@@ -2,9 +2,10 @@ namespace CotdQualifierRankWeb.Models
 {
     public class Competition
     {
-        public int CompetitionId { get; set; }
-        public int ChallengeId { get; set; }
-        public string? MapUid { get; set; }
+        public int Id { get; set; }
+        public int NadeoCompetitionId { get; set; }
+        public int NadeoChallengeId { get; set; }
+        public string? NadeoMapUid { get; set; }
         public DateTime Date { get; set; }
         public List<Record>? Leaderboard { get; set; }
     }
