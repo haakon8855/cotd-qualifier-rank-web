@@ -1,0 +1,53 @@
+@page
+@model CotdQualifierRankWeb.Pages_Competitions.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].NadeoCompetitionId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].NadeoChallengeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].NadeoMapUid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].Date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Competition) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NadeoCompetitionId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NadeoChallengeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NadeoMapUid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
