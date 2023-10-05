@@ -15,7 +15,9 @@ namespace CotdQualifierRankWeb.Data
             var competitions = new Competition[numChallenges];
             for (int i = 0; i < numChallenges; i++)
             {
-                var leaderboard = GenerateRandomLeaderboard(100, 30000, 50000);
+                // random world record time between 31 and 70 seconds:
+                var worldRecord = 31000 + (int)((70000 - 31000) * new Random().NextDouble());
+                var leaderboard = GenerateRandomLeaderboard(100, worldRecord, worldRecord + 20000);
                 competitions[i] = new Competition
                 {
                     Date = DateTime.Today.AddDays(-i).AddHours(19),
