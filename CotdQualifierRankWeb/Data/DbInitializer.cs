@@ -18,7 +18,7 @@ namespace CotdQualifierRankWeb.Data
                 var leaderboard = GenerateRandomLeaderboard(100, 30000, 50000);
                 competitions[i] = new Competition
                 {
-                    Date = DateTime.Today.AddDays(-i),
+                    Date = DateTime.Today.AddDays(-i).AddHours(19),
                     NadeoChallengeId = 8888 - 30 * i,
                     NadeoCompetitionId = 4444 - 20 * i,
                     // Generate random alphabetic string of length 27:

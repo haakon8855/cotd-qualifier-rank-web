@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using CotdQualifierRankWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using CotdQualifierRankWeb.Data;
-using CotdQualifierRankWeb.Models;
 
 namespace CotdQualifierRankWeb.Pages_Competitions
 {
@@ -19,7 +14,7 @@ namespace CotdQualifierRankWeb.Pages_Competitions
             _context = context;
         }
 
-      public Competition Competition { get; set; } = default!; 
+        public Competition Competition { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,13 +23,14 @@ namespace CotdQualifierRankWeb.Pages_Competitions
                 return NotFound();
             }
 
-            var competition = await _context.Competitions.FirstOrDefaultAsync(m => m.Id == id);
+            var competition = await _context.Competitions.Include(c => c.Leaderboard).FirstOrDefaultAsync(m => m.Id == id);
             if (competition == null)
             {
                 return NotFound();
             }
-            else 
+            else
             {
+                competition.Leaderboard = competition.Leaderboard.OrderBy(r => r.Time).ToList();
                 Competition = competition;
             }
             return Page();
