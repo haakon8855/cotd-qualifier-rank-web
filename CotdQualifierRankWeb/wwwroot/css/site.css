@@ -30,3 +30,15 @@ body {
 table-text {
     color: #cfcfcf;
 }
+
+.table-striped > tbody > tr:nth-child(even) > td {
+    background-color: #1d1f20;
+    color: #cfcfcf;
+    --bs-table-accent-bg: #1d1f20;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td {
+    background-color: #252729;
+    color: #cfcfcf;
+    --bs-table-accent-bg: #252729;
+}
