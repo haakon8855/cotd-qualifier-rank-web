@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int Time { get; set; }
 
-        public override string ToString()
+        public string FormattedTime()
         {
             // Return string with time in format "ss.ttt" or "mm:ss.ttt" (if necessary):
             if (Time < 60000)
