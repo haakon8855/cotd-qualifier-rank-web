@@ -9,19 +9,34 @@ namespace CotdQualifierRankWeb.Controllers
     public class RankController : ControllerBase
     {
         CotdContext _context { get; set; }
+        NadeoApiController _nadeoApiController { get; set; }
 
-        public RankController(CotdContext context)
+        public RankController(CotdContext context, NadeoApiController nadeoApiController)
         {
             _context = context;
+            _nadeoApiController = nadeoApiController;
         }
 
         [HttpGet]
         [Route("{mapUID}/{time:int}")]
-        public IActionResult GetAction(string mapUID, int time)
+        public async Task<IActionResult> GetAction(string mapUid, int time)
         {
-            var cotd = _context.Competitions.Include(c => c.Leaderboard).Where(c => c.NadeoMapUid == mapUID).FirstOrDefault();
+            var cotd = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);
 
-            if (cotd == null || cotd.Leaderboard == null)
+            if (cotd == null)
+            {
+                // Need to fetch data from nadeo
+
+
+                var response = await _nadeoApiController.GetTodtInfoFromMap(mapUid);
+                if (response != null)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    return Ok(result);
+                }
+            }
+
+            if (cotd.Leaderboard == null)
             {
                 return NotFound();
             }
@@ -47,7 +62,7 @@ namespace CotdQualifierRankWeb.Controllers
 
             return Ok(new
             {
-                mapUID,
+                mapUid,
                 competitionId = cotd.NadeoCompetitionId,
                 challengeId = cotd.NadeoChallengeId,
                 date = cotd.Date,

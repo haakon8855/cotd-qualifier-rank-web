@@ -1,9 +1,12 @@
+using CotdQualifierRankWeb.Controllers;
 using CotdQualifierRankWeb.Data;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<CredentialsManager>();
+builder.Services.AddSingleton<NadeoApiController>();
 builder.Services.AddDbContext<CotdContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CotdContext") ?? throw new InvalidOperationException("Connection string 'CotdContext' not found.")));
 
@@ -29,7 +32,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<CotdContext>();
     context.Database.EnsureCreated();
-    DbInitializer.Initialize(context);
+    //DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
