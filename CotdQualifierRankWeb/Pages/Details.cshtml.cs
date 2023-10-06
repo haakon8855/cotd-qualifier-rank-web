@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace CotdQualifierRankWeb.Pages_Competitions
+namespace CotdQualifierRankWeb.Pages
 {
     public class DetailsModel : PageModel
     {
-        private readonly CotdQualifierRankWeb.Data.CotdContext _context;
+        private readonly Data.CotdContext _context;
 
-        public DetailsModel(CotdQualifierRankWeb.Data.CotdContext context)
+        public DetailsModel(Data.CotdContext context)
         {
             _context = context;
         }

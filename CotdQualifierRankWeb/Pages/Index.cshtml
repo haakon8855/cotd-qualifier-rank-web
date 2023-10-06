@@ -1,45 +1,49 @@
-﻿@page
+@page
 @model IndexModel
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Index";
 }
 
-<div class="row mb-auto">
-    <div class="col-md-4">
-        <div class="row no-gutters border mb-4">
-            <div class="col p-4 mb-4 ">
-                <p class="card-text">
-                    Contoso University is a sample application that
-                    demonstrates how to use Entity Framework Core in an
-                    ASP.NET Core Razor Pages web app.
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="row no-gutters border mb-4">
-            <div class="col p-4 d-flex flex-column position-static">
-                <p class="card-text mb-auto">
-                    You can build the application by following the steps in a series of tutorials.
-                </p>
-                <p>
-                    @*                    <a href="https://docs.microsoft.com/aspnet/core/data/ef-rp/intro" class="stretched-link">See the tutorial</a>
-                    *@
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="row no-gutters border mb-4">
-            <div class="col p-4 d-flex flex-column">
-                <p class="card-text mb-auto">
-                    You can download the completed project from GitHub.
-                </p>
-                <p>
-                    @*                    <a href="https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/data/ef-rp/intro/samples" class="stretched-link">See project source code</a>
-                    *@
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
+<h1>Recent Cup of the Days</h1>
+
+<table class="table" style="color:#cfcfcf">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].NadeoCompetitionId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].NadeoChallengeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].NadeoMapUid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competition[0].Date)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Competition) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NadeoCompetitionId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NadeoChallengeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NadeoMapUid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
