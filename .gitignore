@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+# Nadeo credentials
+credentials.json
+
 # SQLite database Files
 *.db
 *.db-shm
