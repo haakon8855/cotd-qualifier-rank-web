@@ -1,6 +1,12 @@
 ﻿using CotdQualifierRankWeb.Data;
+using CotdQualifierRankWeb.DTOs;
+using CotdQualifierRankWeb.Models;
+using CotdQualifierRankWeb.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CotdQualifierRankWeb.Controllers
 {
@@ -10,11 +16,15 @@ namespace CotdQualifierRankWeb.Controllers
     {
         CotdContext _context { get; set; }
         NadeoApiController _nadeoApiController { get; set; }
+        NadeoCompetitionService _nadeoCompeitionService { get; set; }
+        CompetitionService _competitionService { get; set; }
 
-        public RankController(CotdContext context, NadeoApiController nadeoApiController)
+        public RankController(CotdContext context, NadeoApiController nadeoApiController, NadeoCompetitionService nadeoCompetitionService, CompetitionService competitionService)
         {
             _context = context;
             _nadeoApiController = nadeoApiController;
+            _nadeoCompeitionService = nadeoCompetitionService;
+            _competitionService = competitionService;
         }
 
         [HttpGet]
@@ -25,23 +35,33 @@ namespace CotdQualifierRankWeb.Controllers
 
             if (cotd == null)
             {
-                // Need to fetch data from nadeo
-
-
-                var response = await _nadeoApiController.GetTodtInfoFromMap(mapUid);
-                if (response != null)
+                cotd = await FetchCompetitionFromNadeo(mapUid);
+                if (cotd == null)
                 {
-                    var result = await response.Content.ReadAsStringAsync();
-                    return Ok(result);
+                    return NotFound();
                 }
             }
 
-            if (cotd.Leaderboard == null)
-            {
-                return NotFound();
-            }
+            var rank = FindRankInLeaderboard(cotd, time);
 
-            // binary search on the leaderboard to find the rank as if it would have been at the correct location in the list
+            return Ok(new
+            {
+                mapUid,
+                competitionId = cotd.NadeoCompetitionId,
+                challengeId = cotd.NadeoChallengeId,
+                date = cotd.Date,
+                time,
+                rank,
+            });
+        }
+
+        public int FindRankInLeaderboard(Competition cotd, int time)
+        {
+            // Binary search on the leaderboard to find the rank as if it would have been at the correct location in the list
+            if (cotd == null || cotd.Leaderboard == null)
+            {
+                return -1;
+            }
             cotd.Leaderboard.Sort((a, b) => a.Time.CompareTo(b.Time));
             int rank = 0;
             int min = 0;
@@ -60,15 +80,129 @@ namespace CotdQualifierRankWeb.Controllers
             }
             rank = min + 1;
 
-            return Ok(new
+            return rank;
+        }
+
+        public async Task<Competition?> FetchCompetitionFromNadeo(string mapUid)
+        {
+            // get map totd info from nadeo
+            var mapResponse = await _nadeoApiController.GetTodtInfoForMap(mapUid);
+            if (mapResponse != null)
             {
-                mapUid,
-                competitionId = cotd.NadeoCompetitionId,
-                challengeId = cotd.NadeoChallengeId,
-                date = cotd.Date,
-                time,
-                rank,
-            });
+                var result = await mapResponse.Content.ReadAsStringAsync();
+                // get date of totd from response
+                try
+                {
+                    var mapTotdInfo = JsonConvert.DeserializeObject<NadeoMapTotdInfoDTO>(result);
+
+                    if (mapTotdInfo == null || mapTotdInfo.TotdMaps == null)
+                    {
+                        return null;
+                    }
+                    var dayOfWeek = (mapTotdInfo.TotdMaps.IndexOf(mapUid) + 1) % 7;
+                    var mapTotdDate = ISOWeek.ToDateTime(mapTotdInfo.TotdYear, mapTotdInfo.Week, (DayOfWeek)dayOfWeek);
+                    mapTotdDate = mapTotdDate.AddHours(19);
+
+                    if (mapTotdDate < new DateTime(2020, 11, 2))
+                    {
+                        return null;
+                    }
+
+                    // check if we have a nadeocompetition with that date
+                    var nadeoCompetition = _nadeoCompeitionService.GetNadeoCompetitions().FirstOrDefault(comp => DateTime.Parse(comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
+                    Competition? cotd = null;
+                    if (nadeoCompetition != null)
+                    {
+                        cotd = await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
+                    }
+                    else
+                    {
+                        // If not, fetch competitions from Nadeo until we find a match
+                        nadeoCompetition = await FetchNadeoCompetition(mapUid, mapTotdDate);
+                        // When we find it, fetch the leaderboard and store it in the db
+                        if (nadeoCompetition == null)
+                        {
+                            return null;
+                        }
+                        cotd = await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
+                    }
+                    _competitionService.AddCompetition(cotd);
+                    return cotd;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        public async Task<List<Record>> FetchQualificationLeaderboard(NadeoCompetition nadeoCompetition, int challengeId)
+        {
+            // Fetch the qualification leaderboard
+            var fullLeaderboard = new List<Record>();
+
+            for (int i = 0; i < nadeoCompetition.NbPlayers; i += 100)
+            {
+                var leaderboardFragment = await _nadeoApiController.GetLeaderboard(challengeId, 100, i);
+
+                if (leaderboardFragment != null && leaderboardFragment.Results != null)
+                {
+                    var records = leaderboardFragment.Results.Select(entry => new Record { Time = entry.Score }).ToList();
+                    fullLeaderboard.AddRange(records);
+                }
+
+                // Sleep for 0.5 seconds to not DOS the Nadeo API
+                Thread.Sleep(500);
+            }
+
+            return fullLeaderboard;
+        }
+
+        public async Task<Competition> FetchCompetition(NadeoCompetition nadeoCompetition, string mapUid, DateTime mapTotdDate)
+        {
+            var newCompetition = new Competition();
+            newCompetition.NadeoCompetitionId = nadeoCompetition.Id;
+            newCompetition.NadeoChallengeId = await _nadeoApiController.GetChallengeId(nadeoCompetition.Id);
+            newCompetition.NadeoMapUid = mapUid;
+            newCompetition.Date = mapTotdDate;
+            newCompetition.Leaderboard = await FetchQualificationLeaderboard(nadeoCompetition, newCompetition.NadeoChallengeId);
+            _competitionService.AddCompetition(newCompetition);
+
+            return newCompetition;
+        }
+
+        public async Task<NadeoCompetition?> FetchNadeoCompetition(string mapUid, DateTime mapTotdDate)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var compResponse = await _nadeoApiController.GetCompetitions(100, i * 100);
+                if (compResponse != null)
+                {
+                    var compResult = await compResponse.Content.ReadAsStringAsync();
+                    try
+                    {
+                        var competitions = JsonConvert.DeserializeObject<List<NadeoCompetition>>(compResult);
+                        competitions = competitions.Where(comp => Regex.IsMatch(comp.Name, @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$")).ToList();
+
+                        // store all competitions while searching
+                        _nadeoCompeitionService.AddNadeoCompetitions(competitions);
+
+                        var competition = competitions.FirstOrDefault(comp => DateTime.Parse(comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
+                        // when we find it, fetch the leaderboard and store it in the db
+                        return competition;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                        return null;
+                    }
+                }
+                // Sleep for 0.5 seconds to not DOS the Nadeo API
+                Thread.Sleep(500);
+            }
+            return null;
         }
     }
 }
