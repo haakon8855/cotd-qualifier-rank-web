@@ -11,37 +11,43 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Competition[0].NadeoCompetitionId)
+                @Html.DisplayNameFor(model => model.Competitions[0].NadeoCompetitionId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Competition[0].NadeoChallengeId)
+                @Html.DisplayNameFor(model => model.Competitions[0].NadeoChallengeId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Competition[0].NadeoMapUid)
+                @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Competition[0].Date)
+                Player Count
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competitions[0].Date)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Competition) {
+@for (int i = 0; i<Model.Competitions.Count;i++) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.NadeoCompetitionId)
+                @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoCompetitionId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NadeoChallengeId)
+                @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoChallengeId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NadeoMapUid)
+                @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @Model.CompetitionPlayerCounts[i]
             </td>
             <td>
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                @Html.DisplayFor(modelItem => Model.Competitions[i].Date)
+            </td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@Model.Competitions[i].Id">Details</a>
             </td>
         </tr>
 }
