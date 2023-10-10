@@ -29,6 +29,12 @@
                         @Html.DisplayFor(model => model.Competition.NadeoChallengeId)
                     </dd>
                     <dt class="col-sm-2">
+                        Player Count
+                    </dt>
+                    <dd class="col-sm-10">
+                        @(Model.Competition.Leaderboard == null ? "-" : Model.Competition.Leaderboard.Count)
+                    </dd>
+                    <dt class="col-sm-2">
                         @Html.DisplayNameFor(model => model.Competition.NadeoMapUid)
                     </dt>
                     <dd class="col-sm-10">

@@ -36,5 +36,15 @@ namespace CotdQualifierRankWeb.Services
                 _context.SaveChanges();
             }
         }
+
+        public (List<Competition> Comps, List<int> PlayerCounts) GetCompetitionsAndPlayerCounts()
+        {
+            var baseQuery = _context.Competitions.OrderByDescending(c => c.Date);
+            var competitions = baseQuery.ToList();
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            var competitionPlayerCounts = baseQuery.Select(c => c.Leaderboard.Count).ToList();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            return (Comps: competitions, PlayerCounts: competitionPlayerCounts);
+        }
     }
 }
