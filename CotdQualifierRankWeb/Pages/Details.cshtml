@@ -48,7 +48,7 @@
                     <dd class="col-sm-8">
                         <pre class="mapUid">
                         <a target="_blank" href="@($"https://trackmania.io/#/leaderboard/{Model.Competition.NadeoMapUid}")">
-                                <code>
+                        <code>
                                     @Model.Competition.NadeoMapUid
                                 </code>
                             </a>
@@ -61,7 +61,7 @@
                     <form method="post" asp-page-handler="PB" asp-route-id="@Model.Competition.Id">
                         <dl class="row mb-0 mt-1">
                             <dt class="col-sm-6">
-                                <input asp-for="Time" value="@(Model.Time==0?"":Model.Time)" class="form-control" placeholder="Your PB (ms)"/>
+                                <input asp-for="Time" value="@(Model.Time==0?"":Model.Time)" class="form-control" placeholder="Your PB (ms)" />
                             </dt>
                             <dd class="col-sm-6">
                                 <button class="btn btn-primary">Get rank</button>
@@ -71,14 +71,14 @@
 
                     @if (Model.Rank != 0)
                     {
-                    <dl class="row">
-                        <dt class="col-sm-6">
+                        <dl class="row">
+                            <dt class="col-sm-6">
                                 Your rank:
-                        </dt>
-                        <dd class="col-sm-6">
-                            @Model.Rank
-                        </dd>
-                    </dl>
+                            </dt>
+                            <dd class="col-sm-6">
+                                @Model.Rank
+                            </dd>
+                        </dl>
                     }
                 </div>
             </div>
@@ -89,24 +89,104 @@
 <nav aria-label="Page navigation">
     <ul class="pagination">
         <li class="page-item">
-            <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="@(Model.PageNo-1)" asp-page="./Details" class="page-link page-link-dark">
-                    <pre class="m-0"><code> <</code></pre>
-            </a>
+            @if (Model.PageNo > 1)
+            {
+                <a asp-route-id="@Model.Competition.Id"
+                   asp-route-pageNo="@(Model.PageNo-1)"
+                   asp-page="./Details"
+                   class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code">&lt;</code></pre>
+                </a>
+            }
+            else
+            {
+                <a class="page-link disabled page-link-disabled">
+                    <pre class="m-0"><code class="pagination-code">&lt;</code></pre>
+                </a>
+            }
         </li>
 
-        @for (int i = 0; i < Model.PageCount; i++)
+        @if (Model.PageCount < 8)
         {
-            <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
-                <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="@(i + 1)" asp-page="./Details" class="page-link page-link-dark">
-                    <pre class="m-0"><code>@(i + 1)</code></pre>
+            @for (int i = 0; i < Model.PageCount; i++)
+            {
+                <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
+                    <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="@(i + 1)" asp-page="./Details" class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
+                    </a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="page-item @(Model.PageNo == 1 ? "active" : "")">
+                <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="1" asp-page="./Details" class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code">1</code></pre>
+                </a>
+            </li>
+            @if (Model.PageNo > 4)
+            {
+                <li class="page-item">
+                    <a class="page-link page-link-dots">
+                        <code class="pagination-code">...</code>
+                    </a>
+                </li>
+            }
+
+            var start = Math.Max(Model.PageNo - 3, 1);
+            var startLost = start - (Model.PageNo - 3);
+
+            var end = Model.PageNo < 5 ?
+                Math.Min(Model.PageNo + 2 + startLost + 1, Model.PageCount - 1)
+                : Math.Min(Model.PageNo + 2 + startLost, Model.PageCount - 1);
+
+            var endLost = (Model.PageNo + 3) - end;
+
+            if (Model.PageNo >= 5){
+                start = Model.PageNo > Model.PageCount - 4 ?
+                    Math.Max(Model.PageNo - 2 - endLost - 1, 1)
+                    : Math.Max(Model.PageNo - 2 - endLost, 1);
+            }
+
+            @for (int i = start; i < end; i++)
+            {
+                <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
+                    <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="@(i + 1)" asp-page="./Details" class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
+                    </a>
+                </li>
+            }
+            @if (Model.PageNo < Model.PageCount - 3)
+            {
+                <li class="page-item">
+                    <a class="page-link page-link-dots">
+                        <code class="pagination-code">...</code>
+                    </a>
+                </li>
+            }
+            <li class="page-item @(Model.PageNo == Model.PageCount ? "active" : "")">
+                <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="@(Model.PageCount)" asp-page="./Details" class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code">@(Model.PageCount)</code></pre>
                 </a>
             </li>
         }
 
         <li class="page-item">
-            <a asp-route-id="@Model.Competition.Id" asp-route-pageNo="@(Model.PageNo+1)" asp-page="./Details" class="page-link page-link-dark">
-                <pre class="m-0"><code> ></code></pre>
-            </a>
+            @if (Model.PageNo < Model.PageCount)
+            {
+                <a asp-route-id="@Model.Competition.Id"
+                   asp-route-pageNo="@(Model.PageNo+1)"
+                   asp-page="./Details"
+                   class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code">&gt;</code></pre>
+                </a>
+            }
+            else
+            {
+                <a class="page-link disabled page-link-disabled">
+                    <pre class="m-0"><code class="pagination-code">&gt;</code></pre>
+                </a>
+            }
         </li>
     </ul>
 </nav>
@@ -117,17 +197,17 @@
             <table class="table table-borderless table-striped">
                 @if (Model.Competition.Leaderboard != null)
                 {
-                @foreach (var item in Model.Competition.Leaderboard.Select((record, i)=>(record, i)))
-                {
-                <tr>
-                    <td class="fw-bold px-3">
-                        @(item.i + 1 + (Model.PageNo-1)*Model.PageSize)
-                    </td>
-                    <td class="px-4" style="text-align:right">
-                        @item.record.FormattedTime()
-                    </td>
-                </tr>
-                }
+                    @foreach (var item in Model.Competition.Leaderboard.Select((record, i) => (record, i)))
+                    {
+                        <tr>
+                            <td class="fw-bold px-3">
+                                @(item.i + 1 + (Model.PageNo - 1) * Model.PageSize)
+                            </td>
+                            <td class="px-4" style="text-align:right">
+                                @item.record.FormattedTime()
+                            </td>
+                        </tr>
+                    }
                 }
             </table>
         </div>

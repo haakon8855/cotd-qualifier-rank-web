@@ -57,8 +57,40 @@ pre {
     border: solid 1px #1d1f20;
 }
 
+.page-link-dots {
+    background-color: #1d1f20;
+    color: white;
+    border: solid 1px #1d1f20;
+}
+
+.page-link-dots:hover {
+    background-color: #1d1f20;
+    color: white;
+    border: solid 1px #1d1f20;
+}
+
+.page-link-disabled {
+    background-color: #555555;
+    color: white;
+    border: solid 1px #1d1f20;
+    transition: none;
+}
+
+.page-link-disabled:hover {
+    background-color: #555555;
+    color: white;
+    border: solid 1px #1d1f20;
+    transition: none;
+}
+
 .page-item.active .page-link {
     border: solid 1px #1d1f20;
     background-color: white;
     color: #0a58ca;
+}
+
+.pagination-code {
+    display: block;
+    width: 24px;
+    text-align: center;
 }

@@ -34,6 +34,10 @@ namespace CotdQualifierRankWeb.Pages
 
         public void Initialise(int? id)
         {
+            if (PageNo < 1)
+            {
+                PageNo = 1;
+            }
             if (id == null || _context.Competitions == null)
             {
                 return;
@@ -47,7 +51,11 @@ namespace CotdQualifierRankWeb.Pages
             else
             {
                 PlayerCount = competition.Leaderboard.Count;
-                PageCount = PlayerCount / PageSize + 1;
+                PageCount = (int)Math.Ceiling((double)PlayerCount / (double)PageSize);
+                if (PageNo > PageCount)
+                {
+                    PageNo = PageCount;
+                }
                 competition.Leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
                 Competition = competition;
             }
