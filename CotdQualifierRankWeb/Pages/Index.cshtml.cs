@@ -21,10 +21,11 @@ namespace CotdQualifierRankWeb.Pages
         {
             if (_context.Competitions != null)
             {
-                Competitions = await _context.Competitions.OrderByDescending(c => c.Date).ToListAsync();
+                var baseQuery = _context.Competitions.OrderByDescending(c => c.Date);
+                Competitions = await baseQuery.ToListAsync();
                 // count the number of players in each comp efficiently for ef core
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-                CompetitionPlayerCounts = _context.Competitions.Include(c => c.Leaderboard).Select(c => c.Leaderboard.Count).ToList();
+                CompetitionPlayerCounts = baseQuery.Select(c => c.Leaderboard.Count).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
         }

@@ -11,6 +11,12 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.Competitions[0].Date)
+            </th>
+            <th>
+                Player Count
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoCompetitionId)
             </th>
             <th>
@@ -19,18 +25,18 @@
             <th>
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
             </th>
-            <th>
-                Player Count
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Competitions[0].Date)
-            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @for (int i = 0; i<Model.Competitions.Count;i++) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Competitions[i].Date)
+            </td>
+            <td>
+                @Model.CompetitionPlayerCounts[i]
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoCompetitionId)
             </td>
@@ -39,12 +45,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)
-            </td>
-            <td>
-                @Model.CompetitionPlayerCounts[i]
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Competitions[i].Date)
             </td>
             <td>
                 <a asp-page="./Details" asp-route-id="@Model.Competitions[i].Id">Details</a>
