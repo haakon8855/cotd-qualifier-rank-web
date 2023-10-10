@@ -50,3 +50,15 @@ pre {
 .mapUid {
     font-size: 16px;
 }
+
+.page-link-dark {
+    background-color: #0d6efd;
+    color: white;
+    border: solid 1px #1d1f20;
+}
+
+.page-item.active .page-link {
+    border: solid 1px #1d1f20;
+    background-color: white;
+    color: #0a58ca;
+}

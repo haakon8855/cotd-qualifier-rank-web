@@ -18,6 +18,12 @@ namespace CotdQualifierRankWeb.Pages
 
         public int Rank { get; set; } = 0;
 
+        [FromQuery(Name = "pageNo")]
+        public int PageNo { get; set; } = 1;
+        public readonly int PageSize = 64;
+        public int PageCount { get; set; } = 0;
+        public int PlayerCount { get; set; } = 0;
+
         public Competition Competition { get; set; } = default!;
 
         public DetailsModel(Data.CotdContext context, RankController rankController)
@@ -40,7 +46,9 @@ namespace CotdQualifierRankWeb.Pages
             }
             else
             {
-                competition.Leaderboard = competition.Leaderboard.OrderBy(r => r.Time).ToList();
+                PlayerCount = competition.Leaderboard.Count;
+                PageCount = PlayerCount / PageSize + 1;
+                competition.Leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
                 Competition = competition;
             }
 
