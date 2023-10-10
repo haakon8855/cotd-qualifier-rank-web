@@ -44,15 +44,24 @@ namespace CotdQualifierRankWeb.Controllers
 
             var rank = FindRankInLeaderboard(cotd, time);
 
-            return Ok(new
+            return Ok(new GetRankDTO
             {
-                mapUid,
-                competitionId = cotd.NadeoCompetitionId,
-                challengeId = cotd.NadeoChallengeId,
-                date = cotd.Date,
-                time,
-                rank,
+                MapUid = mapUid,
+                CompetitionId = cotd.NadeoCompetitionId,
+                ChallengeId = cotd.NadeoChallengeId,
+                Date = cotd.Date,
+                Time = time,
+                Rank = rank,
             });
+            //return Ok(new
+            //{
+            //    mapUid,
+            //    competitionId = cotd.NadeoCompetitionId,
+            //    challengeId = cotd.NadeoChallengeId,
+            //    date = cotd.Date,
+            //    time,
+            //    rank,
+            //});
         }
 
         public int FindRankInLeaderboard(Competition cotd, int time)

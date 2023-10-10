@@ -11,32 +11,66 @@
 <div>
     <h4>Qualification Leaderboard</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Competition.NadeoCompetitionId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Competition.NadeoCompetitionId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Competition.NadeoChallengeId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Competition.NadeoChallengeId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Competition.NadeoMapUid)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Competition.NadeoMapUid)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Competition.Date)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Competition.Date)
-        </dd>
-    </dl>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Competition.NadeoCompetitionId)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Competition.NadeoCompetitionId)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Competition.NadeoChallengeId)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Competition.NadeoChallengeId)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Competition.NadeoMapUid)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Competition.NadeoMapUid)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Competition.Date)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => model.Competition.Date)
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <div>
+                    <form method="post" asp-page-handler="PB" asp-route-id="@Model.Competition.Id">
+                        <dl class="row mb-0 mt-1">
+                            <dt class="col-sm-6">
+                                <input asp-for="Time" value="@(Model.Time==0?"":Model.Time)" class="form-control" placeholder="Your PB (ms)"/>
+                            </dt>
+                            <dd class="col-sm-6">
+                                <button class="btn btn-primary">Get rank</button>
+                            </dd>
+                        </dl>
+                    </form>
+
+                    @if (Model.Rank != 0)
+                    {
+                    <dl class="row">
+                        <dt class="col-sm-6">
+                                Your rank:
+                        </dt>
+                        <dd class="col-sm-6">
+                            @Model.Rank
+                        </dd>
+                    </dl>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="container">

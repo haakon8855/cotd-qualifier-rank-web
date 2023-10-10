@@ -12,6 +12,7 @@ builder.Services.AddDbContext<CotdContext>(options =>
 builder.Services.AddSingleton<NadeoApiController>();
 builder.Services.AddScoped<NadeoCompetitionService>();
 builder.Services.AddScoped<CompetitionService>();
+builder.Services.AddScoped<RankController>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
