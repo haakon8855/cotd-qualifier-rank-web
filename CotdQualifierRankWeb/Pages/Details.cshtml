@@ -20,7 +20,7 @@
                         @Html.DisplayNameFor(model => model.Competition.Date)
                     </dt>
                     <dd class="col-sm-8">
-                        @Html.DisplayFor(model => model.Competition.Date)
+                        @Model.Competition.Date.ToShortDateString()
                     </dd>
                     <dt class="col-sm-4">
                         Player Count
