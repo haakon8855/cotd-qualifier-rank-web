@@ -16,35 +16,43 @@
         <div class="row">
             <div class="col-md-8">
                 <dl class="row">
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => model.Competition.NadeoCompetitionId)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => model.Competition.NadeoCompetitionId)
-                    </dd>
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => model.Competition.NadeoChallengeId)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => model.Competition.NadeoChallengeId)
-                    </dd>
-                    <dt class="col-sm-2">
-                        Player Count
-                    </dt>
-                    <dd class="col-sm-10">
-                        @(Model.Competition.Leaderboard == null ? "-" : Model.Competition.Leaderboard.Count)
-                    </dd>
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => model.Competition.NadeoMapUid)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => model.Competition.NadeoMapUid)
-                    </dd>
-                    <dt class="col-sm-2">
+                    <dt class="col-sm-4">
                         @Html.DisplayNameFor(model => model.Competition.Date)
                     </dt>
-                    <dd class="col-sm-10">
+                    <dd class="col-sm-8">
                         @Html.DisplayFor(model => model.Competition.Date)
+                    </dd>
+                    <dt class="col-sm-4">
+                        Player Count
+                    </dt>
+                    <dd class="col-sm-8">
+                        @(Model.Competition.Leaderboard == null ? "-" : Model.Competition.Leaderboard.Count)
+                    </dd>
+                    <dt class="col-sm-4">
+                        @Html.DisplayNameFor(model => model.Competition.NadeoCompetitionId)
+                    </dt>
+                    <dd class="col-sm-8">
+                        <a target="_blank" href="@($"https://trackmania.io/#/cotd/{Model.Competition.NadeoCompetitionId}")">
+                            @Html.DisplayFor(model => model.Competition.NadeoCompetitionId)
+                        </a>
+                    </dd>
+                    <dt class="col-sm-4">
+                        @Html.DisplayNameFor(model => model.Competition.NadeoChallengeId)
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Competition.NadeoChallengeId)
+                    </dd>
+                    <dt class="col-sm-4">
+                        @Html.DisplayNameFor(model => model.Competition.NadeoMapUid)
+                    </dt>
+                    <dd class="col-sm-8">
+                        <pre class="mapUid">
+                            <a target="_blank" href="@($"https://www.trackmania.com/tracks/{Model.Competition.NadeoMapUid}")">
+                                <code>
+                                    @Model.Competition.NadeoMapUid
+                                </code>
+                            </a>
+                        </pre>
                     </dd>
                 </dl>
             </div>

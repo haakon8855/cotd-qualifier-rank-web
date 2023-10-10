@@ -42,3 +42,11 @@ table-text {
     color: #cfcfcf;
     --bs-table-accent-bg: #252729;
 }
+
+pre {
+    white-space: normal;
+}
+
+.mapUid {
+    font-size: 16px;
+}
