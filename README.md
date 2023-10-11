@@ -73,7 +73,7 @@ plugin.
 **Example Request**:
 
 ```shell
-curl -X GET https://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
+curl -X GET http://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
 ```
 
  **Response**:
