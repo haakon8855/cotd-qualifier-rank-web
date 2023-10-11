@@ -3,6 +3,10 @@
 Cup of the Day Qualifier Rank is a website and API for finding the seeding 
 of your current PB in an arbitrary COTD qualifying session.
 
+__Important:__ This project is still a work in progress and is therefore not
+publicly available or integrated with an accompanying
+[Openplanet Plugin](https://github.com/haakon8855/COTD-qualifier-rank).
+
 ## Introduction
 
 Have you ever been playing an old Track of the Day and thought:  
@@ -47,6 +51,9 @@ once.
 The plugin can then be altered to only send requests to the centralised API
 where data is cached. The server receives a MapUID along with the player's PB
 from and returns the player's "rank".
+
+The only downside to this approach is that someone needs to maintain, and
+possibly pay to keep the server running.
 
 ## API
 
