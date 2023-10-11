@@ -45,6 +45,12 @@ namespace CotdQualifierRankWeb.Controllers
 
         public async Task Authenticate()
         {
+            if (_credentialsManager.Credentials == null
+                || _credentialsManager.Credentials.Login == null
+                || _credentialsManager.Credentials.Password == null)
+            {
+                throw new InvalidOperationException("Credentials not found.");
+            }
             string username = _credentialsManager.Credentials.Login;
             string password = _credentialsManager.Credentials.Password;
             string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
@@ -55,9 +61,6 @@ namespace CotdQualifierRankWeb.Controllers
 
             var request = new HttpRequestMessage(HttpMethod.Post, "/v2/authentication/token/basic");
             request.Content = content;
-
-            //var request = new HttpRequestMessage(HttpMethod.Get, "/v2/authentication/token/basic");
-            //request.Content = new StringContent("{\"audience\":\"NadeoClubServices\"}", Encoding.UTF8, "application/json");
 
             var response = await _coreClient.SendAsync(request);
 

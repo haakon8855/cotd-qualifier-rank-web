@@ -73,9 +73,12 @@ namespace CotdQualifierRankWeb.Pages
         public IActionResult OnPostPB(int? id)
         {
             Initialise(id);
+            if (Competition.NadeoMapUid == null)
+            {
+                return Page();
+            }
             var response = _rankController.GetAction(Competition.NadeoMapUid, Time).Result;
 
-            // check that response is ok
             if (response is OkObjectResult okObjectResult)
             {
                 var content = okObjectResult.Value;

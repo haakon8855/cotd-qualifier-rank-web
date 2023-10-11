@@ -117,8 +117,14 @@ namespace CotdQualifierRankWeb.Controllers
                         return null;
                     }
 
-                    // check if we have a nadeocompetition with that date
-                    var nadeoCompetition = _nadeoCompeitionService.GetNadeoCompetitions().FirstOrDefault(comp => DateTime.Parse(comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
+                    // Check if we have a nadeocompetition with that date
+                    // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
+                    var nadeoCompetition = _nadeoCompeitionService
+                        .GetNadeoCompetitions()
+                        .FirstOrDefault(
+                            comp => DateTime.Parse(
+                                comp.Name == null ? "2020-07-01" : comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
+
                     Competition? cotd = null;
                     if (nadeoCompetition != null)
                     {
@@ -193,12 +199,23 @@ namespace CotdQualifierRankWeb.Controllers
                     try
                     {
                         var competitions = JsonConvert.DeserializeObject<List<NadeoCompetition>>(compResult);
-                        competitions = competitions.Where(comp => Regex.IsMatch(comp.Name, @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$")).ToList();
+                        if (competitions == null)
+                        {
+                            return null;
+                        }
+                        competitions = competitions.Where(comp => Regex.IsMatch(comp.Name == null ? "" : comp.Name, @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$")).ToList();
 
                         // store all competitions while searching
                         _nadeoCompeitionService.AddNadeoCompetitions(competitions);
 
-                        var competition = competitions.FirstOrDefault(comp => DateTime.Parse(comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
+                        // Check if we have a nadeocompetition with that date
+                        // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
+                        var competition = competitions
+                                .FirstOrDefault(
+                                    comp => DateTime.Parse(
+                                        comp.Name == null ? "2020-07-01" : comp.Name.Split(" ")[1]
+                                        ).Date == mapTotdDate.Date);
+
                         // when we find it, fetch the leaderboard and store it in the db
                         return competition;
                     }
