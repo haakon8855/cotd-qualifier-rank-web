@@ -26,6 +26,7 @@ namespace CotdQualifierRankWeb.Pages
 
         public Competition Competition { get; set; } = default!;
         public List<Record> PaginatedLeaderboard { get; set; } = default!;
+        public Dictionary<string, string> PageStatistics { get; set; } = new Dictionary<string, string>();
 
         public DetailsModel(Data.CotdContext context, RankController rankController)
         {
@@ -33,7 +34,7 @@ namespace CotdQualifierRankWeb.Pages
             _rankController = rankController;
         }
 
-        public void Initialise(int? id)
+        private void Initialise(int? id)
         {
             if (PageNo < 1)
             {
@@ -62,7 +63,38 @@ namespace CotdQualifierRankWeb.Pages
                 Competition = competition;
             }
 
+            CalculateStatistics();
+
             return;
+        }
+
+        private void CalculateStatistics()
+        {
+            if (Competition is null || Competition.Leaderboard is null || PaginatedLeaderboard is null)
+            {
+                return;
+            }
+
+            // Calculate cutoff time of the division above
+            Record betterDivCutoff;
+            if (PageNo == 1)
+            {
+                betterDivCutoff = Competition.Leaderboard[0];
+            }
+            else
+            {
+                betterDivCutoff = Competition.Leaderboard[(PageNo - 1) * PageSize - 1];
+            }
+
+            // Calculate cutoff of current division
+            Record currentDivCutoff = PaginatedLeaderboard.Last();
+
+            // Calculate window of current division
+            Record currentDivWindow = currentDivCutoff - betterDivCutoff;
+
+            PageStatistics.Add("BetterDivCutoff", betterDivCutoff.FormattedTime());
+            PageStatistics.Add("CurrentDivCutoff", currentDivCutoff.FormattedTime());
+            PageStatistics.Add("CurrentDivWindow", currentDivWindow.FormattedTime());
         }
 
         public void OnGet(int? id)

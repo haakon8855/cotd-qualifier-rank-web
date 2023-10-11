@@ -191,27 +191,47 @@
     </ul>
 </nav>
 
-<div class="container">
+<h3 class="mt-4 mb-3">Division @Model.PageNo</h3>
+
+<div class="container px-0">
     <div class="row">
-        <div class="col-sm-4 px-0">
-            <table class="table table-borderless table-striped">
-                @if (Model.PaginatedLeaderboard is not null)
-                {
-                    @foreach (var item in Model.PaginatedLeaderboard.Select((record, i) => (record, i)))
-                    {
-                        <tr>
-                            <td class="fw-bold px-3">
-                                @(item.i + 1 + (Model.PageNo - 1) * Model.PageSize)
-                            </td>
-                            <td class="px-4" style="text-align:right">
-                                @item.record.FormattedTime()
-                            </td>
-                        </tr>
-                    }
-                }
-            </table>
+        <div class="col-sm-8">
+            <div class="container px-0">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <table class="table table-borderless table-striped">
+                            @if (Model.PaginatedLeaderboard is not null)
+                            {
+                                @foreach (var item in Model.PaginatedLeaderboard.Select((record, i) => (record, i)))
+                                {
+                                    <tr>
+                                        <td class="fw-bold px-3">
+                                            @(item.i + 1 + (Model.PageNo - 1) * Model.PageSize)
+                                        </td>
+                                        <td class="px-4" style="text-align:right">
+                                            @item.record.FormattedTime()
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </div>
+                    <div class="col-sm-4"></div>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-9"></div>
+        <div class="col-sm-4">
+            <dl class="row">
+                @if (Model.PageNo > 1)
+                {
+                    <dt class="col-sm-6">Division @(Model.PageNo-1) Cutoff</dt>
+                    <dd class="col-sm-6">@Model.PageStatistics["BetterDivCutoff"]</dd>
+                }
+                <dt class="col-sm-6">Division @Model.PageNo Cutoff</dt>
+                <dd class="col-sm-6">@Model.PageStatistics["CurrentDivCutoff"]</dd>
+                <dt class="col-sm-6">Division @Model.PageNo Window</dt>
+                <dd class="col-sm-6">@Model.PageStatistics["CurrentDivWindow"]</dd>
+            </dl>
+        </div>
     </div>
 </div>
-

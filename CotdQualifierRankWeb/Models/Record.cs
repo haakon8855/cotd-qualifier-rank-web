@@ -17,5 +17,10 @@
                 return $"{Time / 60000}:{Time / 1000 % 60:00}.{Time % 1000:000}";
             }
         }
+
+        public static Record operator -(Record a, Record b)
+        {
+            return new Record { Id = 0, Time = a.Time - b.Time };
+        }
     }
 }
