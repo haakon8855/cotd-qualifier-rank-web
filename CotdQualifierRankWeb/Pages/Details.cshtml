@@ -195,9 +195,9 @@
     <div class="row">
         <div class="col-sm-4 px-0">
             <table class="table table-borderless table-striped">
-                @if (Model.Competition.Leaderboard != null)
+                @if (Model.PaginatedLeaderboard != null)
                 {
-                    @foreach (var item in Model.Competition.Leaderboard.Select((record, i) => (record, i)))
+                    @foreach (var item in Model.PaginatedLeaderboard.Select((record, i) => (record, i)))
                     {
                         <tr>
                             <td class="fw-bold px-3">

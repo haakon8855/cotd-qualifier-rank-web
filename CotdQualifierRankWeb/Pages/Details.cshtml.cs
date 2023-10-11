@@ -25,6 +25,7 @@ namespace CotdQualifierRankWeb.Pages
         public int PlayerCount { get; set; } = 0;
 
         public Competition Competition { get; set; } = default!;
+        public List<Record> PaginatedLeaderboard { get; set; } = default!;
 
         public DetailsModel(Data.CotdContext context, RankController rankController)
         {
@@ -44,7 +45,7 @@ namespace CotdQualifierRankWeb.Pages
             }
 
             var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(m => m.Id == id);
-            if (competition == null)
+            if (competition == null || competition.Leaderboard == null)
             {
                 return;
             }
@@ -56,7 +57,8 @@ namespace CotdQualifierRankWeb.Pages
                 {
                     PageNo = PageCount;
                 }
-                competition.Leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+                competition.Leaderboard = competition.Leaderboard.OrderBy(r => r.Time).ToList();
+                PaginatedLeaderboard = competition.Leaderboard.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
                 Competition = competition;
             }
 
@@ -79,6 +81,7 @@ namespace CotdQualifierRankWeb.Pages
                 var content = okObjectResult.Value;
                 if (content is GetRankDTO getRankDTO)
                 {
+                    Console.WriteLine(getRankDTO.Rank);
                     Rank = getRankDTO.Rank;
                 }
             }
