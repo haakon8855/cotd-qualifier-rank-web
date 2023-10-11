@@ -28,7 +28,7 @@ namespace CotdQualifierRankWeb.Controllers
         public NadeoApiController(CredentialsManager credentialsManager)
         {
             _credentialsManager = credentialsManager;
-            if (_credentialsManager.Credentials == null)
+            if (_credentialsManager.Credentials is null)
             {
                 throw new InvalidOperationException("Credentials not found.");
             }
@@ -45,9 +45,9 @@ namespace CotdQualifierRankWeb.Controllers
 
         public async Task Authenticate()
         {
-            if (_credentialsManager.Credentials == null
-                || _credentialsManager.Credentials.Login == null
-                || _credentialsManager.Credentials.Password == null)
+            if (_credentialsManager.Credentials is null
+                || _credentialsManager.Credentials.Login is null
+                || _credentialsManager.Credentials.Password is null)
             {
                 throw new InvalidOperationException("Credentials not found.");
             }
@@ -70,7 +70,7 @@ namespace CotdQualifierRankWeb.Controllers
                 try
                 {
                     NadeoAuthTokens? tokens = JsonConvert.DeserializeObject<NadeoAuthTokens>(responseBody);
-                    if (tokens == null)
+                    if (tokens is null)
                     {
                         return;
                     }
@@ -94,11 +94,11 @@ namespace CotdQualifierRankWeb.Controllers
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
-            if (AuthTokens == null || AuthTokens.AuthTime == null || AuthTokens.AuthTime < DateTime.Now.AddHours(-12))
+            if (AuthTokens is null || AuthTokens.AuthTime is null || AuthTokens.AuthTime < DateTime.Now.AddHours(-12))
             {
                 await Authenticate();
             }
-            if (AuthTokens != null)
+            if (AuthTokens is not null)
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("nadeo_v1", $"t={AuthTokens.AccessToken}");
             }
@@ -159,12 +159,12 @@ namespace CotdQualifierRankWeb.Controllers
                 {
                     var rounds = JsonConvert.DeserializeObject<List<NadeoCompetitionRoundsDTO>>(content);
                     Console.WriteLine(content);
-                    if (rounds == null)
+                    if (rounds is null)
                     {
                         return 0;
                     }
                     var round = rounds.First();
-                    if (round != null)
+                    if (round is not null)
                     {
                         return round.QualifierChallengeId;
                     }
@@ -196,7 +196,7 @@ namespace CotdQualifierRankWeb.Controllers
                 {
                     var leaderboard = JsonConvert.DeserializeObject<NadeoChallengeLeaderboardDTO>(content);
                     Console.WriteLine(content);
-                    if (leaderboard == null)
+                    if (leaderboard is null)
                     {
                         return null;
                     }

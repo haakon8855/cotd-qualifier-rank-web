@@ -39,13 +39,13 @@ namespace CotdQualifierRankWeb.Pages
             {
                 PageNo = 1;
             }
-            if (id == null || _context.Competitions == null)
+            if (id is null || _context.Competitions is null)
             {
                 return;
             }
 
             var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(m => m.Id == id);
-            if (competition == null || competition.Leaderboard == null)
+            if (competition is null || competition.Leaderboard is null)
             {
                 return;
             }
@@ -73,7 +73,7 @@ namespace CotdQualifierRankWeb.Pages
         public IActionResult OnPostPB(int? id)
         {
             Initialise(id);
-            if (Competition.NadeoMapUid == null)
+            if (Competition.NadeoMapUid is null)
             {
                 return Page();
             }

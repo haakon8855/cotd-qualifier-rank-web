@@ -33,10 +33,10 @@ namespace CotdQualifierRankWeb.Controllers
         {
             var cotd = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);
 
-            if (cotd == null)
+            if (cotd is null)
             {
                 cotd = await FetchCompetitionFromNadeo(mapUid);
-                if (cotd == null)
+                if (cotd is null)
                 {
                     return NotFound();
                 }
@@ -67,7 +67,7 @@ namespace CotdQualifierRankWeb.Controllers
         public int FindRankInLeaderboard(Competition cotd, int time)
         {
             // Binary search on the leaderboard to find the rank as if it would have been at the correct location in the list
-            if (cotd == null || cotd.Leaderboard == null)
+            if (cotd is null || cotd.Leaderboard is null)
             {
                 return -1;
             }
@@ -96,7 +96,7 @@ namespace CotdQualifierRankWeb.Controllers
         {
             // get map totd info from nadeo
             var mapResponse = await _nadeoApiController.GetTodtInfoForMap(mapUid);
-            if (mapResponse != null)
+            if (mapResponse is not null)
             {
                 var result = await mapResponse.Content.ReadAsStringAsync();
                 // get date of totd from response
@@ -104,7 +104,7 @@ namespace CotdQualifierRankWeb.Controllers
                 {
                     var mapTotdInfo = JsonConvert.DeserializeObject<NadeoMapTotdInfoDTO>(result);
 
-                    if (mapTotdInfo == null || mapTotdInfo.TotdMaps == null)
+                    if (mapTotdInfo is null || mapTotdInfo.TotdMaps is null)
                     {
                         return null;
                     }
@@ -123,10 +123,10 @@ namespace CotdQualifierRankWeb.Controllers
                         .GetNadeoCompetitions()
                         .FirstOrDefault(
                             comp => DateTime.Parse(
-                                comp.Name == null ? "2020-07-01" : comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
+                                comp.Name is null ? "2020-07-01" : comp.Name.Split(" ")[1]).Date == mapTotdDate.Date);
 
                     Competition? cotd = null;
-                    if (nadeoCompetition != null)
+                    if (nadeoCompetition is not null)
                     {
                         cotd = await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
                     }
@@ -135,7 +135,7 @@ namespace CotdQualifierRankWeb.Controllers
                         // If not, fetch competitions from Nadeo until we find a match
                         nadeoCompetition = await FetchNadeoCompetition(mapUid, mapTotdDate);
                         // When we find it, fetch the leaderboard and store it in the db
-                        if (nadeoCompetition == null)
+                        if (nadeoCompetition is null)
                         {
                             return null;
                         }
@@ -162,7 +162,7 @@ namespace CotdQualifierRankWeb.Controllers
             {
                 var leaderboardFragment = await _nadeoApiController.GetLeaderboard(challengeId, 100, i);
 
-                if (leaderboardFragment != null && leaderboardFragment.Results != null)
+                if (leaderboardFragment is not null && leaderboardFragment.Results is not null)
                 {
                     var records = leaderboardFragment.Results.Select(entry => new Record { Time = entry.Score }).ToList();
                     fullLeaderboard.AddRange(records);
@@ -193,17 +193,17 @@ namespace CotdQualifierRankWeb.Controllers
             for (int i = 0; i < 100; i++)
             {
                 var compResponse = await _nadeoApiController.GetCompetitions(100, i * 100);
-                if (compResponse != null)
+                if (compResponse is not null)
                 {
                     var compResult = await compResponse.Content.ReadAsStringAsync();
                     try
                     {
                         var competitions = JsonConvert.DeserializeObject<List<NadeoCompetition>>(compResult);
-                        if (competitions == null)
+                        if (competitions is null)
                         {
                             return null;
                         }
-                        competitions = competitions.Where(comp => Regex.IsMatch(comp.Name == null ? "" : comp.Name, @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$")).ToList();
+                        competitions = competitions.Where(comp => Regex.IsMatch(comp.Name is null ? "" : comp.Name, @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$")).ToList();
 
                         // store all competitions while searching
                         _nadeoCompeitionService.AddNadeoCompetitions(competitions);
@@ -213,7 +213,7 @@ namespace CotdQualifierRankWeb.Controllers
                         var competition = competitions
                                 .FirstOrDefault(
                                     comp => DateTime.Parse(
-                                        comp.Name == null ? "2020-07-01" : comp.Name.Split(" ")[1]
+                                        comp.Name is null ? "2020-07-01" : comp.Name.Split(" ")[1]
                                         ).Date == mapTotdDate.Date);
 
                         // when we find it, fetch the leaderboard and store it in the db

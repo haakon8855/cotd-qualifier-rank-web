@@ -11,7 +11,7 @@ namespace CotdQualifierRankWeb.Data
         public CredentialsManager()
         {
             Credentials = JsonSerializer.Deserialize<Credentials>(File.ReadAllText(_jsonPath));
-            if (Credentials == null)
+            if (Credentials is null)
             {
                 throw new InvalidOperationException("Credentials not found.");
             }

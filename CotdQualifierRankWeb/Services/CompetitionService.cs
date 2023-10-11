@@ -20,7 +20,7 @@ namespace CotdQualifierRankWeb.Services
 
         public void AddCompetition(Competition? competition)
         {
-            if (competition != null)
+            if (competition is not null)
             {
                 _context.Competitions.Add(competition);
                 _context.SaveChanges();
@@ -30,7 +30,7 @@ namespace CotdQualifierRankWeb.Services
         public void AddLeaderboardToCompetition(int id, List<Record> leaderboard)
         {
             var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.Id == id);
-            if (competition != null)
+            if (competition is not null)
             {
                 competition.Leaderboard = leaderboard;
                 _context.SaveChanges();
