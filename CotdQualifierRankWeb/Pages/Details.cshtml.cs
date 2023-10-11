@@ -26,6 +26,7 @@ namespace CotdQualifierRankWeb.Pages
 
         public Competition Competition { get; set; } = default!;
         public List<Record> PaginatedLeaderboard { get; set; } = default!;
+        public List<Record> FirstSeedDifference { get; set; } = default!;
         public Dictionary<string, string> PageStatistics { get; set; } = new Dictionary<string, string>();
 
         public DetailsModel(Data.CotdContext context, RankController rankController)
@@ -95,6 +96,10 @@ namespace CotdQualifierRankWeb.Pages
             PageStatistics.Add("BetterDivCutoff", betterDivCutoff.FormattedTime());
             PageStatistics.Add("CurrentDivCutoff", currentDivCutoff.FormattedTime());
             PageStatistics.Add("CurrentDivWindow", currentDivWindow.FormattedTime());
+
+            // Calculate first seed difference
+            var firstSeed = Competition.Leaderboard[0];
+            FirstSeedDifference = PaginatedLeaderboard.Select(r => r - firstSeed).ToList();
         }
 
         public void OnGet(int? id)

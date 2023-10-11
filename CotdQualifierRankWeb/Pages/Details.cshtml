@@ -211,6 +211,14 @@
                                         <td class="px-4" style="text-align:right">
                                             @item.record.FormattedTime()
                                         </td>
+                                        @if (Model.PageNo==1 && item.i == 0)
+                                        {
+                                            <td></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="first-seed-difference">(+@Model.FirstSeedDifference[item.i].FormattedTime())</td>
+                                        }
                                     </tr>
                                 }
                             }
