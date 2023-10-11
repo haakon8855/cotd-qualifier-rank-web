@@ -1,4 +1,5 @@
 @page
+@using CotdQualifierRankWeb.Models
 @model DetailsModel
 
 @{
@@ -71,7 +72,21 @@
 
                     @if (Model.Rank != 0)
                     {
+                        var inputRecord = new Record { Time = Model.Time };
                         <dl class="row">
+                            <dt class="col-sm-6">
+                                Your time:
+                            </dt>
+                            <dd class="col-sm-6">
+                                @(inputRecord.FormattedTime())&ensp;
+
+                                @if (Model.Competition.Leaderboard is not null)
+                                {
+                                    <span class="first-seed-difference">
+                                        (@((inputRecord-Model.Competition.Leaderboard[0]).FormattedDiffTime()))
+                                    </span>
+                                }
+                            </dd>
                             <dt class="col-sm-6">
                                 Your rank:
                             </dt>
@@ -217,7 +232,7 @@
                                         }
                                         else
                                         {
-                                            <td class="first-seed-difference">(+@Model.FirstSeedDifference[item.i].FormattedTime())</td>
+                                            <td class="first-seed-difference first-seed-difference-td">(@Model.FirstSeedDifference[item.i].FormattedDiffTime())</td>
                                         }
                                     </tr>
                                 }

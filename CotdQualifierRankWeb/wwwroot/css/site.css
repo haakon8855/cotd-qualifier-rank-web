@@ -97,7 +97,10 @@ pre {
     text-align: center;
 }
 
-.first-seed-difference {
-    color: #d56262;
+.first-seed-difference-td {
     width: 100px;
+}
+
+.first-seed-difference{
+    color: #d56262;
 }

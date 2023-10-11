@@ -121,7 +121,6 @@ namespace CotdQualifierRankWeb.Pages
                 var content = okObjectResult.Value;
                 if (content is GetRankDTO getRankDTO)
                 {
-                    Console.WriteLine(getRankDTO.Rank);
                     Rank = getRankDTO.Rank;
                 }
             }
