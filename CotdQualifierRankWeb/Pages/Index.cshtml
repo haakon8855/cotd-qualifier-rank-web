@@ -48,12 +48,12 @@
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)
             </td>
             <td>
-                <a asp-page="./Details" asp-route-id="@Model.Competitions[i].Id">Details</a>
+                <a aria-label="Open leaderboard for @Model.Competitions[i].Date.ToShortDateString()" asp-page="./Details" asp-route-id="@Model.Competitions[i].Id">Details</a>
             </td>
-            <td>
+            <td aria-label="heisann">
                 <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Competitions[i].Id"
                       onsubmit="return confirm('Are you sure you want to delete this Leaderboard?')">
-                    <button class="btn-danger">
+                    <button aria-label="Delete leaderboard for @Model.Competitions[i].Date.ToShortDateString()" class="btn-danger">
                         Delete
                     </button>
                 </form>
