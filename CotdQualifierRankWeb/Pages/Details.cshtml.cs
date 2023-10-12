@@ -71,7 +71,10 @@ namespace CotdQualifierRankWeb.Pages
 
         private void CalculateStatistics()
         {
-            if (Competition is null || Competition.Leaderboard is null || PaginatedLeaderboard is null)
+            if (Competition is null ||
+                Competition.Leaderboard is null ||
+                PaginatedLeaderboard is null ||
+                Competition.Leaderboard.Count == 0)
             {
                 return;
             }

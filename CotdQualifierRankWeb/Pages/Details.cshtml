@@ -65,6 +65,10 @@
                     </dd>
                 </dl>
             </div>
+
+            @if (Model.Competition.Leaderboard is not null && 
+                Model.Competition.Leaderboard.Count > 0)
+            {
             <div class="col-md-4">
                 <div>
                     <form method="post" asp-page-handler="PB" asp-route-id="@Model.Competition.Id">
@@ -105,10 +109,14 @@
                     }
                 </div>
             </div>
+            }
         </div>
     </div>
 </div>
 
+@if (Model.Competition.Leaderboard is not null &&
+    Model.Competition.Leaderboard.Count > 0)
+{
 <nav aria-label="Page navigation">
     <ul class="pagination">
         <li class="page-item">
@@ -266,3 +274,4 @@
         </div>
     </div>
 </div>
+}
