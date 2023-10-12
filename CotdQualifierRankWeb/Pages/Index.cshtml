@@ -26,6 +26,7 @@
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
             </th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -48,6 +49,14 @@
             </td>
             <td>
                 <a asp-page="./Details" asp-route-id="@Model.Competitions[i].Id">Details</a>
+            </td>
+            <td>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Competitions[i].Id"
+                      onsubmit="return confirm('Are you sure you want to delete this Leaderboard?')">
+                    <button class="btn-danger">
+                        Delete
+                    </button>
+                </form>
             </td>
         </tr>
 }

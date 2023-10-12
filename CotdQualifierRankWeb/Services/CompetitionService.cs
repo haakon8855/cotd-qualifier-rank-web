@@ -46,5 +46,15 @@ namespace CotdQualifierRankWeb.Services
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             return (Comps: competitions, PlayerCounts: competitionPlayerCounts);
         }
+
+        public void DeleteCompetition(int id)
+        {
+            var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.Id == id);
+            if (competition is not null)
+            {
+                _context.Competitions.Remove(competition);
+                _context.SaveChanges();
+            }
+        }
     }
 }
