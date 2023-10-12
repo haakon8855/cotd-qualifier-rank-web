@@ -18,13 +18,16 @@ publicly available or integrated with an accompanying
     - [Rank Endpoint](#rank-endpoint)
   - [Website](#website)
   - [Setup Guide](#setup-guide)
+    - [Prerequisites](#prerequisites)
     - [Install .NET](#install-net)
     - [Download Source Code](#download-source-code)
     - [Create a Trackmania Dedicated Server Account](#create-a-trackmania-dedicated-server-account)
     - [Provide Credentials for the Server](#provide-credentials-for-the-server)
+    - [Create the Database](#create-the-database)
     - [Run the Server](#run-the-server)
   - [License](#license)
   - [Credits](#credits)
+
 ## Introduction
 
 Have you ever been playing an old Track of the Day and thought:  
@@ -139,6 +142,12 @@ right of this page.
 The following section will guide you through the necessary steps to run this
 server locally.
 
+### Prerequisites
+
+To successfully run this server locally, you will need the following:
+- A Trackmania Club Access Subscription
+- .NET 7.0
+
 ### Install .NET
 
 Make sure you have
@@ -182,7 +191,7 @@ Take note of your server login, as well as the generated
 
 Create a file in `CotdQualifierRankWeb/` named `credentials.json`
 ```shell
-touch CotdQualifierRankWeb/ credentials.json
+touch CotdQualifierRankWeb/credentials.json
 ```
 and store your dedicated server account credentials inside
 with the following format:
@@ -194,10 +203,19 @@ with the following format:
 }
 ```
 
+### Create the Database
+
+To create the database run the following commands:
+```shell
+cd CotdQualifierRankWeb/
+dotnet ef database update
+```
+
 ### Run the Server
 
-Open a terminal in `CotdQualifierRankWeb/` and run the following command:
+Open a terminal inside the repo and run the following commands:
 ```shell
+cd CotdQualifierRankWeb/
 dotnet run
 ```
 
