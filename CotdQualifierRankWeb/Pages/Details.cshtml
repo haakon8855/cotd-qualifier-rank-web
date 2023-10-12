@@ -33,7 +33,11 @@
                         @Html.DisplayNameFor(model => model.Competition.NadeoCompetitionId)
                     </dt>
                     <dd class="col-sm-8">
-                        <a target="_blank" href="@($"https://trackmania.io/#/cotd/{Model.Competition.NadeoCompetitionId}")">
+                        <a
+                            target="_blank"
+                            aria-label="Open competition number @Model.Competition.NadeoCompetitionId on Trackmania.io"
+                            href="@($"https://trackmania.io/#/cotd/{Model.Competition.NadeoCompetitionId}")"
+                        >
                             @Html.DisplayFor(model => model.Competition.NadeoCompetitionId)
                         </a>
                     </dd>
@@ -48,7 +52,11 @@
                     </dt>
                     <dd class="col-sm-8">
                         <pre class="mapUid">
-                        <a target="_blank" href="@($"https://trackmania.io/#/leaderboard/{Model.Competition.NadeoMapUid}")">
+                        <a
+                            target="_blank"
+                            aria-label="Open corresponding map on Trackmania.io (MapUID: @Model.Competition.NadeoMapUid)"
+                            href="@($"https://trackmania.io/#/leaderboard/{Model.Competition.NadeoMapUid}")"
+                        >
                         <code>
                                     @Model.Competition.NadeoMapUid
                                 </code>
@@ -62,10 +70,10 @@
                     <form method="post" asp-page-handler="PB" asp-route-id="@Model.Competition.Id">
                         <dl class="row mb-0 mt-1">
                             <dt class="col-sm-6">
-                                <input asp-for="Time" value="@(Model.Time==0?"":Model.Time)" class="form-control" placeholder="Your PB (ms)" />
+                                <input aria-label="Enter your PB in milliseconds" asp-for="Time" value="@(Model.Time==0?"":Model.Time)" class="form-control" placeholder="Your PB (ms)" />
                             </dt>
                             <dd class="col-sm-6">
-                                <button class="btn btn-primary">Get rank</button>
+                                <button role="button" class="btn btn-primary">Get rank</button>
                             </dd>
                         </dl>
                     </form>
@@ -110,13 +118,13 @@
                    asp-route-pageNo="@(Model.PageNo-1)"
                    asp-page="./Details"
                    class="page-link page-link-dark">
-                    <pre class="m-0"><code class="pagination-code">&lt;</code></pre>
+                    <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
                 </a>
             }
             else
             {
                 <a class="page-link disabled page-link-disabled">
-                    <pre class="m-0"><code class="pagination-code">&lt;</code></pre>
+                    <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
                 </a>
             }
         </li>
@@ -193,13 +201,13 @@
                    asp-route-pageNo="@(Model.PageNo+1)"
                    asp-page="./Details"
                    class="page-link page-link-dark">
-                    <pre class="m-0"><code class="pagination-code">&gt;</code></pre>
+                    <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
                 </a>
             }
             else
             {
                 <a class="page-link disabled page-link-disabled">
-                    <pre class="m-0"><code class="pagination-code">&gt;</code></pre>
+                    <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
                 </a>
             }
         </li>

@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="~/CotdQualifierRankWeb.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    <header role="navigation">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark header box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">COTD Qualifier Rank</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button role="button" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -26,8 +26,8 @@
         </main>
     </div>
 
-    <footer class="footer">
-        <div class="container">
+    <footer role="contentinfo" aria-labelledby="footer-label" class="footer">
+        <div class="container" id="footer-label">
             &copy; 2023 - COTD Qualifier Rank
         </div>
     </footer>
