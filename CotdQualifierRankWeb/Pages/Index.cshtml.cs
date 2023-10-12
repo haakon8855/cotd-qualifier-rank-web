@@ -22,5 +22,11 @@ namespace CotdQualifierRankWeb.Pages
             Competitions = compsAndPlayerCounts.Comps;
             CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
         }
+
+        public void OnPostDelete(int id)
+        {
+            _competitionService.DeleteCompetition(id);
+            OnGet();
+        }
     }
 }

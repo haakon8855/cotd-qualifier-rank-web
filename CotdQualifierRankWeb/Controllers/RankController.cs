@@ -19,6 +19,8 @@ namespace CotdQualifierRankWeb.Controllers
         NadeoCompetitionService _nadeoCompeitionService { get; set; }
         CompetitionService _competitionService { get; set; }
 
+        public static readonly int TimeoutInterval = 500;
+
         public RankController(CotdContext context, NadeoApiController nadeoApiController, NadeoCompetitionService nadeoCompetitionService, CompetitionService competitionService)
         {
             _context = context;
@@ -53,15 +55,6 @@ namespace CotdQualifierRankWeb.Controllers
                 Time = time,
                 Rank = rank,
             });
-            //return Ok(new
-            //{
-            //    mapUid,
-            //    competitionId = cotd.NadeoCompetitionId,
-            //    challengeId = cotd.NadeoChallengeId,
-            //    date = cotd.Date,
-            //    time,
-            //    rank,
-            //});
         }
 
         public int FindRankInLeaderboard(Competition cotd, int time)
@@ -141,7 +134,6 @@ namespace CotdQualifierRankWeb.Controllers
                         }
                         cotd = await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
                     }
-                    _competitionService.AddCompetition(cotd);
                     return cotd;
                 }
                 catch (Exception e)
@@ -168,8 +160,8 @@ namespace CotdQualifierRankWeb.Controllers
                     fullLeaderboard.AddRange(records);
                 }
 
-                // Sleep for 0.5 seconds to not DOS the Nadeo API
-                Thread.Sleep(500);
+                // Sleep for a little while to not overload the Nadeo API
+                Thread.Sleep(TimeoutInterval);
             }
 
             return fullLeaderboard;
@@ -217,7 +209,10 @@ namespace CotdQualifierRankWeb.Controllers
                                         ).Date == mapTotdDate.Date);
 
                         // when we find it, fetch the leaderboard and store it in the db
-                        return competition;
+                        if (competition is not null)
+                        {
+                            return competition;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -225,8 +220,8 @@ namespace CotdQualifierRankWeb.Controllers
                         return null;
                     }
                 }
-                // Sleep for 0.5 seconds to not DOS the Nadeo API
-                Thread.Sleep(500);
+                // Sleep for a little while to not overload the Nadeo API
+                Thread.Sleep(TimeoutInterval);
             }
             return null;
         }
