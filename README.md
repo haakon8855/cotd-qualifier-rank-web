@@ -199,8 +199,14 @@ with the following format:
 {
   "Login": "<dedicated-server-account-login>",
   "Password": "<dedicated-server-account-password>",
-  "AccountId":	"<dedicated-server-account-account-id>"
+  "AccountId": "<dedicated-server-account-account-id>",
+  "UserAgent": "<your-user-agent>",
 }
+```
+You'll also need to provide a User-Agent in the credentials file,
+which is usually on the following format:
+```
+Application Name / your-email-address@example.com
 ```
 
 ### Create the Database

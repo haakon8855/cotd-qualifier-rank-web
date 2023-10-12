@@ -19,7 +19,7 @@ namespace CotdQualifierRankWeb.Controllers
         static HttpClient _liveClient = new HttpClient();
         static HttpClient _meetClient = new HttpClient();
 
-        public static readonly string UserAgent = "COTD Qualifier Rank/1.0 (@haakon8855 / haakon8855@gmail.com)";
+        public string UserAgent { get; set; } = "";
 
         private static NadeoAuthTokens? AuthTokens = null;
 
@@ -35,9 +35,11 @@ namespace CotdQualifierRankWeb.Controllers
             Console.WriteLine("----------------------------------");
             Console.WriteLine(_credentialsManager.Credentials.Login);
             Console.WriteLine(_credentialsManager.Credentials.Password);
-            Console.WriteLine(_credentialsManager.Credentials.AccoundId);
+            Console.WriteLine(_credentialsManager.Credentials.AccountId);
+            Console.WriteLine(_credentialsManager.Credentials.UserAgent);
             Console.WriteLine("----------------------------------");
 
+            UserAgent = _credentialsManager.Credentials.UserAgent ?? "Cotd Qualifier Rank Web/1.0";
             _coreClient.BaseAddress = new Uri(BaseURIs["core"]);
             _liveClient.BaseAddress = new Uri(BaseURIs["live"]);
             _meetClient.BaseAddress = new Uri(BaseURIs["meet"]);
