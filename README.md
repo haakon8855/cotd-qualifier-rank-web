@@ -7,6 +7,27 @@ __Important:__ This project is still a work in progress and is therefore not
 publicly available or integrated with an accompanying
 [Openplanet Plugin](https://github.com/haakon8855/COTD-qualifier-rank).
 
+## Overview
+
+- [Cup of the Day Qualifier RankWebsite and API](#cup-of-the-day-qualifier-rankwebsite-and-api)
+  - [Overview](#overview)
+  - [Introduction](#introduction)
+    - [The Decentralised Approach](#the-decentralised-approach)
+    - [The Centralised Approach](#the-centralised-approach)
+  - [API](#api)
+    - [Rank Endpoint](#rank-endpoint)
+  - [Website](#website)
+  - [Setup Guide](#setup-guide)
+    - [Prerequisites](#prerequisites)
+    - [Install .NET](#install-net)
+    - [Download Source Code](#download-source-code)
+    - [Create a Trackmania Dedicated Server Account](#create-a-trackmania-dedicated-server-account)
+    - [Provide Credentials for the Server](#provide-credentials-for-the-server)
+    - [Create the Database](#create-the-database)
+    - [Run the Server](#run-the-server)
+  - [License](#license)
+  - [Credits](#credits)
+
 ## Introduction
 
 Have you ever been playing an old Track of the Day and thought:  
@@ -97,7 +118,11 @@ details and data from each qualification leaderboard.
 
 The home page on the website shows a list of the most recent Cup of the Days:
 
-<img src="img/web-index.png" alt="Landing page on website showing a list of the most recent COTDs" width="700"/>
+<img
+    src="img/web-index.png"
+    alt="Landing page on website showing a list of the most recent COTDs"
+    width="700"
+/>
 
 <br>Clicking on _Details_ for a specific COTD redirects to a more detailed
 view of the qualification leaderboard for that COTD. This page includes a full
@@ -106,13 +131,101 @@ corresponding TOTD and COTD on [trackmania.io](trackmania.io). It is also
 possible to manually fetch your rank by entering it in the input on the upper
 right of this page.
 
-<img src="img/web-details.png" alt="Detailed view of a specific COTD qualification leaderboard" width="700"/>
+<img
+    src="img/web-details.png"
+    alt="Detailed view of a specific COTD qualification leaderboard"
+    width="700"
+/>
+
+## Setup Guide
+
+The following section will guide you through the necessary steps to run this
+server locally.
+
+### Prerequisites
+
+To successfully run this server locally, you will need the following:
+- A Trackmania Club Access Subscription
+- .NET 7.0
+
+### Install .NET
+
+Make sure you have
+[.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+installed.
+
+To verify you have the correct version, run the following command:
+
+```shell
+dotnet --version
+```
+
+This should return `7.0.x`
+
+### Download Source Code
+
+Clone the repo:
+
+```shell
+git clone https://github.com/haakon8855/COTD-qualifier-rank-web.git
+```
+
+Or download the source code as a `.zip`.
+
+### Create a Trackmania Dedicated Server Account
+
+In order to authenticate with the Trackmania Web Services API, we need to
+provide our server with credentials with the necessary authorisation.
+
+To create a dedicated server account, go to
+<https://www.trackmania.com/player/dedicated-servers>
+and create a dedicated server account by entering a server login
+of your choosing.  
+_Note: This requires you to login with a Ubisoft account_
+with an active Trackmania Club Access subsciption
+
+Take note of your server login, as well as the generated
+`password` and `account-id`.
+
+### Provide Credentials for the Server
+
+Create a file in `CotdQualifierRankWeb/` named `credentials.json`
+```shell
+touch CotdQualifierRankWeb/credentials.json
+```
+and store your dedicated server account credentials inside
+with the following format:
+```json
+{
+  "Login": "<dedicated-server-account-login>",
+  "Password": "<dedicated-server-account-password>",
+  "AccountId":	"<dedicated-server-account-account-id>"
+}
+```
+
+### Create the Database
+
+To create the database run the following commands:
+```shell
+cd CotdQualifierRankWeb/
+dotnet ef database update
+```
+
+### Run the Server
+
+Open a terminal inside the repo and run the following commands:
+```shell
+cd CotdQualifierRankWeb/
+dotnet run
+```
 
 ## License
-The code in this repository is protected by the [GNU General Public License v3](./LICENSE).
+The code in this repository is protected by the
+[GNU General Public License v3](./LICENSE).
 
 ## Credits
 
 This project would not be possible without:
-- The Openplanet team's [Trackmania Web Services API Documentation](https://webservices.openplanet.dev/)
+- The Openplanet team's
+  [Trackmania Web Services API Documentation](https://webservices.openplanet.dev/)
 - The Openplanet discord server
