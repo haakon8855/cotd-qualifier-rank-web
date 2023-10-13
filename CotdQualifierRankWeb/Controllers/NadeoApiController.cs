@@ -23,6 +23,10 @@ namespace CotdQualifierRankWeb.Controllers
 
         private static NadeoAuthTokens? AuthTokens = null;
 
+        private DateTime LastRequest = DateTime.Now;
+
+        public static readonly int RequestTimeoutInterval = 500;
+
         private CredentialsManager _credentialsManager;
 
         public NadeoApiController(CredentialsManager credentialsManager)
@@ -91,11 +95,29 @@ namespace CotdQualifierRankWeb.Controllers
             }
         }
 
-        public async Task SetAuthenticationHeaders(HttpClient client)
+        public void Throttle()
+        {
+            var timeToWait = LastRequest.AddMilliseconds(RequestTimeoutInterval) - DateTime.Now;
+            if (timeToWait > TimeSpan.Zero)
+            {
+                Console.WriteLine($"Throttling for {timeToWait.TotalMilliseconds} ms");
+                Thread.Sleep(timeToWait);
+            }
+            Console.WriteLine($"Time since last request: {DateTime.Now - LastRequest}");
+            LastRequest = DateTime.Now;
+        }
+
+        public void SetDefaultRequestHeaders(HttpClient client)
         {
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.UserAgent.Clear();
             client.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+        }
+
+        public async Task SetAuthenticationHeaders(HttpClient client)
+        {
+            SetDefaultRequestHeaders(client);
             if (AuthTokens is null || AuthTokens.AuthTime is null || AuthTokens.AuthTime < DateTime.Now.AddHours(-12))
             {
                 await Authenticate();
@@ -108,14 +130,14 @@ namespace CotdQualifierRankWeb.Controllers
 
         public async Task<HttpResponseMessage?> GetTodtInfoForMap(string mapUid)
         {
-            _liveClient.DefaultRequestHeaders.Accept.Clear();
-            _liveClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+            SetDefaultRequestHeaders(_liveClient);
             var endpointURI = $"/api/campaign/map/{mapUid}";
             try
             {
                 Console.WriteLine("----------------------------------");
                 Console.WriteLine($"Sending request: {endpointURI}");
                 Console.WriteLine("----------------------------------");
+                Throttle();
                 var response = await _liveClient.GetAsync(endpointURI);
                 return response;
             }
@@ -128,14 +150,14 @@ namespace CotdQualifierRankWeb.Controllers
 
         public async Task<HttpResponseMessage?> GetCompetitions(int length, int offset)
         {
-            _meetClient.DefaultRequestHeaders.Accept.Clear();
-            _meetClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+            SetDefaultRequestHeaders(_meetClient);
             var endpointURI = $"/api/competitions?length={length}&offset={offset}";
             try
             {
                 Console.WriteLine("----------------------------------");
                 Console.WriteLine($"Sending request: {endpointURI}");
                 Console.WriteLine("----------------------------------");
+                Throttle();
                 var response = await _meetClient.GetAsync(endpointURI);
                 return response;
             }
@@ -155,6 +177,7 @@ namespace CotdQualifierRankWeb.Controllers
                 Console.WriteLine("----------------------------------");
                 Console.WriteLine($"Sending request: {endpointURI}");
                 Console.WriteLine("----------------------------------");
+                Throttle();
                 var response = await _meetClient.GetAsync(endpointURI);
                 var content = await response.Content.ReadAsStringAsync();
                 try
@@ -192,12 +215,12 @@ namespace CotdQualifierRankWeb.Controllers
                 Console.WriteLine("----------------------------------");
                 Console.WriteLine($"Sending request: {endpointURI}");
                 Console.WriteLine("----------------------------------");
+                Throttle();
                 var response = await _meetClient.GetAsync(endpointURI);
                 var content = await response.Content.ReadAsStringAsync();
                 try
                 {
                     var leaderboard = JsonConvert.DeserializeObject<NadeoChallengeLeaderboardDTO>(content);
-                    Console.WriteLine(content);
                     if (leaderboard is null)
                     {
                         return null;
