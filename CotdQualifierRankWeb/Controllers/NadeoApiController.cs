@@ -25,7 +25,7 @@ namespace CotdQualifierRankWeb.Controllers
 
         private DateTime LastRequest = DateTime.Now;
 
-        public static readonly int RequestTimeoutInterval = 500;
+        public static readonly int RequestTimeoutInterval = 1000;
 
         private CredentialsManager _credentialsManager;
 
