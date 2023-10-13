@@ -270,6 +270,11 @@
                 <dd class="col-sm-6">@Model.PageStatistics["CurrentDivCutoff"]</dd>
                 <dt class="col-sm-6">Division @Model.PageNo Window</dt>
                 <dd class="col-sm-6">@Model.PageStatistics["CurrentDivWindow"]</dd>
+                @if (Model.PageNo == Model.PageCount)
+                {
+                    <dt class="col-sm-6">Division @Model.PageNo Size</dt>
+                    <dd class="col-sm-6">@(Model.PaginatedLeaderboard is null ? "n/a" : Model.PaginatedLeaderboard.Count)</dd>
+                }
             </dl>
         </div>
     </div>
