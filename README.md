@@ -1,4 +1,6 @@
 # Cup of the Day Qualifier Rank<br>Website and API
+[![.NET 7.0](https://img.shields.io/badge/.NET-7.0-0ba300)](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+[![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Cup of the Day Qualifier Rank is a website and API for finding the seeding 
 of your current PB in an arbitrary COTD qualifying session.
