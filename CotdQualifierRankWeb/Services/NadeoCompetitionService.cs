@@ -34,5 +34,14 @@ namespace CotdQualifierRankWeb.Services
             }
             _context.SaveChanges();
         }
+
+        public bool DateExists(DateTime date)
+        {
+            return _context.NadeoCompetitions
+                .Where(c => c.Name != null)
+                .ToList()
+                .Select(c => NadeoCompetition.ParseDate(c.Name is null ? "2020-07-01" : c.Name).Date)
+                .Any(d => d == date);
+        }
     }
 }
