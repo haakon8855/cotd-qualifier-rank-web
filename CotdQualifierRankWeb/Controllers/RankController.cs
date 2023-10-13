@@ -19,8 +19,6 @@ namespace CotdQualifierRankWeb.Controllers
         NadeoCompetitionService _nadeoCompeitionService { get; set; }
         CompetitionService _competitionService { get; set; }
 
-        public static readonly int TimeoutInterval = 500;
-
         public RankController(CotdContext context, NadeoApiController nadeoApiController, NadeoCompetitionService nadeoCompetitionService, CompetitionService competitionService)
         {
             _context = context;
@@ -160,11 +158,7 @@ namespace CotdQualifierRankWeb.Controllers
                     var records = leaderboardFragment.Results.Select(entry => new Record { Time = entry.Score }).ToList();
                     fullLeaderboard.AddRange(records);
                 }
-
-                // Sleep for a little while to not overload the Nadeo API
-                Thread.Sleep(TimeoutInterval);
             }
-
             return fullLeaderboard;
         }
 
@@ -221,8 +215,6 @@ namespace CotdQualifierRankWeb.Controllers
                         return null;
                     }
                 }
-                // Sleep for a little while to not overload the Nadeo API
-                Thread.Sleep(TimeoutInterval);
             }
             return null;
         }
