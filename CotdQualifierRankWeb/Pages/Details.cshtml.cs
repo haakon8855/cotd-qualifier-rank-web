@@ -110,12 +110,12 @@ namespace CotdQualifierRankWeb.Pages
             Initialise(id);
         }
 
-        public IActionResult OnPostPB(int? id)
+        public void OnPostPB(int? id)
         {
             Initialise(id);
             if (Competition.NadeoMapUid is null)
             {
-                return Page();
+                return;
             }
             var response = _rankController.GetAction(Competition.NadeoMapUid, Time).Result;
 
@@ -127,8 +127,6 @@ namespace CotdQualifierRankWeb.Pages
                     Rank = getRankDTO.Rank;
                 }
             }
-
-            return Page();
         }
     }
 }

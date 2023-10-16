@@ -10,9 +10,14 @@ namespace CotdQualifierRankWeb.Pages
         private readonly CompetitionService _competitionService;
 
         public List<Competition> PaginatedCompetitions { get; set; } = default!;
+
+        [FromQuery(Name = "filterAnomalous")]
+        public bool FilterAnomalous { get; set; } = false;
+
         [FromQuery(Name = "pageNo")]
         public int PageNo { get; set; } = 1;
         public int PageCount { get; set; } = 0;
+
         public readonly int PageSize = 14;
 
         public IndexModel(CompetitionService competitionService)
@@ -25,7 +30,7 @@ namespace CotdQualifierRankWeb.Pages
 
         public void OnGet()
         {
-            var compsAndPlayerCounts = _competitionService.GetCompetitionsAndPlayerCounts(length: PageSize, offset: (PageNo - 1) * PageSize);
+            var compsAndPlayerCounts = _competitionService.GetCompetitionsAndPlayerCounts(length: PageSize, offset: (PageNo - 1) * PageSize, FilterAnomalous);
             Competitions = compsAndPlayerCounts.Comps;
             CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
 

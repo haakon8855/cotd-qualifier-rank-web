@@ -109,3 +109,11 @@ pre {
     display: flex;
     justify-content: center;
 }
+
+.filter-container {
+    width: -webkit-fill-available;
+    display: flex;
+    justify-content: end;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}

@@ -6,6 +6,10 @@
 }
 
 <h1>Recent Cup of the Days</h1>
+@if (Model.FilterAnomalous)
+{
+    <h2>Anomalous Leaderboards <span title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</span></h2>
+}
 
 <table class="table table-borderless table-striped" style="color:#cfcfcf">
     <thead>
@@ -67,14 +71,18 @@
 </table>
 
 <div class="index-pagination-container">
+    <div class="filter-container"></div>
     <nav aria-label="Page navigation">
         <ul class="pagination">
             <li class="page-item">
                 @if (Model.PageNo > 1)
                 {
-                    <a asp-route-pageNo="@(Model.PageNo-1)"
-                       asp-page="./Index"
-                       class="page-link page-link-dark">
+                    <a
+                        asp-route-pageNo="@(Model.PageNo-1)"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
                         <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
                     </a>
                 }
@@ -91,7 +99,12 @@
                 @for (int i = 0; i < Model.PageCount; i++)
                 {
                     <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
-                        <a asp-route-pageNo="@(i + 1)" asp-page="./Index" class="page-link page-link-dark">
+                        <a
+                            asp-route-pageNo="@(i + 1)"
+                            asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                            asp-page="./Index"
+                            class="page-link page-link-dark"
+                        >
                             <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
                         </a>
                     </li>
@@ -100,7 +113,12 @@
             else
             {
                 <li class="page-item @(Model.PageNo == 1 ? "active" : "")">
-                    <a asp-route-pageNo="1" asp-page="./Index" class="page-link page-link-dark">
+                    <a
+                        asp-route-pageNo="1"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
                         <pre class="m-0"><code class="pagination-code">1</code></pre>
                     </a>
                 </li>
@@ -131,7 +149,12 @@
                 @for (int i = start; i < end; i++)
                 {
                     <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
-                        <a asp-route-pageNo="@(i + 1)" asp-page="./Index" class="page-link page-link-dark">
+                        <a
+                            asp-route-pageNo="@(i + 1)"
+                            asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                            asp-page="./Index"
+                            class="page-link page-link-dark"
+                        >
                             <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
                         </a>
                     </li>
@@ -145,7 +168,12 @@
                     </li>
                 }
                 <li class="page-item @(Model.PageNo == Model.PageCount ? "active" : "")">
-                    <a asp-route-pageNo="@(Model.PageCount)" asp-page="./Index" class="page-link page-link-dark">
+                    <a
+                        asp-route-pageNo="@(Model.PageCount)"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
                         <pre class="m-0"><code class="pagination-code">@(Model.PageCount)</code></pre>
                     </a>
                 </li>
@@ -154,9 +182,12 @@
             <li class="page-item">
                 @if (Model.PageNo < Model.PageCount)
                 {
-                    <a asp-route-pageNo="@(Model.PageNo+1)"
-                       asp-page="./Index"
-                       class="page-link page-link-dark">
+                    <a
+                        asp-route-pageNo="@(Model.PageNo+1)"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
                     </a>
                 }
@@ -169,5 +200,20 @@
             </li>
         </ul>
     </nav>
+
+    <div class="filter-container">
+        <div class="d-flex">
+            <a asp-route-filterAnomalous="@(!Model.FilterAnomalous)">
+                @if (Model.FilterAnomalous)
+                {
+                    <div>Show all COTDs</div>
+                }
+                else
+                {
+                    <div>Show only anomalous COTDs</div>
+                }
+            </a>&nbsp; <div title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</div>
+        </div>
+    </div>
 </div>
 

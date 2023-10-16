@@ -37,13 +37,21 @@ namespace CotdQualifierRankWeb.Services
             }
         }
 
-        public (List<Competition> Comps, List<int> PlayerCounts, int TotalComps) GetCompetitionsAndPlayerCounts(int length = 0, int offset = 0)
+        public (List<Competition> Comps, List<int> PlayerCounts, int TotalComps) GetCompetitionsAndPlayerCounts(int length = 0, int offset = 0, bool filterSuspicious = false)
         {
             if (length < 1)
             {
                 length = int.MaxValue;
             }
+
             var baseQuery = _context.Competitions.OrderByDescending(c => c.Date);
+            if (filterSuspicious)
+            {
+                baseQuery = _context.NadeoCompetitions.Join(_context.Competitions.Include(c => c.Leaderboard), nc => nc.Id, c => c.NadeoCompetitionId, (nc, c) => new { NadeoCompetition = nc, Competition = c })
+                    .Where(jc => jc.Competition.Leaderboard == null || jc.Competition.Leaderboard.Count == 0 || jc.NadeoCompetition.NbPlayers != jc.Competition.Leaderboard.Count)
+                    .Select(jc => jc.Competition).OrderByDescending(c => c.Date);
+            }
+
             var totalComps = baseQuery.Count();
             var fetchedComps = baseQuery.Skip(offset).Take(length);
             var competitions = fetchedComps.ToList();
