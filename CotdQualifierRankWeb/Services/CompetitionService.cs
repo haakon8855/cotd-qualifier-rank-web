@@ -37,28 +37,46 @@ namespace CotdQualifierRankWeb.Services
             }
         }
 
-        public (List<Competition> Comps, List<int> PlayerCounts, int TotalComps) GetCompetitionsAndPlayerCounts(int length = 0, int offset = 0, bool filterSuspicious = false)
+        public (
+            List<Competition> Comps,
+            List<int> PlayerCounts,
+            DateTime OldestDate,
+            DateTime NewestDate
+        )
+            GetCompetitionsAndPlayerCounts(
+            int year,
+            int month,
+            bool filterAnomalous = false
+        )
         {
-            if (length < 1)
-            {
-                length = int.MaxValue;
-            }
-
             var baseQuery = _context.Competitions.OrderByDescending(c => c.Date);
-            if (filterSuspicious)
+
+            var oldestDate = baseQuery.LastOrDefault()?.Date ?? new DateTime(2020, 11, 02);
+            var newestDate = baseQuery.FirstOrDefault()?.Date ?? DateTime.Now;
+
+            IQueryable<Competition> fetchedComps = baseQuery;
+            if (filterAnomalous)
             {
                 baseQuery = _context.NadeoCompetitions.Join(_context.Competitions.Include(c => c.Leaderboard), nc => nc.Id, c => c.NadeoCompetitionId, (nc, c) => new { NadeoCompetition = nc, Competition = c })
                     .Where(jc => jc.Competition.Leaderboard == null || jc.Competition.Leaderboard.Count == 0 || jc.NadeoCompetition.NbPlayers != jc.Competition.Leaderboard.Count)
                     .Select(jc => jc.Competition).OrderByDescending(c => c.Date);
+                fetchedComps = baseQuery;
             }
-
-            var totalComps = baseQuery.Count();
-            var fetchedComps = baseQuery.Skip(offset).Take(length);
+            else
+            {
+                fetchedComps = baseQuery.Where(c => c.Date.Year == year && c.Date.Month == month);
+            }
             var competitions = fetchedComps.ToList();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var competitionPlayerCounts = fetchedComps.Select(c => c.Leaderboard.Count).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            return (Comps: competitions, PlayerCounts: competitionPlayerCounts, TotalComps: totalComps);
+
+            return (
+                Comps: competitions,
+                PlayerCounts: competitionPlayerCounts,
+                OldestDate: oldestDate,
+                NewestDate: newestDate
+            );
         }
 
         public void DeleteCompetition(int id)

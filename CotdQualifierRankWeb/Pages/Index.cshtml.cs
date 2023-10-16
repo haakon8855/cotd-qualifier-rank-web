@@ -1,5 +1,6 @@
 using CotdQualifierRankWeb.Models;
 using CotdQualifierRankWeb.Services;
+using CotdQualifierRankWeb.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -14,11 +15,11 @@ namespace CotdQualifierRankWeb.Pages
         [FromQuery(Name = "filterAnomalous")]
         public bool FilterAnomalous { get; set; } = false;
 
-        [FromQuery(Name = "pageNo")]
-        public int PageNo { get; set; } = 1;
-        public int PageCount { get; set; } = 0;
+        [FromQuery(Name = "pageMonth")]
+        public string PageMonth { get; set; } = DateTime.Now.ToString("yyyy-MM");
 
-        public readonly int PageSize = 14;
+        public DateTime NewestMonth { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        public DateTime OldestMonth { get; set; } = new DateTime(2020, 11, 1);
 
         public IndexModel(CompetitionService competitionService)
         {
@@ -30,21 +31,38 @@ namespace CotdQualifierRankWeb.Pages
 
         public void OnGet()
         {
-            var compsAndPlayerCounts = _competitionService.GetCompetitionsAndPlayerCounts(length: PageSize, offset: (PageNo - 1) * PageSize, FilterAnomalous);
+            var year = int.Parse(PageMonth.Split("-")[0]);
+            var month = int.Parse(PageMonth.Split("-")[1]);
+            var compsAndPlayerCounts = _competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
             Competitions = compsAndPlayerCounts.Comps;
             CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
-
-            PageCount = (int)Math.Ceiling((double)compsAndPlayerCounts.TotalComps / (double)PageSize);
-            if (PageNo > PageCount)
-            {
-                PageNo = PageCount;
-            }
+            NewestMonth = new DateTime(compsAndPlayerCounts.NewestDate.Year, compsAndPlayerCounts.NewestDate.Month, 1);
+            OldestMonth = new DateTime(compsAndPlayerCounts.OldestDate.Year, compsAndPlayerCounts.OldestDate.Month, 1);
         }
 
         public IActionResult OnPostDelete(int id)
         {
             _competitionService.DeleteCompetition(id);
             return RedirectToAction("");
+        }
+
+        public string NewPageMonth(int monthsToAdd, bool getMonthName = false)
+        {
+            DateTime currentMonth = GetPageMonthDateTime();
+            DateTime newMonth = currentMonth.AddMonths(monthsToAdd);
+            if (!getMonthName)
+            {
+                return newMonth.ToPageMonthString();
+            }
+            else
+            {
+                return newMonth.ToMonthString();
+            }
+        }
+
+        public DateTime GetPageMonthDateTime()
+        {
+            return new DateTime(int.Parse(PageMonth.Split("-")[0]), int.Parse(PageMonth.Split("-")[1]), 1);
         }
     }
 }
