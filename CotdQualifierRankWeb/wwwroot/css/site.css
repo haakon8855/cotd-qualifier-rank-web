@@ -104,3 +104,8 @@ pre {
 .first-seed-difference{
     color: #d56262;
 }
+
+.index-pagination-container {
+    display: flex;
+    justify-content: center;
+}
