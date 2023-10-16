@@ -37,14 +37,20 @@ namespace CotdQualifierRankWeb.Services
             }
         }
 
-        public (List<Competition> Comps, List<int> PlayerCounts) GetCompetitionsAndPlayerCounts()
+        public (List<Competition> Comps, List<int> PlayerCounts, int TotalComps) GetCompetitionsAndPlayerCounts(int length = 0, int offset = 0)
         {
+            if (length < 1)
+            {
+                length = int.MaxValue;
+            }
             var baseQuery = _context.Competitions.OrderByDescending(c => c.Date);
-            var competitions = baseQuery.ToList();
+            var totalComps = baseQuery.Count();
+            var fetchedComps = baseQuery.Skip(offset).Take(length);
+            var competitions = fetchedComps.ToList();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var competitionPlayerCounts = baseQuery.Select(c => c.Leaderboard.Count).ToList();
+            var competitionPlayerCounts = fetchedComps.Select(c => c.Leaderboard.Count).ToList();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-            return (Comps: competitions, PlayerCounts: competitionPlayerCounts);
+            return (Comps: competitions, PlayerCounts: competitionPlayerCounts, TotalComps: totalComps);
         }
 
         public void DeleteCompetition(int id)

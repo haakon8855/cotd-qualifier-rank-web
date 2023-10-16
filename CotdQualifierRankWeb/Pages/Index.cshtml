@@ -53,7 +53,10 @@
             <td aria-label="heisann">
                 <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Competitions[i].Id"
                       onsubmit="return confirm('Are you sure you want to delete this Leaderboard?')">
-                    <button aria-label="Delete leaderboard for @Model.Competitions[i].Date.ToShortDateString()" class="btn-danger">
+                    <button
+                        aria-label="Delete leaderboard for @Model.Competitions[i].Date.ToShortDateString()"
+                        class="btn-danger py-0 border-0 rounded-1"
+                    >
                         Delete
                     </button>
                 </form>
@@ -62,3 +65,106 @@
 }
     </tbody>
 </table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item">
+            @if (Model.PageNo > 1)
+            {
+                <a asp-route-pageNo="@(Model.PageNo-1)"
+                   asp-page="./Index"
+                   class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
+                </a>
+            }
+            else
+            {
+                <a class="page-link disabled page-link-disabled">
+                    <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
+                </a>
+            }
+        </li>
+
+        @if (Model.PageCount < 8)
+        {
+            @for (int i = 0; i < Model.PageCount; i++)
+            {
+                <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
+                    <a asp-route-pageNo="@(i + 1)" asp-page="./Index" class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
+                    </a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="page-item @(Model.PageNo == 1 ? "active" : "")">
+                <a asp-route-pageNo="1" asp-page="./Index" class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code">1</code></pre>
+                </a>
+            </li>
+            @if (Model.PageNo > 4)
+            {
+                <li class="page-item">
+                    <a class="page-link page-link-dots">
+                        <code class="pagination-code">...</code>
+                    </a>
+                </li>
+            }
+
+            var start = Math.Max(Model.PageNo - 3, 1);
+            var startLost = start - (Model.PageNo - 3);
+
+            var end = Model.PageNo < 5 ?
+                Math.Min(Model.PageNo + 2 + startLost + 1, Model.PageCount - 1)
+                : Math.Min(Model.PageNo + 2 + startLost, Model.PageCount - 1);
+
+            var endLost = (Model.PageNo + 3) - end;
+
+            if (Model.PageNo >= 5){
+                start = Model.PageNo > Model.PageCount - 4 ?
+                    Math.Max(Model.PageNo - 2 - endLost - 1, 1)
+                    : Math.Max(Model.PageNo - 2 - endLost, 1);
+            }
+
+            @for (int i = start; i < end; i++)
+            {
+                <li class="page-item @(Model.PageNo == i + 1 ? "active" : "")">
+                    <a asp-route-pageNo="@(i + 1)" asp-page="./Index" class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
+                    </a>
+                </li>
+            }
+            @if (Model.PageNo < Model.PageCount - 3)
+            {
+                <li class="page-item">
+                    <a class="page-link page-link-dots">
+                        <code class="pagination-code">...</code>
+                    </a>
+                </li>
+            }
+            <li class="page-item @(Model.PageNo == Model.PageCount ? "active" : "")">
+                <a asp-route-pageNo="@(Model.PageCount)" asp-page="./Index" class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code">@(Model.PageCount)</code></pre>
+                </a>
+            </li>
+        }
+
+        <li class="page-item">
+            @if (Model.PageNo < Model.PageCount)
+            {
+                <a asp-route-pageNo="@(Model.PageNo+1)"
+                   asp-page="./Index"
+                   class="page-link page-link-dark">
+                    <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
+                </a>
+            }
+            else
+            {
+                <a class="page-link disabled page-link-disabled">
+                    <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
+                </a>
+            }
+        </li>
+    </ul>
+</nav>
