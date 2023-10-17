@@ -84,7 +84,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoChallengeId)
             </th>
-            <th>
+            <th class="fit">
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
             </th>
             <th></th>
@@ -113,11 +113,25 @@
             <td>
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoChallengeId)
             </td>
-            <td>
+            <td class="fit">
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)
             </td>
             <td>
-                <a aria-label="Open leaderboard for @Model.Competitions[i].Date.ToShortDateString()" asp-page="./Details" asp-route-id="@Model.Competitions[i].Id">Details</a>
+                <a
+                    aria-label="Send GET request to Rank endpoint"
+                    href="./api/rank/@Model.Competitions[i].NadeoMapUid/45000"
+                >
+                    API
+                </a>
+            </td>
+            <td>
+                <a
+                    aria-label="Open leaderboard for @Model.Competitions[i].Date.ToShortDateString()"
+                    asp-page="./Details"
+                    asp-route-id="@Model.Competitions[i].Id"
+                >
+                    Details
+                </a>
             </td>
             <td aria-label="heisann">
                 <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Competitions[i].Id"
