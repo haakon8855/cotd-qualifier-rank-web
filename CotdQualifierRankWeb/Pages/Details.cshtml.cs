@@ -108,14 +108,23 @@ namespace CotdQualifierRankWeb.Pages
         public void OnGet(int? id)
         {
             Initialise(id);
+
+            if (TempData.TryGetValue("Rank", out var rankData) && rankData is not null)
+            {
+                Rank = (int)rankData;
+            }
+            if (TempData.TryGetValue("Time", out var timeData) && timeData is not null)
+            {
+                Time = (int)timeData;
+            }
         }
 
-        public void OnPostPB(int? id)
+        public IActionResult OnPostPB(int? id)
         {
             Initialise(id);
             if (Competition.NadeoMapUid is null)
             {
-                return;
+                return RedirectToPage();
             }
             var response = _rankController.GetAction(Competition.NadeoMapUid, Time).Result;
 
@@ -124,9 +133,11 @@ namespace CotdQualifierRankWeb.Pages
                 var content = okObjectResult.Value;
                 if (content is GetRankDTO getRankDTO)
                 {
-                    Rank = getRankDTO.Rank;
+                    TempData["Rank"] = getRankDTO.Rank;
+                    TempData["Time"] = Time;
                 }
             }
+            return RedirectToPage(new { id = Competition.Id });
         }
     }
 }
