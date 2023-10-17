@@ -102,7 +102,7 @@
                         var inputRecord = new Record { Time = Model.Time };
                         <dl class="row">
                             <dt class="col-sm-6">
-                                Your time:
+                                Time:
                             </dt>
                             <dd class="col-sm-6">
                                 @(inputRecord.FormattedTime())&ensp;
@@ -115,10 +115,16 @@
                                 }
                             </dd>
                             <dt class="col-sm-6">
-                                Your rank:
+                                Rank:
                             </dt>
                             <dd class="col-sm-6">
                                 @Model.Rank
+                            </dd>
+                            <dt class="col-sm-6">
+                                Division:
+                            </dt>
+                            <dd class="col-sm-6">
+                                @(((Model.Rank - 1) / 64) + 1)
                             </dd>
                         </dl>
                     }
