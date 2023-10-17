@@ -74,10 +74,25 @@
                     <form method="post" asp-page-handler="PB" asp-route-id="@Model.Competition.Id">
                         <dl class="row mb-0 mt-1">
                             <dt class="col-sm-6">
-                                <input aria-label="Enter your PB in milliseconds" asp-for="Time" value="@(Model.Time==0?"":Model.Time)" class="form-control" placeholder="Your PB (ms)" />
+                                <input
+                                    aria-label="Enter your PB in milliseconds"
+                                    asp-for="Time"
+                                    value="@(Model.Time==0?"":Model.Time)"
+                                    class="form-control"
+                                    placeholder="Your PB (ms)"
+                                />
                             </dt>
                             <dd class="col-sm-6">
                                 <button role="button" class="btn btn-primary">Get rank</button>
+                                <span class="mx-3">
+                                    <a
+                                        aria-label="Send GET request to Rank endpoint"
+                                        href="./api/rank/@Model.Competition.NadeoMapUid/@(Model.Time==0?"45000":Model.Time)"
+                                        class="btn btn-outline-primary"
+                                    >
+                                        API
+                                    </a>
+                                </span>
                             </dd>
                         </dl>
                     </form>
