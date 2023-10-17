@@ -78,13 +78,13 @@
             <th>
                 Player Count
             </th>
-            <th>
+            <th class="d-none d-sm-table-cell">
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoCompetitionId)
             </th>
-            <th>
+            <th class="d-none d-md-table-cell">
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoChallengeId)
             </th>
-            <th class="fit">
+            <th class="fit d-none d-xl-table-cell">
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
             </th>
             <th></th>
@@ -107,13 +107,13 @@
             <td>
                 @Model.CompetitionPlayerCounts[i]
             </td>
-            <td>
+            <td class="d-none d-sm-table-cell">
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoCompetitionId)
             </td>
-            <td>
+            <td class="d-none d-md-table-cell">
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoChallengeId)
             </td>
-            <td class="fit">
+            <td class="fit d-none d-xl-table-cell">
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)
             </td>
             <td>
