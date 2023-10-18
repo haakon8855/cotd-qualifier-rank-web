@@ -87,7 +87,7 @@
             <th class="fit d-none d-xl-table-cell">
                 @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
             </th>
-            <th></th>
+            <th class="d-none d-md-table-cell"></th>
             <th></th>
         </tr>
     </thead>
@@ -116,12 +116,12 @@
             <td class="fit d-none d-xl-table-cell">
                 @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)
             </td>
-            <td>
+            <td class="d-none d-md-table-cell">
                 <a
                     aria-label="Send GET request to Rank endpoint"
                     href="./api/rank/@Model.Competitions[i].NadeoMapUid/45000"
                 >
-                    API
+                    Rank API
                 </a>
             </td>
             <td>
