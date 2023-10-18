@@ -13,9 +13,22 @@ namespace CotdQualifierRankWeb.Services
             _context = context;
         }
 
-        public Competition? GetCompetitionByMapUid(string mapUid)
+        public Competition? GetCompetitionByMapUid(string mapUid, bool includeLeaderboard = true)
         {
-            return _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);
+            if (includeLeaderboard)
+            {
+                return _context.Competitions
+                    .Include(c => c.Leaderboard)
+                    .FirstOrDefault(c => c.NadeoMapUid == mapUid);
+            }
+            return _context.Competitions
+                .FirstOrDefault(c => c.NadeoMapUid == mapUid);
+        }
+
+        public Competition? GetCompetition(int competitionId)
+        {
+            return _context.Competitions
+                .FirstOrDefault(c => c.NadeoCompetitionId == competitionId);
         }
 
         public void AddCompetition(Competition? competition)
@@ -87,6 +100,15 @@ namespace CotdQualifierRankWeb.Services
                 _context.Competitions.Remove(competition);
                 _context.SaveChanges();
             }
+        }
+
+        public async Task<List<string?>> GetMapsUids()
+        {
+            return await _context.Competitions
+                .Where(c => c.NadeoMapUid != null)
+                .OrderBy(c => c.Date)
+                .Select(c => c.NadeoMapUid)
+                .ToListAsync();
         }
     }
 }
