@@ -15,8 +15,7 @@ namespace CotdQualifierRankWeb.Controllers
             _competitionService = competitionService;
         }
 
-        [HttpGet]
-        [Route("{mapUid}")]
+        [HttpGet("{mapUid}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCompetitionByMap(string mapUid)
@@ -37,8 +36,7 @@ namespace CotdQualifierRankWeb.Controllers
             });
         }
 
-        [HttpGet]
-        [Route("{competitionId:int}")]
+        [HttpGet("{competitionId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCompetitionByCompetitionId(int competitionId)
@@ -59,8 +57,7 @@ namespace CotdQualifierRankWeb.Controllers
             });
         }
 
-        [HttpGet]
-        [Route("{mapUid}/leaderboard")]
+        [HttpGet("{mapUid}/leaderboard")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
@@ -76,8 +73,7 @@ namespace CotdQualifierRankWeb.Controllers
             return Ok(leaderboard);
         }
 
-        [HttpGet]
-        [Route("{competitionId:int}/leaderboard")]
+        [HttpGet("{competitionId:int}/leaderboard")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)

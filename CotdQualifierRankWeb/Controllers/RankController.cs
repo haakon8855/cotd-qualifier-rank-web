@@ -27,8 +27,7 @@ namespace CotdQualifierRankWeb.Controllers
             _competitionService = competitionService;
         }
 
-        [HttpGet]
-        [Route("{mapUid}/{time:int}")]
+        [HttpGet("{mapUid}/{time:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RankDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAction(string mapUid, int time)
