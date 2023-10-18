@@ -1,6 +1,6 @@
 ﻿namespace CotdQualifierRankWeb.DTOs
 {
-    public class GetRankDTO
+    public class RankDTO
     {
         public string MapUid { get; set; } = default!;
         public int CompetitionId { get; set; } = 0;
