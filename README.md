@@ -16,7 +16,7 @@ publicly available or integrated with an accompanying
   - [Introduction](#introduction)
     - [The Decentralised Approach](#the-decentralised-approach)
     - [The Centralised Approach](#the-centralised-approach)
-  - [API](#api)
+  - [API Documentation](#api-documentation)
     - [Rank](#rank)
     - [Maps](#maps)
     - [Competitions](#competitions)
@@ -81,7 +81,10 @@ from and returns the player's "rank".
 The only downside to this approach is that someone needs to maintain, and
 possibly pay to keep the server running.
 
-## API
+## API Documentation
+
+___Note:__ Swagger documentation is available when running the server locally
+at `http:localhost:5000/Swagger`_
 
 The API contains several endpoints serving data related to COTDs (competitions)
 and COTD leaderboards (challenges). These include endpoints for competition
