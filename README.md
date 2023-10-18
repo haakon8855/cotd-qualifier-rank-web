@@ -129,13 +129,12 @@ curl -X GET http://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
 - **URL**: `/api/maps`
 - **Method**: GET
 - **Description**: Returns a list of MapUids for all COTD leaderboards that are
-  currently in the server's database. New TOTDs are not automatically added
-  to the server's database and are fetched from Nadeo on a JIT basis.
-  I.e., when that data i needed. When qualifying session from a COTD is fetched
-  from Nadeo, the track's MapUid is added to the database and will then be
-  returned as part of this list.
-
-  The the list is sorted by each track's date (ascending)
+  currently in the server's database, sorted by COTD date.
+  New TOTDs are not automatically added to the server's database and are
+  fetched from Nadeo on a JIT basis. I.e. competition and map data is only
+  fetched from Nadeo when that data is needed. When qualifying session from a
+  COTD is fetched from Nadeo, the track's MapUid is added to the database and
+  will then be returned as part of this list.  
 
 **Example Request**:
 
@@ -192,7 +191,11 @@ curl -X GET http://localhost:5000/api/competitions/9447
 - **URL**: `/api/competitions/{mapUid|competitionId}/leaderboard`
 - **Method**: GET
 - **Description**: Returns the leaderboard from the qualifying session in a
-  COTD given the cup's CompetitionId or the associated track's MapUid
+  COTD given the cup's CompetitionId or the associated track's MapUid.  
+  A normal COTD normally has somewhere between 1000 and 5000 players, usually
+  depending on how recent it was. E.g. COTDs from 2020 saw around 1.5k players
+  while COTDs after console release regularly contain upwards of 3k players.
+  Expect the size of the returned list to in this range.
 - **Values**:
   - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
     data has not yet been fetched from Nadeo by the server, no data is returned.
