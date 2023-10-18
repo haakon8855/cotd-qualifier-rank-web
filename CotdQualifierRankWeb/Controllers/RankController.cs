@@ -29,6 +29,8 @@ namespace CotdQualifierRankWeb.Controllers
 
         [HttpGet]
         [Route("{mapUid}/{time:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RankDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAction(string mapUid, int time)
         {
             var cotd = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);

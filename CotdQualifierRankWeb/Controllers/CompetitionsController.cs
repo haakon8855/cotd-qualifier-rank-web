@@ -17,6 +17,8 @@ namespace CotdQualifierRankWeb.Controllers
 
         [HttpGet]
         [Route("{mapUid}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCompetitionByMap(string mapUid)
         {
             var competition = _competitionService.GetCompetitionByMapUid(mapUid, false);
@@ -36,37 +38,9 @@ namespace CotdQualifierRankWeb.Controllers
         }
 
         [HttpGet]
-        [Route("{mapUid}/leaderboard")]
-        public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
-        {
-            var competition = _competitionService.GetCompetitionByMapUid(mapUid, true);
-
-            if (competition is null || competition.Leaderboard is null)
-            {
-                return NotFound();
-            }
-
-            var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
-            return Ok(leaderboard);
-        }
-
-        [HttpGet]
-        [Route("{competitionId:int}/leaderboard")]
-        public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)
-        {
-            var competition = _competitionService.GetCompetition(competitionId, true);
-
-            if (competition is null || competition.Leaderboard is null)
-            {
-                return NotFound();
-            }
-
-            var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
-            return Ok(leaderboard);
-        }
-
-        [HttpGet]
         [Route("{competitionId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCompetitionByCompetitionId(int competitionId)
         {
             var competition = _competitionService.GetCompetition(competitionId, false);
@@ -83,6 +57,40 @@ namespace CotdQualifierRankWeb.Controllers
                 Date = competition.Date,
                 MapUid = competition.NadeoMapUid,
             });
+        }
+
+        [HttpGet]
+        [Route("{mapUid}/leaderboard")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
+        {
+            var competition = _competitionService.GetCompetitionByMapUid(mapUid, true);
+
+            if (competition is null || competition.Leaderboard is null)
+            {
+                return NotFound();
+            }
+
+            var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
+            return Ok(leaderboard);
+        }
+
+        [HttpGet]
+        [Route("{competitionId:int}/leaderboard")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)
+        {
+            var competition = _competitionService.GetCompetition(competitionId, true);
+
+            if (competition is null || competition.Leaderboard is null)
+            {
+                return NotFound();
+            }
+
+            var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
+            return Ok(leaderboard);
         }
     }
 }

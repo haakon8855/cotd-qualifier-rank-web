@@ -15,6 +15,8 @@ namespace CotdQualifierRankWeb.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetMapUids()
         {
             var maps = await _competitionService.GetMapsUids();
