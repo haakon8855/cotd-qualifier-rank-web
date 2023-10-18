@@ -6,15 +6,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 builder.Services.AddSingleton<CredentialsManager>();
+
 builder.Services.AddDbContext<CotdContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CotdContext") ?? throw new InvalidOperationException("Connection string 'CotdContext' not found.")));
+
 builder.Services.AddSingleton<NadeoApiController>();
+
 builder.Services.AddScoped<NadeoCompetitionService>();
 builder.Services.AddScoped<CompetitionService>();
 builder.Services.AddScoped<RankController>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -45,6 +53,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapRazorPages();
 app.MapControllers();
