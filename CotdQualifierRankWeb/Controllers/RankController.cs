@@ -28,7 +28,7 @@ namespace CotdQualifierRankWeb.Controllers
         }
 
         [HttpGet]
-        [Route("{mapUID}/{time:int}")]
+        [Route("{mapUid}/{time:int}")]
         public async Task<IActionResult> GetAction(string mapUid, int time)
         {
             var cotd = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);
@@ -56,6 +56,7 @@ namespace CotdQualifierRankWeb.Controllers
             });
         }
 
+        [NonAction]
         public int FindRankInLeaderboard(Competition cotd, int time)
         {
             // Binary search on the leaderboard to find the rank as if it would have been at the correct location in the list
@@ -84,6 +85,7 @@ namespace CotdQualifierRankWeb.Controllers
             return rank;
         }
 
+        [NonAction]
         public async Task<Competition?> FetchCompetitionFromNadeo(string mapUid)
         {
             // get map totd info from nadeo
@@ -145,6 +147,7 @@ namespace CotdQualifierRankWeb.Controllers
             return null;
         }
 
+        [NonAction]
         public async Task<List<Record>> FetchQualificationLeaderboard(NadeoCompetition nadeoCompetition, int challengeId)
         {
             // Fetch the qualification leaderboard
@@ -163,6 +166,7 @@ namespace CotdQualifierRankWeb.Controllers
             return fullLeaderboard;
         }
 
+        [NonAction]
         public async Task<Competition> FetchCompetition(NadeoCompetition nadeoCompetition, string mapUid, DateTime mapTotdDate)
         {
             var newCompetition = new Competition();
@@ -176,6 +180,7 @@ namespace CotdQualifierRankWeb.Controllers
             return newCompetition;
         }
 
+        [NonAction]
         public async Task<NadeoCompetition?> FetchNadeoCompetition(string mapUid, DateTime mapTotdDate)
         {
             var offsetLimit = 10000;

@@ -16,7 +16,7 @@ namespace CotdQualifierRankWeb.Controllers
         }
 
         [HttpGet]
-        [Route("{mapUID}")]
+        [Route("{mapUid}")]
         public IActionResult GetCompetitionByMap(string mapUid)
         {
             var competition = _competitionService.GetCompetitionByMapUid(mapUid, false);
@@ -36,7 +36,7 @@ namespace CotdQualifierRankWeb.Controllers
         }
 
         [HttpGet]
-        [Route("{mapUID}/leaderboard")]
+        [Route("{mapUid}/leaderboard")]
         public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
         {
             var competition = _competitionService.GetCompetitionByMapUid(mapUid, true);
