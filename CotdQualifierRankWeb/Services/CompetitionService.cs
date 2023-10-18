@@ -25,8 +25,14 @@ namespace CotdQualifierRankWeb.Services
                 .FirstOrDefault(c => c.NadeoMapUid == mapUid);
         }
 
-        public Competition? GetCompetition(int competitionId)
+        public Competition? GetCompetition(int competitionId, bool includeLeaderboard = true)
         {
+            if (includeLeaderboard)
+            {
+                return _context.Competitions
+                    .Include(c => c.Leaderboard)
+                    .FirstOrDefault(c => c.NadeoCompetitionId == competitionId);
+            }
             return _context.Competitions
                 .FirstOrDefault(c => c.NadeoCompetitionId == competitionId);
         }

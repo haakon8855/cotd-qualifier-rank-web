@@ -35,14 +35,41 @@ namespace CotdQualifierRankWeb.Controllers
             });
         }
 
-        //[HttpGet]
-        //[Route("{mapUID}/leaderboard")]
+        [HttpGet]
+        [Route("{mapUID}/leaderboard")]
+        public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
+        {
+            var competition = _competitionService.GetCompetitionByMapUid(mapUid, true);
+
+            if (competition is null || competition.Leaderboard is null)
+            {
+                return NotFound();
+            }
+
+            var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
+            return Ok(leaderboard);
+        }
+
+        [HttpGet]
+        [Route("{competitionId:int}/leaderboard")]
+        public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)
+        {
+            var competition = _competitionService.GetCompetition(competitionId, true);
+
+            if (competition is null || competition.Leaderboard is null)
+            {
+                return NotFound();
+            }
+
+            var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
+            return Ok(leaderboard);
+        }
 
         [HttpGet]
         [Route("{competitionId:int}")]
         public IActionResult GetCompetitionByCompetitionId(int competitionId)
         {
-            var competition = _competitionService.GetCompetition(competitionId);
+            var competition = _competitionService.GetCompetition(competitionId, false);
 
             if (competition is null)
             {
