@@ -17,7 +17,10 @@ publicly available or integrated with an accompanying
     - [The Decentralised Approach](#the-decentralised-approach)
     - [The Centralised Approach](#the-centralised-approach)
   - [API](#api)
-    - [Rank Endpoint](#rank-endpoint)
+    - [Rank](#rank)
+    - [Maps](#maps)
+    - [Competitions](#competitions)
+    - [Qualifying Leaderboard](#qualifying-leaderboard)
   - [Website](#website)
   - [Setup Guide](#setup-guide)
     - [Prerequisites](#prerequisites)
@@ -80,18 +83,28 @@ possibly pay to keep the server running.
 
 ## API
 
-The API has a single endpoint designed for use with the 
-[COTD Qualifier Rank](https://github.com/haakon8855/COTD-qualifier-rank)
-plugin. 
+The API contains several endpoints serving data related to COTDs (competitions)
+and COTD leaderboards (challenges). These include endpoints for competition
+metadata, TOTD MapUids, qualifier rank and qualifier leaderboards.
 
-### Rank Endpoint
+The Rank endpoint is considered the main use-case of this API, providing the
+rank for a given time on a specied TOTD as if that time was driven during the 
+COTD 15-minute qualifying session. This endpoint is made to accompany the
+[COTD Qualifier Rank](https://github.com/haakon8855/COTD-qualifier-rank)
+plugin (WIP). 
+
+The following is a list of the available endpoints and details about them.
+
+### Rank
 - **URL**: `/api/rank/{mapUid}/{time}`
 - **Method**: GET
 - **Description**: Returns the seeding/rank of the given time
   on the given MapUID 
 - **Values**:
-  - `mapUid`: The UID of any map. If the map is not a TOTD or was TOTD prior to 02.11.2020, no data is returned.
-  - `time`: The time in milliseconds for which a rank is returned (e.g. your current PB on a TOTD).
+  - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
+    data has not yet been fetched from Nadeo by the server, no data is returned.
+  - `time (int)`: The time in milliseconds for which a rank is returned
+    (e.g. your current PB on the track).
 
 **Example Request**:
 
@@ -110,6 +123,107 @@ curl -X GET http://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
     "time": 49302,
     "rank": 4079
 }
+```
+
+### Maps
+- **URL**: `/api/maps`
+- **Method**: GET
+- **Description**: Returns a list of MapUids for all COTD leaderboards that are
+  currently in the server's database, sorted by COTD date.
+  New TOTDs are not automatically added to the server's database and are
+  fetched from Nadeo on a JIT basis. I.e. competition and map data is only
+  fetched from Nadeo when that data is needed. When qualifying session from a
+  COTD is fetched from Nadeo, the track's MapUid is added to the database and
+  will then be returned as part of this list.  
+
+**Example Request**:
+
+```shell
+curl -X GET http://localhost:5000/api/maps
+```
+
+ **Response**:
+
+```json
+[
+    "5G1WTldWDF810zEiS5dxiS2DtMj",
+    "1pmNdxhn5SrE82rh4EafPIxg7y7",
+    "IWCPdbCtlaYUWCVfWxDads9dsc",
+    ...
+    "JQkYS9BcGzbl67hu5PBdyIDcWUl",
+    "JRaHDJ_ZfSbFfGxrVw9Uk9Ai3i9"
+]
+```
+
+### Competitions
+- **URL**: `/api/competitions/{mapUid|competitionId}`
+- **Method**: GET
+- **Description**: Returns information about a COTD given its CompetitionId or
+  the MapUid of its associated track.
+- **Values**:
+  - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
+    data has not yet been fetched from Nadeo by the server, no data is returned.
+  - `competitionId (int)`: The ID of any COTD. If the COTD competition data has not
+    yet been fetched from Nadeo by the server, no data is returned.
+
+**Example Request**:
+
+```shell
+curl -X GET http://localhost:5000/api/competitions/rbzxGFuf_dKyzxir8RgzvX5Ss65
+```
+or
+```shell
+curl -X GET http://localhost:5000/api/competitions/9447
+```
+
+ **Response**:
+
+```json
+{
+    "competitionId": 9447,
+    "challengeId": 4689,
+    "mapUid": "rbzxGFuf_dKyzxir8RgzvX5Ss65",
+    "date": "2023-09-02T19:00:00"
+}
+```
+
+### Qualifying Leaderboard
+- **URL**: `/api/competitions/{mapUid|competitionId}/leaderboard`
+- **Method**: GET
+- **Description**: Returns the leaderboard from the qualifying session in a
+  COTD given the cup's CompetitionId or the associated track's MapUid.  
+  A normal COTD normally has somewhere between 1000 and 5000 players, usually
+  depending on how recent it was. E.g. COTDs from 2020 saw around 1.5k players
+  while COTDs after console release regularly contain upwards of 3k players.
+  Expect the size of the returned list to in this range.
+- **Values**:
+  - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
+    data has not yet been fetched from Nadeo by the server, no data is returned.
+  - `competitionId (int)`: The ID of any COTD. If the COTD competition data has
+    not yet been fetched from Nadeo by the server, no data is returned.
+
+**Example Requests**:
+
+```shell
+curl -X GET http://localhost:5000/api/competitions/rbzxGFuf_dKyzxir8RgzvX5Ss65/leaderboard
+```
+or
+```shell
+curl -X GET http://localhost:5000/api/competitions/9447/leaderboard
+```
+
+ **Response**:
+
+```json
+[
+    44370,
+    44440,
+    44497,
+    ...
+    197554,
+    206797,
+    247544
+]
 ```
 
 ## Website
@@ -147,7 +261,7 @@ server locally.
 ### Prerequisites
 
 To successfully run this server locally, you will need the following:
-- A Trackmania Club Access Subscription
+- An active Trackmania Club Access Subscription
 - .NET 7.0
 
 ### Install .NET
@@ -156,7 +270,8 @@ Make sure you have
 [.NET 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 installed.
 
-To verify you have the correct version, run the following command:
+To verify you have the correct version, run the following command in the
+terminal:
 
 ```shell
 dotnet --version
@@ -199,10 +314,10 @@ and store your dedicated server account credentials inside
 with the following format:
 ```json
 {
-  "Login": "<dedicated-server-account-login>",
-  "Password": "<dedicated-server-account-password>",
-  "AccountId": "<dedicated-server-account-account-id>",
-  "UserAgent": "<your-user-agent>",
+    "Login": "<dedicated-server-account-login>",
+    "Password": "<dedicated-server-account-password>",
+    "AccountId": "<dedicated-server-account-account-id>",
+    "UserAgent": "<your-user-agent>",
 }
 ```
 You'll also need to provide a User-Agent in the credentials file,
@@ -236,4 +351,4 @@ The code in this repository is protected by the
 This project would not be possible without:
 - The Openplanet team's
   [Trackmania Web Services API Documentation](https://webservices.openplanet.dev/)
-- The Openplanet discord server
+- Numerous helpful individuals from the Openplanet discord server

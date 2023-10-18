@@ -131,9 +131,9 @@ namespace CotdQualifierRankWeb.Pages
             if (response is OkObjectResult okObjectResult)
             {
                 var content = okObjectResult.Value;
-                if (content is GetRankDTO getRankDTO)
+                if (content is RankDTO rankDTO)
                 {
-                    TempData["Rank"] = getRankDTO.Rank;
+                    TempData["Rank"] = rankDTO.Rank;
                     TempData["Time"] = Time;
                 }
             }
