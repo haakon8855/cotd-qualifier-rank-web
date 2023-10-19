@@ -1,6 +1,7 @@
 using CotdQualifierRankWeb.Controllers;
 using CotdQualifierRankWeb.Data;
 using CotdQualifierRankWeb.Services;
+using CotdQualifierRankWeb.Utils;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHostedService<LeaderboardQueueWorker>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,14 +40,6 @@ else
 {
     app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<CotdContext>();
-    //context.Database.EnsureCreated();
-    //DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
