@@ -126,7 +126,7 @@ namespace CotdQualifierRankWeb.Pages
             {
                 return RedirectToPage();
             }
-            var response = _rankController.GetAction(Competition.NadeoMapUid, Time).Result;
+            var response = _rankController.GetAction(Competition.NadeoMapUid, Time);
 
             if (response is OkObjectResult okObjectResult)
             {
