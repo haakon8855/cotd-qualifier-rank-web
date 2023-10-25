@@ -37,10 +37,10 @@ namespace CotdQualifierRankWeb.Controllers
                 return StatusCode(503,
                     new
                     {
-                        message = @"Requested map is either not a valid TOTD or the COTD
-                                    leaderboard is currently being fetched from
-                                    Nadeo and will be available shortly.
-                                    Please retry in " + secondsToWait.ToString() + " seconds."
+                        message = "Requested map is either not a valid TOTD or the COTD " +
+                                  "leaderboard is currently being fetched from " +
+                                  "Nadeo and will be available shortly. " +
+                                  "Please retry in " + secondsToWait.ToString() + " seconds."
                     }
                 );
             }
