@@ -23,6 +23,22 @@ namespace CotdQualifierRankWeb.Controllers
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
         public IActionResult GetQualifierRank(string mapUid, int time)
         {
+            // check if mapUid matches pattern
+            if (!Competition.IsValidMapUid(mapUid))
+            {
+                int secondsToWait = 5;
+                Response.Headers.Add("Retry-After", secondsToWait.ToString());
+                return StatusCode(503,
+                    new
+                    {
+                        message = "Requested map is either not a valid TOTD or the COTD " +
+                                  "leaderboard is currently being fetched from " +
+                                  "Nadeo and will be available shortly. " +
+                                  "Please retry in " + secondsToWait.ToString() + " seconds."
+                    }
+                );
+            }
+
             var cotd = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);
 
             if (cotd is null)

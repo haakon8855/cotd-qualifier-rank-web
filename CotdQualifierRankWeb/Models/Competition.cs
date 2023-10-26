@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace CotdQualifierRankWeb.Models
 {
     public class Competition
     {
-        public static string MapPattern = @"^[A-Za-z0-9_]{26,27}$";
-
         public int Id { get; set; }
 
         [Display(Name = "Competition ID")]
@@ -21,5 +20,12 @@ namespace CotdQualifierRankWeb.Models
         public DateTime Date { get; set; }
 
         public List<Record>? Leaderboard { get; set; }
+
+        public static string MapPattern = @"^[A-Za-z0-9_]{26,27}$";
+        public static bool IsValidMapUid(string mapUid)
+        {
+            return Regex.IsMatch(mapUid, MapPattern);
+        }
+
     }
 }

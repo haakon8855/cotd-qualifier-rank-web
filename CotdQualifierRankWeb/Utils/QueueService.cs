@@ -59,7 +59,7 @@ namespace CotdQualifierRankWeb.Utils
         public async Task<Competition?> FetchCompetitionFromNadeo(string mapUid)
         {
             // check if mapUid matches pattern
-            if (!Regex.IsMatch(mapUid, Competition.MapPattern))
+            if (!Competition.IsValidMapUid(mapUid))
             {
                 return null;
             }
