@@ -20,6 +20,7 @@ namespace CotdQualifierRankWeb.Pages
 
         [FromQuery(Name = "pageNo")]
         public int PageNo { get; set; } = 1;
+
         public readonly int PageSize = 64;
         public int PageCount { get; set; } = 0;
         public int PlayerCount { get; set; } = 0;
@@ -126,7 +127,7 @@ namespace CotdQualifierRankWeb.Pages
             {
                 return RedirectToPage();
             }
-            var response = _rankController.GetAction(Competition.NadeoMapUid, Time);
+            var response = _rankController.GetQualifierRank(Competition.NadeoMapUid, Time);
 
             if (response is OkObjectResult okObjectResult)
             {

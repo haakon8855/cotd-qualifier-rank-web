@@ -21,7 +21,7 @@ namespace CotdQualifierRankWeb.Controllers
         [HttpGet("{mapUid}/{time:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RankDTO))]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-        public IActionResult GetAction(string mapUid, int time)
+        public IActionResult GetQualifierRank(string mapUid, int time)
         {
             var cotd = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.NadeoMapUid == mapUid);
 
@@ -62,7 +62,8 @@ namespace CotdQualifierRankWeb.Controllers
         [NonAction]
         public int FindRankInLeaderboard(Competition cotd, int time)
         {
-            // Binary search on the leaderboard to find the rank as if it would have been at the correct location in the list
+            // Binary search on the leaderboard to find the rank as if
+            // it would have been part of the sorted list
             if (cotd is null || cotd.Leaderboard is null)
             {
                 return -1;
