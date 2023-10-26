@@ -58,7 +58,11 @@ namespace CotdQualifierRankWeb.Utils
 
         public async Task<Competition?> FetchCompetitionFromNadeo(string mapUid)
         {
-            // get map totd info from nadeo
+            // check if mapUid matches pattern
+            if (!Regex.IsMatch(mapUid, Competition.MapPattern))
+            {
+                return null;
+            }
             var mapResponse = await _nadeoApiController.GetTodtInfoForMap(mapUid);
             if (mapResponse is not null)
             {
@@ -68,10 +72,14 @@ namespace CotdQualifierRankWeb.Utils
                 {
                     var mapTotdInfo = JsonConvert.DeserializeObject<NadeoMapTotdInfoDTO>(result);
 
-                    if (mapTotdInfo is null || mapTotdInfo.TotdMaps is null)
+                    // Response is null or empty or map is not TOTD
+                    if (mapTotdInfo is null ||
+                        mapTotdInfo.TotdMaps is null ||
+                        mapTotdInfo.TotdYear == -1)
                     {
                         return null;
                     }
+
                     var dayOfWeek = (mapTotdInfo.TotdMaps.IndexOf(mapUid) + 1) % 7;
                     var mapTotdDate = ISOWeek.ToDateTime(mapTotdInfo.TotdYear, mapTotdInfo.Week, (DayOfWeek)dayOfWeek);
                     mapTotdDate = mapTotdDate.AddHours(19);

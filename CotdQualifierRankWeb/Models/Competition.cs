@@ -4,6 +4,8 @@ namespace CotdQualifierRankWeb.Models
 {
     public class Competition
     {
+        public static string MapPattern = @"^[A-Za-z0-9_]{26,27}$";
+
         public int Id { get; set; }
 
         [Display(Name = "Competition ID")]
