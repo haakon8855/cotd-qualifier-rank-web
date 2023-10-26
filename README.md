@@ -3,11 +3,13 @@
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Cup of the Day Qualifier Rank is a website and API for finding the seeding 
-of your current PB in an arbitrary COTD qualifying session.
+of your current PB in an arbitrary COTD qualifying session. It provides a 
+Web UI for browsing information and leaderboards from previous COTD qualifying
+sessions, as well as an API for fetching this data in a structured manner. 
 
-__Important:__ This project is still a work in progress and is therefore not
+__Note:__ _This project is still a work in progress and is therefore not
 publicly available or integrated with an accompanying
-[Openplanet Plugin](https://github.com/haakon8855/COTD-qualifier-rank).
+[Openplanet Plugin](https://github.com/haakon8855/COTD-qualifier-rank)._
 
 ## Overview
 
@@ -16,6 +18,7 @@ publicly available or integrated with an accompanying
   - [Introduction](#introduction)
     - [The Decentralised Approach](#the-decentralised-approach)
     - [The Centralised Approach](#the-centralised-approach)
+    - [Solution](#solution)
   - [API Documentation](#api-documentation)
     - [Rank](#rank)
     - [Maps](#maps)
@@ -35,55 +38,78 @@ publicly available or integrated with an accompanying
 
 ## Introduction
 
-Have you ever been playing an old Track of the Day and thought:  
-_Which division would I have gotten with this PB?_
+Have you ever been playing an old Track of the Day and wondered
+which division you would have gotten with your current PB on that map?
 
+This problem can be solved in a couple ways, but ultimately, someone needs to 
+fetch COTD data from the Trackmania Web Services API provided by Nadeo.
+
+### The Decentralised Approach
+An OpenPlanet plugin can be created that runs the required requests client-side
+within Trackmania 2020. This solution does not rely on a centralised server and
+fetches all required data directly from Nadeo.
+However, there are several problems with this solution:
+
+- Leaderboard data needs to be fetched every time a TOTD map is loaded. Even
+  if caching is implemented, this creates on average 10-20 requests to Nadeo
+  every time an uncached map is loaded. Keeping a cache also needs to be stored
+  on disk for each user, and is not synced across computers and is lost if the
+  plugin is uninstalled.
+- Obtaining the ID of a qualification leaderboard given a MapId is very
+  difficult when only relying on Nadeo's own API and can generate a lot of
+  requests. Wihtout caching, this can create between 1 and 100 requests to
+  Nadeo (__each time a map is loaded by the user__) depending on when the track
+  was TOTD. (newer TOTDs require less requests)
+- Fetched data cannot be shared between users, and thus each user has to fetch
+  the same leaderboard data and IDs for each map loaded.
+
+### The Centralised Approach
+
+Another approach to this problem is to create a centralised server handling
+all communication with Nadeo's API. This way, both qualification 
+leaderboard IDs and leaderboard data can be cached in one server database.
+Additionally, since historical TOTD data never changes after qualification
+commences, caching only needs to happen once per map.
+
+An accompanying OpenPlanet plugin can then be created. This plugin would only
+need to send requests to this centralised API. The server can return the
+player's "rank" when prompted with a MapUID and the player's PB. Both of which
+are trivial to retrieve from an OpenPlaned plugin.
+
+The main downside to this approach is the work and costs tied to maintaining
+and running a server.
+
+### Solution
+
+The server in this repo utilises the centralised approach.
 The main use case of this API is to show users what their seeding would have
 been if they drove their current PB during the COTD qualifying session for
-that TOTD.
-This API tries to provide this functionality in an efficient manner without
-contacting Nadeo's own API for every request.
+that TOTD. This API tries to provide this functionality in an efficient manner
+without contacting Nadeo's own API for every request.
+
+When the rank from a specific qualifying session is requested, the server 
+searches its database for the corresponding leaderboard in order to provide
+the requested rank. If this data is not yet stored in the server's database, 
+it fetches the necessary data from Nadeo and stores it for future requests. 
+Due to this implementation, the first request for any COTD qualifying session
+will return a 503 response and promt the client to retry after a few seconds.
+This is intended behaviour as this initial request prompts the server to start
+fetching the data from Nadeo. All subsequent requests for the same qualifying
+session will fetch data directly from the server's database, and will return
+the requested data immediately.
+
+__Note:__ _Only the [Rank endpoint](#rank) will fetch leaderboard data from
+Nadeo when data is not cached. If data has not been cached for other endpoints,
+a 404 response code is returned._
 
 The API is made to accompany the 
 openplanet plugin 
 [COTD Qualifier Rank](https://github.com/haakon8855/COTD-qualifier-rank)
 for Trackmania 2020. 
 
-### The Decentralised Approach
-A plugin already exists which provides the aforementioned features. This plugin
-does not rely on a centralised server and fetches all
-required data directly from Nadeo. There are several problems with this
-solution:
-
-- Data is only cached during a single map session, meaning leaderboard data
-  needs to be fetched every time a map is reloaded or the game is restarted. 
-  If coded efficiently, this creates on average 10-20 requests to Nadeo per map.
-- Obtaining the ID of a qualification leaderboard given a MapId is very
-  difficult when only relying on Nadeo's own API and can generate a lot of
-  requests. Wihtout caching, this can create between 1 and 120 requests to
-  Nadeo (__each time a map is loaded by the user__) depending on when the track
-  was TOTD.
-- Data cannot be shared between users, and thus each user has to fetch the same
-  leaderboard data and ID data for each map loaded.
-
-### The Centralised Approach
-
-The obvious solution to this problem is to create a centralised server which
-handles all communication with Nadeo's API. This way, both qualification 
-leaderboard IDs and leaderboard data can be cached. Additionally, since this
-data never changes after qualification commences, caching only needs to happen
-once.
-
-The plugin can then be altered to only send requests to the centralised API
-where data is cached. The server receives a MapUID along with the player's PB
-from and returns the player's "rank".
-
-The only downside to this approach is that someone needs to maintain, and
-possibly pay to keep the server running.
-
 ## API Documentation
 
-___Note:__ Swagger documentation is available when running the server locally
+__Note:__ _Swagger documentation is available when running the server locally
 at `http:localhost:5000/Swagger`_
 
 The API contains several endpoints serving data related to COTDs (competitions)
@@ -102,7 +128,11 @@ The following is a list of the available endpoints and details about them.
 - **URL**: `/api/rank/{mapUid}/{time}`
 - **Method**: GET
 - **Description**: Returns the seeding/rank of the given time
-  on the given MapUID 
+  on the given MapUID  
+  - If the requested leaderboard has not previously been fetched from Nadeo,
+    the server responds with response code 503 and promts the client to retry
+    after a few seconds. This happens because fetching of a leaderboard from 
+    Nadeo usually takes about 30 seconds.
 - **Values**:
   - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
     data has not yet been fetched from Nadeo by the server, no data is returned.
