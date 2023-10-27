@@ -18,9 +18,9 @@ namespace CotdQualifierRankWeb.Controllers
         [HttpGet("{mapUid}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetCompetitionByMap(string mapUid)
+        public async Task<IActionResult> GetCompetitionByMap(string mapUid)
         {
-            var competition = _competitionService.GetCompetitionByMapUid(mapUid, false);
+            var competition = await _competitionService.GetCompetitionByMapUid(mapUid, false);
 
             if (competition is null)
             {
@@ -39,9 +39,9 @@ namespace CotdQualifierRankWeb.Controllers
         [HttpGet("{competitionId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetCompetitionByCompetitionId(int competitionId)
+        public async Task<IActionResult> GetCompetitionByCompetitionId(int competitionId)
         {
-            var competition = _competitionService.GetCompetition(competitionId, false);
+            var competition = await _competitionService.GetCompetition(competitionId, false);
 
             if (competition is null)
             {
@@ -60,14 +60,15 @@ namespace CotdQualifierRankWeb.Controllers
         [HttpGet("{mapUid}/leaderboard")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
+        public async Task<IActionResult> GetCompetitionLeaderboardByMapUid(string mapUid)
         {
-            var competition = _competitionService.GetCompetitionByMapUid(mapUid, true);
+            var competition = await _competitionService.GetCompetitionByMapUid(mapUid, true);
 
             if (competition is null || competition.Leaderboard is null)
             {
                 return NotFound();
             }
+            var hei = Guid.NewGuid();
 
             var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
             return Ok(leaderboard);
@@ -76,9 +77,9 @@ namespace CotdQualifierRankWeb.Controllers
         [HttpGet("{competitionId:int}/leaderboard")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)
+        public async Task<IActionResult> GetCompetitionLeaderboardByChallengeId(int competitionId)
         {
-            var competition = _competitionService.GetCompetition(competitionId, true);
+            var competition = await _competitionService.GetCompetition(competitionId, true);
 
             if (competition is null || competition.Leaderboard is null)
             {

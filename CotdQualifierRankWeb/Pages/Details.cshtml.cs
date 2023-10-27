@@ -36,7 +36,7 @@ namespace CotdQualifierRankWeb.Pages
             _rankController = rankController;
         }
 
-        private void Initialise(int? id)
+        private async Task Initialise(int? id)
         {
             if (PageNo < 1)
             {
@@ -47,7 +47,7 @@ namespace CotdQualifierRankWeb.Pages
                 return;
             }
 
-            var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(m => m.Id == id);
+            var competition = await _context.Competitions.Include(c => c.Leaderboard).FirstOrDefaultAsync(m => m.Id == id);
             if (competition is null || competition.Leaderboard is null)
             {
                 return;
@@ -106,9 +106,9 @@ namespace CotdQualifierRankWeb.Pages
             FirstSeedDifference = PaginatedLeaderboard.Select(r => r - firstSeed).ToList();
         }
 
-        public void OnGet(int? id)
+        public async Task OnGet(int? id)
         {
-            Initialise(id);
+            await Initialise(id);
 
             if (TempData.TryGetValue("Rank", out var rankData) && rankData is not null)
             {
@@ -120,9 +120,9 @@ namespace CotdQualifierRankWeb.Pages
             }
         }
 
-        public IActionResult OnPostPB(int? id)
+        public async Task<IActionResult> OnPostPB(int? id)
         {
-            Initialise(id);
+            await Initialise(id);
             if (Competition.NadeoMapUid is null)
             {
                 return RedirectToPage();
