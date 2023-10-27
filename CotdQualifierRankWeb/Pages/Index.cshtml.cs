@@ -40,12 +40,6 @@ namespace CotdQualifierRankWeb.Pages
             OldestMonth = new DateTime(compsAndPlayerCounts.OldestDate.Year, compsAndPlayerCounts.OldestDate.Month, 1);
         }
 
-        public IActionResult OnPostDelete(int id)
-        {
-            _competitionService.DeleteCompetition(id);
-            return RedirectToAction("");
-        }
-
         public string NewPageMonth(int monthsToAdd, bool getMonthName = false)
         {
             DateTime currentMonth = GetPageMonthDateTime();
