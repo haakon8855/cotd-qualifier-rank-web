@@ -19,6 +19,7 @@ namespace CotdQualifierRankWeb.Services
             {
                 return await _context.Competitions
                     .Include(c => c.Leaderboard)
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(c => c.NadeoMapUid == mapUid);
             }
             return await _context.Competitions
@@ -31,6 +32,7 @@ namespace CotdQualifierRankWeb.Services
             {
                 return await _context.Competitions
                     .Include(c => c.Leaderboard)
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(c => c.NadeoCompetitionId == competitionId);
             }
             return await _context.Competitions
@@ -68,7 +70,9 @@ namespace CotdQualifierRankWeb.Services
             bool filterAnomalous = false
         )
         {
-            var baseQuery = _context.Competitions.OrderByDescending(c => c.Date);
+            var baseQuery = _context.Competitions
+                .OrderByDescending(c => c.Date)
+                .AsNoTracking();
 
             var oldestDate = baseQuery.LastOrDefault()?.Date ?? new DateTime(2020, 11, 02);
             var newestDate = baseQuery.FirstOrDefault()?.Date ?? DateTime.Now;
@@ -77,6 +81,7 @@ namespace CotdQualifierRankWeb.Services
             if (filterAnomalous)
             {
                 baseQuery = _context.NadeoCompetitions.Join(_context.Competitions.Include(c => c.Leaderboard), nc => nc.Id, c => c.NadeoCompetitionId, (nc, c) => new { NadeoCompetition = nc, Competition = c })
+                    .AsNoTracking()
                     .Where(
                         jc => jc.Competition.Leaderboard == null ||
                         jc.Competition.Leaderboard.Count == 0 ||
@@ -115,6 +120,7 @@ namespace CotdQualifierRankWeb.Services
         public async Task<List<string?>> GetMapsUids()
         {
             return await _context.Competitions
+                .AsNoTracking()
                 .Where(c => c.NadeoMapUid != null)
                 .OrderBy(c => c.Date)
                 .Select(c => c.NadeoMapUid)
