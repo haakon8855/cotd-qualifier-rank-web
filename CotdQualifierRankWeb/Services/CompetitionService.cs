@@ -13,46 +13,46 @@ namespace CotdQualifierRankWeb.Services
             _context = context;
         }
 
-        public Competition? GetCompetitionByMapUid(string mapUid, bool includeLeaderboard = true)
+        public async Task<Competition?> GetCompetitionByMapUid(string mapUid, bool includeLeaderboard = true)
         {
             if (includeLeaderboard)
             {
-                return _context.Competitions
+                return await _context.Competitions
                     .Include(c => c.Leaderboard)
-                    .FirstOrDefault(c => c.NadeoMapUid == mapUid);
+                    .FirstOrDefaultAsync(c => c.NadeoMapUid == mapUid);
             }
-            return _context.Competitions
-                .FirstOrDefault(c => c.NadeoMapUid == mapUid);
+            return await _context.Competitions
+                .FirstOrDefaultAsync(c => c.NadeoMapUid == mapUid);
         }
 
-        public Competition? GetCompetition(int competitionId, bool includeLeaderboard = true)
+        public async Task<Competition?> GetCompetition(int competitionId, bool includeLeaderboard = true)
         {
             if (includeLeaderboard)
             {
-                return _context.Competitions
+                return await _context.Competitions
                     .Include(c => c.Leaderboard)
-                    .FirstOrDefault(c => c.NadeoCompetitionId == competitionId);
+                    .FirstOrDefaultAsync(c => c.NadeoCompetitionId == competitionId);
             }
-            return _context.Competitions
-                .FirstOrDefault(c => c.NadeoCompetitionId == competitionId);
+            return await _context.Competitions
+                .FirstOrDefaultAsync(c => c.NadeoCompetitionId == competitionId);
         }
 
-        public void AddCompetition(Competition? competition)
+        public async Task AddCompetition(Competition? competition)
         {
             if (competition is not null)
             {
                 _context.Competitions.Add(competition);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public void AddLeaderboardToCompetition(int id, List<Record> leaderboard)
+        public async Task AddLeaderboardToCompetition(int id, List<Record> leaderboard)
         {
             var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.Id == id);
             if (competition is not null)
             {
                 competition.Leaderboard = leaderboard;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -77,8 +77,12 @@ namespace CotdQualifierRankWeb.Services
             if (filterAnomalous)
             {
                 baseQuery = _context.NadeoCompetitions.Join(_context.Competitions.Include(c => c.Leaderboard), nc => nc.Id, c => c.NadeoCompetitionId, (nc, c) => new { NadeoCompetition = nc, Competition = c })
-                    .Where(jc => jc.Competition.Leaderboard == null || jc.Competition.Leaderboard.Count == 0 || jc.NadeoCompetition.NbPlayers != jc.Competition.Leaderboard.Count)
-                    .Select(jc => jc.Competition).OrderByDescending(c => c.Date);
+                    .Where(
+                        jc => jc.Competition.Leaderboard == null ||
+                        jc.Competition.Leaderboard.Count == 0 ||
+                        jc.NadeoCompetition.NbPlayers != jc.Competition.Leaderboard.Count)
+                    .Select(jc => jc.Competition)
+                    .OrderByDescending(c => c.Date);
                 fetchedComps = baseQuery;
             }
             else
@@ -98,13 +102,13 @@ namespace CotdQualifierRankWeb.Services
             );
         }
 
-        public void DeleteCompetition(int id)
+        public async Task DeleteCompetition(int id)
         {
             var competition = _context.Competitions.Include(c => c.Leaderboard).FirstOrDefault(c => c.Id == id);
             if (competition is not null)
             {
                 _context.Competitions.Remove(competition);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 

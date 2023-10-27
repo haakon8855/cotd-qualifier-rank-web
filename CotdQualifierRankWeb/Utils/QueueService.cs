@@ -151,7 +151,7 @@ namespace CotdQualifierRankWeb.Utils
             newCompetition.NadeoMapUid = mapUid;
             newCompetition.Date = mapTotdDate;
             newCompetition.Leaderboard = await FetchQualificationLeaderboard(nadeoCompetition, newCompetition.NadeoChallengeId);
-            _competitionService.AddCompetition(newCompetition);
+            await _competitionService.AddCompetition(newCompetition);
 
             return newCompetition;
         }
