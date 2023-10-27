@@ -29,11 +29,11 @@ namespace CotdQualifierRankWeb.Pages
         public List<Competition> Competitions { get; set; } = default!;
         public List<int> CompetitionPlayerCounts { get; set; } = default!;
 
-        public void OnGet()
+        public async Task OnGet()
         {
             var year = int.Parse(PageMonth.Split("-")[0]);
             var month = int.Parse(PageMonth.Split("-")[1]);
-            var compsAndPlayerCounts = _competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
+            var compsAndPlayerCounts = await _competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
             Competitions = compsAndPlayerCounts.Comps;
             CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
             NewestMonth = new DateTime(compsAndPlayerCounts.NewestDate.Year, compsAndPlayerCounts.NewestDate.Month, 1);
@@ -56,7 +56,11 @@ namespace CotdQualifierRankWeb.Pages
 
         public DateTime GetPageMonthDateTime()
         {
-            return new DateTime(int.Parse(PageMonth.Split("-")[0]), int.Parse(PageMonth.Split("-")[1]), 1);
+            return new DateTime(
+                year: int.Parse(PageMonth.Split("-")[0]),
+                month: int.Parse(PageMonth.Split("-")[1]),
+                day: 1
+            );
         }
     }
 }

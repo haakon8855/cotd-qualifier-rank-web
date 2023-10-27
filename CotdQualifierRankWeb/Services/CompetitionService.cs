@@ -56,12 +56,12 @@ namespace CotdQualifierRankWeb.Services
             }
         }
 
-        public (
+        public async Task<(
             List<Competition> Comps,
             List<int> PlayerCounts,
             DateTime OldestDate,
             DateTime NewestDate
-        )
+        )>
             GetCompetitionsAndPlayerCounts(
             int year,
             int month,
@@ -85,9 +85,9 @@ namespace CotdQualifierRankWeb.Services
             {
                 fetchedComps = baseQuery.Where(c => c.Date.Year == year && c.Date.Month == month);
             }
-            var competitions = fetchedComps.ToList();
+            var competitions = await fetchedComps.ToListAsync();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            var competitionPlayerCounts = fetchedComps.Select(c => c.Leaderboard.Count).ToList();
+            var competitionPlayerCounts = await fetchedComps.Select(c => c.Leaderboard.Count).ToListAsync();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             return (
