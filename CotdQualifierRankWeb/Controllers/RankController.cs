@@ -71,6 +71,7 @@ namespace CotdQualifierRankWeb.Controllers
                 Date = cotd.Date,
                 Time = time,
                 Rank = rank,
+                PlayerCount = cotd.Leaderboard?.Count ?? 0,
                 LeaderboardIsEmpty = cotd.Leaderboard is null || cotd.Leaderboard.Count == 0,
             });
         }
