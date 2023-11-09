@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - cotd-qualifier-rank-web
+name: Build and deploy COTD Qualifier Rank to prod
 
 on:
   push:
@@ -25,14 +25,25 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: Generate EF migration script
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef migrations script --idempotent --no-build --configuration Release --output ${{env.DOTNET_ROOT}}/migrations.sql --verbose
+
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/cotd-app
+
+      - name: Upload EF migration script artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: dbmigrationscript
+          path: ${{env.DOTNET_ROOT}}/migrations.sql
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: cotdapp
+          path: ${{env.DOTNET_ROOT}}/cotd-app
 
   deploy:
     runs-on: windows-latest
@@ -43,9 +54,30 @@ jobs:
 
     steps:
       - name: Download artifact from build job
+        id: download-artifact
         uses: actions/download-artifact@v3
         with:
-          name: .net-app
+          name: cotdapp
+
+      - name: Download EF migration script artifact from build job
+        id: download-migration-script
+        uses: actions/download-artifact@v3
+        with:
+          name: dbmigrationscript
+      
+      - name: Update DB using SQL script
+        uses: azure/sql-action@v2.2
+        with:
+          connection-string: ${{ secrets.DB_CONNECTION_STRING }}
+          path: ${{ steps.download-migration-script.outputs.download-path }}/migrations.sql
+          action: "publish"
+      
+      - name: App settings variable substitution
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: "${{ steps.download-artifact.outputs.download-path }}/appsettings.json"
+        env:
+          ConnectionStrings.DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
