@@ -13,11 +13,5 @@ namespace CotdQualifierRankWeb.Data
         public DbSet<Competition> Competitions { get; set; } = default!;
         public DbSet<Record> Records { get; set; } = default!;
         public DbSet<NadeoCompetition> NadeoCompetitions { get; set; } = default!;
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Competition>().ToTable("Competition");
-            modelBuilder.Entity<Record>().ToTable("Record");
-        }
     }
 }

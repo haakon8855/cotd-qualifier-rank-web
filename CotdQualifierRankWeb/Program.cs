@@ -1,17 +1,35 @@
+using Azure.Identity;
 using CotdQualifierRankWeb.Controllers;
 using CotdQualifierRankWeb.Data;
 using CotdQualifierRankWeb.Services;
 using CotdQualifierRankWeb.Utils;
 using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var config = builder.Configuration;
+
+if (builder.Environment.IsDevelopment())
+{
+    // Use User Secrets
+    config.AddUserSecrets<Program>();
+    // Use credentials.json
+    config.AddJsonFile("credentials.json", optional: true, reloadOnChange: true);
+}
+else
+{
+    // Use Azure Key Vault for production
+    var keyVaultEndpoint = new Uri("https://cotd-qualifier-rank-keys.vault.azure.net/");
+    config.AddAzureKeyVault(keyVaultEndpoint, new ManagedIdentityCredential());
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<CredentialsManager>();
+builder.Services.AddSingleton<NadeoCredentialsManager>();
 
 builder.Services.AddDbContext<CotdContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("CotdContext") ?? throw new InvalidOperationException("Connection string 'CotdContext' not found.")));
+    options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
 builder.Services.AddSingleton<NadeoApiController>();
 

@@ -27,9 +27,9 @@ namespace CotdQualifierRankWeb.Controllers
 
         public static readonly int RequestTimeoutInterval = 1000;
 
-        private CredentialsManager _credentialsManager;
+        private NadeoCredentialsManager _credentialsManager;
 
-        public NadeoApiController(CredentialsManager credentialsManager)
+        public NadeoApiController(NadeoCredentialsManager credentialsManager)
         {
             _credentialsManager = credentialsManager;
             if (_credentialsManager.Credentials is null)
