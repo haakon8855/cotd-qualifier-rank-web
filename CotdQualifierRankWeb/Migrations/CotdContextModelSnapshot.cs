@@ -50,10 +50,7 @@ namespace CotdQualifierRankWeb.Migrations
             modelBuilder.Entity("CotdQualifierRankWeb.Models.NadeoCompetition", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");

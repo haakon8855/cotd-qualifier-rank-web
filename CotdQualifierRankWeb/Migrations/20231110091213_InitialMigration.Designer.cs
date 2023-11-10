@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CotdQualifierRankWeb.Migrations
 {
     [DbContext(typeof(CotdContext))]
-    [Migration("20231108132131_InitialMigration")]
+    [Migration("20231110091213_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -53,10 +53,7 @@ namespace CotdQualifierRankWeb.Migrations
             modelBuilder.Entity("CotdQualifierRankWeb.Models.NadeoCompetition", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
