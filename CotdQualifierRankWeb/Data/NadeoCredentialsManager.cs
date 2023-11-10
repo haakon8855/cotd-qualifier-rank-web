@@ -12,10 +12,11 @@ namespace CotdQualifierRankWeb.Data
             _configuration = configuration;
 
             Console.WriteLine("starting");
-            var accountId = _configuration["AzureKeyVault:nadeo-accountid"];
-            var login = _configuration["AzureKeyVault:nadeo-login"];
-            var password = _configuration["AzureKeyVault:nadeo-password"];
-            var useragent = _configuration["AzureKeyVault:nadeo-useragent"];
+            var accountId = _configuration["nadeo-accountid"];
+            var login = _configuration["nadeo-login"];
+            var password = _configuration["nadeo-password"];
+            var useragent = _configuration["nadeo-useragent"];
+            var connectionstring = _configuration["database-connection-string"];
 
             Credentials = new Credentials
             {
@@ -24,6 +25,8 @@ namespace CotdQualifierRankWeb.Data
                 Password = password,
                 UserAgent = useragent
             };
+
+            Console.WriteLine(connectionstring);
             Console.WriteLine(accountId);
             Console.WriteLine(login);
             Console.WriteLine(password);

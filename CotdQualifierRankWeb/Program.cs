@@ -20,7 +20,7 @@ else
 {
     // Use Azure Key Vault for production
     var keyVaultEndpoint = new Uri("https://cotd-qualifier-rank-keys.vault.azure.net/");
-    config.AddAzureKeyVault(keyVaultEndpoint, new ManagedIdentityCredential());
+    config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
 }
 
 // Add services to the container.
