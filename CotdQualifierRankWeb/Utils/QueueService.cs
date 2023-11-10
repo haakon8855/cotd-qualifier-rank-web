@@ -84,6 +84,18 @@ namespace CotdQualifierRankWeb.Utils
                     var mapTotdDate = ISOWeek.ToDateTime(mapTotdInfo.TotdYear, mapTotdInfo.Week, (DayOfWeek)dayOfWeek);
                     mapTotdDate = mapTotdDate.AddHours(19);
 
+                    var currentTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Central European Standard Time");
+
+                    // If the requested map is today's map
+                    if (currentTime.Date == mapTotdDate.Date)
+                    {
+                        // If the time is before 19:30, we assume the leaderboard is not available yet and return null
+                        if (currentTime < mapTotdDate.AddMinutes(30))
+                        {
+                            return null;
+                        }
+                    }
+
                     if (mapTotdDate < new DateTime(2020, 11, 16))
                     {
                         return null;
