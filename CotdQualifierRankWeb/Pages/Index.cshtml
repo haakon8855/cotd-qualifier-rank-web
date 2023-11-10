@@ -97,7 +97,7 @@
             <td>
                 @if (Model.FilterAnomalous)
                 {
-                    @Model.Competitions[i].Date.ToShortDateString()
+                    @Model.Competitions[i].Date.ToString("dd.MM.yyyy");
                 }
                 else
                 {

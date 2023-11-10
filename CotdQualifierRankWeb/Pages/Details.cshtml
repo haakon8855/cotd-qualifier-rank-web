@@ -7,7 +7,7 @@
     var date = Model.Competition.Date;
 }
 
-<h1>Cup of the Day - @date.DayOfWeek @date.ToShortDateString()</h1>
+<h1>Cup of the Day - @date.DayOfWeek @date.ToString("dd.MM.yyyy")</h1>
 
 <div>
     <h4>Qualification Leaderboard</h4>
@@ -21,7 +21,7 @@
                         @Html.DisplayNameFor(model => model.Competition.Date)
                     </dt>
                     <dd class="col-sm-8">
-                        @Model.Competition.Date.ToShortDateString()
+                        @Model.Competition.Date.ToString("dd.MM.yyyy")
                     </dd>
                     <dt class="col-sm-4">
                         Player Count
