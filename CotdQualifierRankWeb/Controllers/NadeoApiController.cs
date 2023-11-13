@@ -150,7 +150,7 @@ namespace CotdQualifierRankWeb.Controllers
 
         public async Task<HttpResponseMessage?> GetCompetitions(int length, int offset)
         {
-            SetDefaultRequestHeaders(_meetClient);
+            await SetAuthenticationHeaders(_meetClient);
             var endpointURI = $"/api/competitions?length={length}&offset={offset}";
             try
             {
