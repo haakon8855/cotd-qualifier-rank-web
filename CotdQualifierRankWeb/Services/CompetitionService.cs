@@ -6,7 +6,7 @@ namespace CotdQualifierRankWeb.Services
 {
     public class CompetitionService
     {
-        public CotdContext _context { get; set; } = default!;
+        private readonly CotdContext _context;
 
         public CompetitionService(CotdContext context)
         {
