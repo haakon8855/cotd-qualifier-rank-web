@@ -1,0 +1,154 @@
+@page
+@using CotdQualifierRank.Web.Utils
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Recent Cup of the Days @(Model.FilterAnomalous ? "" : "- " + Model.GetPageMonthDateTime().ToMonthAndYearString())</h1>
+@if (Model.FilterAnomalous)
+{
+    <h2>Anomalous Leaderboards <span title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</span></h2>
+}
+
+@if (!Model.FilterAnomalous)
+{
+<div class="index-pagination-container">
+    <div class="filter-container"></div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @if (Model.GetPageMonthDateTime() != Model.OldestMonth)
+            {
+                <li class="page-item">
+                    <a
+                        asp-route-pageMonth="@Model.OldestMonth.ToPageMonthString()"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0">&lt;&lt;</pre>
+                    </a>
+                </li>
+                <li class="page-item">
+                        <a
+                            asp-route-pageMonth="@Model.NewPageMonth(-1)"
+                            asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                            asp-page="./Index"
+                            class="page-link page-link-dark"
+                        >
+                            <pre class="m-0">&lt;&nbsp;@Model.NewPageMonth(-1, true)</pre>
+                        </a>
+                </li>
+            }
+            @if (Model.GetPageMonthDateTime() != Model.NewestMonth)
+            {
+                <li class="page-item">
+                    <a
+                        asp-route-pageMonth="@Model.NewPageMonth(1)"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0">@Model.NewPageMonth(1, true)&nbsp;&gt;</pre>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a
+                        asp-route-pageMonth="@Model.NewestMonth.ToPageMonthString()"
+                        asp-route-filterAnomalous="@Model.FilterAnomalous" 
+                        asp-page="./Index"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0">&gt;&gt;</pre>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+}
+
+<table class="table table-borderless table-striped" style="color:#cfcfcf">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Competitions[0].Date)
+            </th>
+            <th>
+                Player Count
+            </th>
+            <th class="d-none d-sm-table-cell">
+                @Html.DisplayNameFor(model => model.Competitions[0].NadeoCompetitionId)
+            </th>
+            <th class="d-none d-md-table-cell">
+                @Html.DisplayNameFor(model => model.Competitions[0].NadeoChallengeId)
+            </th>
+            <th class="fit d-none d-xl-table-cell">
+                @Html.DisplayNameFor(model => model.Competitions[0].NadeoMapUid)
+            </th>
+            <th class="d-none d-md-table-cell"></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@for (int i = 0; i<Model.Competitions.Count;i++) {
+        <tr>
+            <td>
+                @if (Model.FilterAnomalous)
+                {
+                    @Model.Competitions[i].Date.ToString("dd.MM.yyyy");
+                }
+                else
+                {
+                    @Model.Competitions[i].Date.ToShortDayString()
+                }
+            </td>
+            <td>
+                @Model.CompetitionPlayerCounts[i]
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoCompetitionId)
+            </td>
+            <td class="d-none d-md-table-cell">
+                @Html.DisplayFor(modelItem => Model.Competitions[i].NadeoChallengeId)
+            </td>
+            <td class="fit d-none d-xl-table-cell">
+                <code class="mapuid-code">@Html.DisplayFor(modelItem => Model.Competitions[i].NadeoMapUid)</code>
+            </td>
+            <td class="d-none d-md-table-cell">
+                <a
+                    aria-label="Send GET request to Rank endpoint"
+                    href="./api/rank/@Model.Competitions[i].NadeoMapUid/45000"
+                >
+                    Rank API
+                </a>
+            </td>
+            <td>
+                <a
+                    aria-label="Open leaderboard for @Model.Competitions[i].Date.ToShortDateString()"
+                    asp-page="./Details"
+                    asp-route-id="@Model.Competitions[i].Id"
+                >
+                    Details
+                </a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div class="filter-container">
+    <div class="d-flex">
+        <a asp-route-filterAnomalous="@(!Model.FilterAnomalous)">
+            @if (Model.FilterAnomalous)
+            {
+                <div>Show all COTDs</div>
+            }
+            else
+            {
+                <div>Show only anomalous COTDs</div>
+            }
+        </a>&nbsp; <div title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</div>
+    </div>
+</div>
