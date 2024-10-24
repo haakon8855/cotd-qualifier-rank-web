@@ -1,9 +1,8 @@
-﻿namespace CotdQualifierRank.Web.DTOs
+﻿namespace CotdQualifierRank.Web.DTOs;
+
+public class NadeoAuthTokens
 {
-    public class NadeoAuthTokens
-    {
-        public string? AccessToken { get; set; }
-        public string? RefreshToken { get; set; }
-        public DateTime? AuthTime { get; set; }
-    }
+    public string? AccessToken { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? AuthTime { get; set; }
 }

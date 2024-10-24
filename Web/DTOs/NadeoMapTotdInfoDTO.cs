@@ -1,9 +1,8 @@
-﻿namespace CotdQualifierRank.Web.DTOs
+﻿namespace CotdQualifierRank.Web.DTOs;
+
+public class NadeoMapTotdInfoDTO
 {
-    public class NadeoMapTotdInfoDTO
-    {
-        public int TotdYear { get; set; }
-        public int Week { get; set; }
-        public List<string>? TotdMaps { get; set; }
-    }
+    public int TotdYear { get; set; }
+    public int Week { get; set; }
+    public List<string>? TotdMaps { get; set; }
 }

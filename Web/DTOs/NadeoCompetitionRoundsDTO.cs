@@ -1,9 +1,8 @@
-﻿namespace CotdQualifierRank.Web.DTOs
+﻿namespace CotdQualifierRank.Web.DTOs;
+
+public class NadeoCompetitionRoundsDTO
 {
-    public class NadeoCompetitionRoundsDTO
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public int QualifierChallengeId { get; set; }
-    }
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    public int QualifierChallengeId { get; set; }
 }
