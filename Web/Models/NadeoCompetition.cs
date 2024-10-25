@@ -12,29 +12,11 @@ public class NadeoCompetition
 
     public static DateTime ParseDate(string input)
     {
-        string[] dateFormats = {
-            "COTD yyyy-MM-dd #1",
-            "Cup of the Day yyyy-MM-dd #1",
-            "Cup of the Day yyyy-MM-dd"
-        };
-        string[] nameFormats = {
-            @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$",
-            @"Cup of the Day 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$",
-            @"Cup of the Day 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$",
-        };
-        string nameFormat = @"20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]";
+        var nameFormat = @"20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]";
+        var match = Regex.Match(input, nameFormat);
 
-        for (int i = 0; i < dateFormats.Length; i++)
-        {
-            Match match = Regex.Match(input, nameFormat);
-            if (match.Success)
-            {
-                if (DateTime.TryParse(match.Value, out DateTime date))
-                {
-                    return date;
-                }
-            }
-        }
+        if (match.Success && DateTime.TryParse(match.Value, out DateTime date))
+            return date;
 
         return DateTime.Parse("2020-07-01");
     }

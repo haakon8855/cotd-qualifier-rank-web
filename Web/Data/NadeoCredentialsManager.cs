@@ -33,4 +33,3 @@ public class NadeoCredentialsManager
         Console.WriteLine(useragent);
     }
 }
-

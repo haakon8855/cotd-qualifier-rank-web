@@ -49,7 +49,7 @@ public class RankController : ControllerBase
             }
 
             int secondsToWait = 5;
-            Response.Headers.Add("Retry-After", secondsToWait.ToString());
+            Response.Headers.Append("Retry-After", secondsToWait.ToString());
             return StatusCode(503,
                 new
                 {
@@ -77,7 +77,7 @@ public class RankController : ControllerBase
     }
 
     [NonAction]
-    public int FindRankInLeaderboard(Competition cotd, int time)
+    private int FindRankInLeaderboard(Competition? cotd, int time)
     {
         // Binary search on the leaderboard to find the rank as if
         // it would have been part of the sorted list
@@ -85,6 +85,7 @@ public class RankController : ControllerBase
         {
             return -1;
         }
+
         cotd.Leaderboard.Sort((a, b) => a.Time.CompareTo(b.Time));
         int rank = 0;
         int min = 0;
@@ -101,9 +102,9 @@ public class RankController : ControllerBase
                 max = mid;
             }
         }
+
         rank = min + 1;
 
         return rank;
     }
-
 }

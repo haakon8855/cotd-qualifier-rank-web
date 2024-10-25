@@ -36,6 +36,7 @@ public class NadeoApiController
         {
             throw new InvalidOperationException("Credentials not found.");
         }
+
         Console.WriteLine("----------------------------------");
         Console.WriteLine(_credentialsManager.Credentials.Login);
         Console.WriteLine(_credentialsManager.Credentials.Password);
@@ -57,6 +58,7 @@ public class NadeoApiController
         {
             throw new InvalidOperationException("Credentials not found.");
         }
+
         string username = _credentialsManager.Credentials.Login;
         string password = _credentialsManager.Credentials.Password;
         string credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
@@ -80,6 +82,7 @@ public class NadeoApiController
                 {
                     return;
                 }
+
                 tokens.AuthTime = DateTime.Now;
                 AuthTokens = tokens;
                 Console.WriteLine("----------------------------------");
@@ -103,6 +106,7 @@ public class NadeoApiController
             Console.WriteLine($"Throttling for {timeToWait.TotalMilliseconds} ms");
             Thread.Sleep(timeToWait);
         }
+
         Console.WriteLine($"Time since last request: {DateTime.Now - LastRequest}");
         LastRequest = DateTime.Now;
     }
@@ -122,9 +126,11 @@ public class NadeoApiController
         {
             await Authenticate();
         }
+
         if (AuthTokens is not null)
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("nadeo_v1", $"t={AuthTokens.AccessToken}");
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("nadeo_v1", $"t={AuthTokens.AccessToken}");
         }
     }
 
@@ -145,6 +151,7 @@ public class NadeoApiController
         {
             Console.WriteLine(e.Message);
         }
+
         return null;
     }
 
@@ -165,6 +172,7 @@ public class NadeoApiController
         {
             Console.WriteLine(e.Message);
         }
+
         return null;
     }
 
@@ -188,6 +196,7 @@ public class NadeoApiController
                 {
                     return 0;
                 }
+
                 var round = rounds.First();
                 if (round is not null)
                 {
@@ -203,6 +212,7 @@ public class NadeoApiController
         {
             Console.WriteLine(e.Message);
         }
+
         return 0;
     }
 
@@ -225,6 +235,7 @@ public class NadeoApiController
                 {
                     return null;
                 }
+
                 return leaderboard;
             }
             catch (Exception e)
@@ -236,6 +247,7 @@ public class NadeoApiController
         {
             Console.WriteLine(e.Message);
         }
+
         return null;
     }
 }

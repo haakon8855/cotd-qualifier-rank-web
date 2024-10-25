@@ -2,7 +2,7 @@
 
 namespace CotdQualifierRank.Web.Utils;
 
-public static class Extensions
+public static class DateTimeExtensions
 {
     public static string ToMonthString(this DateTime date)
     {

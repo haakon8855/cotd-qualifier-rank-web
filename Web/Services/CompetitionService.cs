@@ -22,6 +22,7 @@ public class CompetitionService
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.NadeoMapUid == mapUid);
         }
+
         return await _context.Competitions
             .FirstOrDefaultAsync(c => c.NadeoMapUid == mapUid);
     }
@@ -35,6 +36,7 @@ public class CompetitionService
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.NadeoCompetitionId == competitionId);
         }
+
         return await _context.Competitions
             .FirstOrDefaultAsync(c => c.NadeoCompetitionId == competitionId);
     }
@@ -59,16 +61,16 @@ public class CompetitionService
     }
 
     public async Task<(
-        List<Competition> Comps,
-        List<int> PlayerCounts,
-        DateTime OldestDate,
-        DateTime NewestDate
-    )>
+            List<Competition> Comps,
+            List<int> PlayerCounts,
+            DateTime OldestDate,
+            DateTime NewestDate
+            )>
         GetCompetitionsAndPlayerCounts(
-        int year,
-        int month,
-        bool filterAnomalous = false
-    )
+            int year,
+            int month,
+            bool filterAnomalous = false
+        )
     {
         var baseQuery = _context.Competitions
             .OrderByDescending(c => c.Date)
@@ -94,6 +96,7 @@ public class CompetitionService
         {
             fetchedComps = baseQuery.Where(c => c.Date.Year == year && c.Date.Month == month);
         }
+
         var competitions = await fetchedComps.ToListAsync();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         var competitionPlayerCounts = await fetchedComps.Select(c => c.Leaderboard.Count).ToListAsync();

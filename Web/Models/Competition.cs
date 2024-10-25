@@ -22,9 +22,9 @@ public class Competition
     public List<Record>? Leaderboard { get; set; }
 
     public static string MapPattern = @"^[A-Za-z0-9_]{26,27}$";
+    
     public static bool IsValidMapUid(string mapUid)
     {
         return Regex.IsMatch(mapUid, MapPattern);
     }
-
 }

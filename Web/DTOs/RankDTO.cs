@@ -2,12 +2,12 @@
 
 public class RankDTO
 {
-    public string MapUid { get; set; } = default!;
-    public int CompetitionId { get; set; } = 0;
-    public int ChallengeId { get; set; } = 0;
-    public DateTime Date { get; set; } = default!;
-    public int Time { get; set; } = 0;
-    public int Rank { get; set; } = 0;
-    public int PlayerCount { get; set; } = 0;
-    public bool LeaderboardIsEmpty { get; set; } = false;
+    public string MapUid { get; set; } = "";
+    public int CompetitionId { get; set; }
+    public int ChallengeId { get; set; } 
+    public DateTime Date { get; set; } 
+    public int Time { get; set; } 
+    public int Rank { get; set; }
+    public int PlayerCount { get; set; }
+    public bool LeaderboardIsEmpty { get; set; }
 }

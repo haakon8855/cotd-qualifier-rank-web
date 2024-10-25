@@ -3,15 +3,9 @@ using CotdQualifierRank.Web.Services;
 
 namespace CotdQualifierRank.Web.Utils;
 
-public class LeaderboardQueueWorker : IHostedService, IDisposable
+public class LeaderboardQueueWorker(IServiceProvider services) : IHostedService, IDisposable
 {
-    private readonly IServiceProvider _services;
     private Timer? _timer = null;
-
-    public LeaderboardQueueWorker(IServiceProvider services)
-    {
-        _services = services;
-    }
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
@@ -23,15 +17,13 @@ public class LeaderboardQueueWorker : IHostedService, IDisposable
 
     private async void DoWork(object? state)
     {
-        using (var scope = _services.CreateScope())
-        {
-            var nadeoApiController = scope.ServiceProvider.GetRequiredService<NadeoApiController>();
-            var competitionService = scope.ServiceProvider.GetRequiredService<CompetitionService>();
-            var nadeoCompetitionService = scope.ServiceProvider.GetRequiredService<NadeoCompetitionService>();
+        using var scope = services.CreateScope();
+        var nadeoApiController = scope.ServiceProvider.GetRequiredService<NadeoApiController>();
+        var competitionService = scope.ServiceProvider.GetRequiredService<CompetitionService>();
+        var nadeoCompetitionService = scope.ServiceProvider.GetRequiredService<NadeoCompetitionService>();
 
-            var queueService = new QueueService(nadeoApiController, nadeoCompetitionService, competitionService);
-            await queueService.ProcessMapsAsync();
-        }
+        var queueService = new QueueService(nadeoApiController, nadeoCompetitionService, competitionService);
+        await queueService.ProcessMapsAsync();
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
