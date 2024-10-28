@@ -1,4 +1,4 @@
-﻿namespace CotdQualifierRank.Web.Models;
+﻿namespace CotdQualifierRank.Database.Models;
 
 public class Record
 {

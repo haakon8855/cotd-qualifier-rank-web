@@ -1,7 +1,7 @@
-using CotdQualifierRank.Web.Models;
+using CotdQualifierRank.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CotdQualifierRank.Web.Data;
+namespace CotdQualifierRank.Database;
 
 public class CotdContext : DbContext
 {

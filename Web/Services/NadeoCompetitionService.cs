@@ -1,5 +1,5 @@
-﻿using CotdQualifierRank.Web.Data;
-using CotdQualifierRank.Web.Models;
+﻿using CotdQualifierRank.Database;
+using CotdQualifierRank.Database.Models;
 
 namespace CotdQualifierRank.Web.Services;
 

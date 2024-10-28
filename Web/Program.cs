@@ -1,4 +1,5 @@
 using Azure.Identity;
+using CotdQualifierRank.Database;
 using CotdQualifierRank.Web.Controllers;
 using CotdQualifierRank.Web.Data;
 using CotdQualifierRank.Web.Services;

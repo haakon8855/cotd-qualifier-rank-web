@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CotdQualifierRank.Web.Migrations
+namespace CotdQualifierRank.Database.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

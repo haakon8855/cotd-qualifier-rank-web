@@ -1,6 +1,7 @@
+using CotdQualifierRank.Database;
 using CotdQualifierRank.Web.Controllers;
 using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Models;
+using CotdQualifierRank.Database.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace CotdQualifierRank.Web.Pages;
 
 public class DetailsModel : PageModel
 {
-    private readonly Data.CotdContext _context;
+    private readonly CotdContext _context;
 
     private readonly RankController _rankController;
 
@@ -30,7 +31,7 @@ public class DetailsModel : PageModel
     public List<Record> FirstSeedDifference { get; set; } = default!;
     public Dictionary<string, string> PageStatistics { get; set; } = new Dictionary<string, string>();
 
-    public DetailsModel(Data.CotdContext context, RankController rankController)
+    public DetailsModel(CotdContext context, RankController rankController)
     {
         _context = context;
         _rankController = rankController;

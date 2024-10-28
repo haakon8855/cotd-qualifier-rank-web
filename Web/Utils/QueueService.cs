@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Web.Controllers;
 using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Models;
 using CotdQualifierRank.Web.Services;
 
 namespace CotdQualifierRank.Web.Utils;

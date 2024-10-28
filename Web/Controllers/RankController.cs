@@ -1,6 +1,6 @@
-﻿using CotdQualifierRank.Web.Data;
+﻿using CotdQualifierRank.Database;
+using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Models;
 using CotdQualifierRank.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

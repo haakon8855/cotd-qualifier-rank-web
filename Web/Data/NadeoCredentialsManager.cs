@@ -1,4 +1,4 @@
-﻿using CotdQualifierRank.Web.Models;
+﻿using CotdQualifierRank.Database.Models;
 
 namespace CotdQualifierRank.Web.Data;
 

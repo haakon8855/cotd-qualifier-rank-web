@@ -1,5 +1,5 @@
+using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Web.Utils;
-using CotdQualifierRank.Web.Models;
 using CotdQualifierRank.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
