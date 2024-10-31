@@ -1,9 +1,9 @@
 ﻿namespace CotdQualifierRank.Web.DTOs;
 
-public class CompetitionDTO
+public class CompetitionDTO(int competitionId, int challengeId, string? mapUid, DateTime date)
 {
-    public int CompetitionId { get; set; }
-    public int ChallengeId { get; set; }
-    public string? MapUid { get; set; }
-    public DateTime Date { get; set; }
+    public int CompetitionId { get; } = competitionId;
+    public int ChallengeId { get; } = challengeId;
+    public string? MapUid { get; } = mapUid;
+    public DateTime Date { get; } = date;
 }

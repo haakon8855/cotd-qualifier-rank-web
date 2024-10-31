@@ -144,8 +144,9 @@ public class QueueService(
             NadeoMapUid = mapUid,
             Date = mapTotdDate
         };
-        newCompetition.Leaderboard = await FetchQualificationLeaderboard(nadeoCompetition, newCompetition.NadeoChallengeId);
-        await competitionService.AddCompetition(newCompetition);
+        newCompetition.Leaderboard =
+            await FetchQualificationLeaderboard(nadeoCompetition, newCompetition.NadeoChallengeId);
+        competitionService.AddCompetition(newCompetition);
     }
 
     private async Task<NadeoCompetition?> FetchNadeoCompetition(DateTime mapTotdDate)

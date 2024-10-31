@@ -6,88 +6,47 @@ namespace CotdQualifierRank.Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CompetitionsController : ControllerBase
+public class CompetitionsController(CompetitionService competitionService) : ControllerBase
 {
-    private CompetitionService _competitionService { get; set; }
-
-    public CompetitionsController(CompetitionService competitionService)
-    {
-        _competitionService = competitionService;
-    }
-
     [HttpGet("{mapUid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCompetitionByMap(string mapUid)
+    public IActionResult GetCompetitionByMap(string mapUid)
     {
-        var competition = await _competitionService.GetCompetitionByMapUid(mapUid, false);
+        var competitionDTO = competitionService.GetCompetitionByMapUid(mapUid, false);
 
-        if (competition is null)
-        {
+        if (competitionDTO is null)
             return NotFound();
-        }
 
-        return Ok(new CompetitionDTO
-        {
-            ChallengeId = competition.NadeoChallengeId,
-            CompetitionId = competition.NadeoCompetitionId,
-            Date = competition.Date,
-            MapUid = competition.NadeoMapUid,
-        });
+        return Ok(competitionDTO);
     }
 
     [HttpGet("{competitionId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCompetitionByCompetitionId(int competitionId)
+    public IActionResult GetCompetitionByCompetitionId(int competitionId)
     {
-        var competition = await _competitionService.GetCompetition(competitionId, false);
+        var competition = competitionService.GetCompetitionByCompetitionId(competitionId, false);
 
         if (competition is null)
-        {
             return NotFound();
-        }
 
-        return Ok(new CompetitionDTO
-        {
-            ChallengeId = competition.NadeoChallengeId,
-            CompetitionId = competition.NadeoCompetitionId,
-            Date = competition.Date,
-            MapUid = competition.NadeoMapUid,
-        });
+        return Ok(competition);
     }
 
     [HttpGet("{mapUid}/leaderboard")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCompetitionLeaderboardByMapUid(string mapUid)
+    public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
     {
-        var competition = await _competitionService.GetCompetitionByMapUid(mapUid, true);
-
-        if (competition is null || competition.Leaderboard is null)
-        {
-            return NotFound();
-        }
-
-        var hei = Guid.NewGuid();
-
-        var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
-        return Ok(leaderboard);
+        return Ok(competitionService.GetLeaderboardByMapUid(mapUid));
     }
 
     [HttpGet("{competitionId:int}/leaderboard")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCompetitionLeaderboardByChallengeId(int competitionId)
+    public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)
     {
-        var competition = await _competitionService.GetCompetition(competitionId, true);
-
-        if (competition is null || competition.Leaderboard is null)
-        {
-            return NotFound();
-        }
-
-        var leaderboard = competition.Leaderboard.OrderBy(r => r.Time).Select(r => r.Time);
-        return Ok(leaderboard);
+        return Ok(competitionService.GetLeaderboardByCompetitionId(competitionId));
     }
 }

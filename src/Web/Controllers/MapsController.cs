@@ -5,26 +5,17 @@ namespace CotdQualifierRank.Web.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class MapsController : ControllerBase
+public class MapsController(CompetitionService competitionService) : ControllerBase
 {
-    private CompetitionService _competitionService { get; set; }
-
-    public MapsController(CompetitionService competitionService)
-    {
-        _competitionService = competitionService;
-    }
-
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetMapUids()
+    public IActionResult GetUids()
     {
-        var maps = await _competitionService.GetMapsUids();
+        var maps = competitionService.GetMapsUids();
 
-        if (maps is null)
-        {
+        if (maps.Count == 0)
             return NotFound();
-        }
 
         return Ok(maps);
     }

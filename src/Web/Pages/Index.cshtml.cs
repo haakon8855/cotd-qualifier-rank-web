@@ -12,11 +12,9 @@ public class IndexModel : PageModel
 
     public List<Competition> PaginatedCompetitions { get; set; } = default!;
 
-    [FromQuery(Name = "filterAnomalous")]
-    public bool FilterAnomalous { get; set; } = false;
+    [FromQuery(Name = "filterAnomalous")] public bool FilterAnomalous { get; set; } = false;
 
-    [FromQuery(Name = "pageMonth")]
-    public string PageMonth { get; set; } = DateTime.Now.ToString("yyyy-MM");
+    [FromQuery(Name = "pageMonth")] public string PageMonth { get; set; } = DateTime.Now.ToString("yyyy-MM");
 
     public DateTime NewestMonth { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
     public DateTime OldestMonth { get; set; } = new DateTime(2020, 11, 1);
@@ -33,8 +31,9 @@ public class IndexModel : PageModel
     {
         var year = int.Parse(PageMonth.Split("-")[0]);
         var month = int.Parse(PageMonth.Split("-")[1]);
-        var compsAndPlayerCounts = await _competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
-        Competitions = compsAndPlayerCounts.Comps;
+        var compsAndPlayerCounts =
+            _competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
+        Competitions = compsAndPlayerCounts.Competitions;
         CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
         NewestMonth = new DateTime(compsAndPlayerCounts.NewestDate.Year, compsAndPlayerCounts.NewestDate.Month, 1);
         OldestMonth = new DateTime(compsAndPlayerCounts.OldestDate.Year, compsAndPlayerCounts.OldestDate.Month, 1);
