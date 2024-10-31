@@ -1,6 +1,5 @@
 using Azure.Identity;
 using CotdQualifierRank.Database;
-using CotdQualifierRank.Web.Controllers;
 using CotdQualifierRank.Web.Data;
 using CotdQualifierRank.Web.Repositories;
 using CotdQualifierRank.Web.Services;
@@ -28,13 +27,11 @@ else
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddSingleton<NadeoCredentialsManager>();
-
 builder.Services.AddDbContext<CotdContext>(options =>
     options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
-builder.Services.AddSingleton<NadeoApiController>();
-
+builder.Services.AddSingleton<NadeoCredentialsManager>();
+builder.Services.AddSingleton<NadeoApiService>();
 builder.Services.AddScoped<NadeoCompetitionService>();
 builder.Services.AddScoped<CompetitionService>();
 builder.Services.AddScoped<CotdRepository>();

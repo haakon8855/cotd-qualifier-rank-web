@@ -9,7 +9,7 @@ using CotdQualifierRank.Web.Services;
 namespace CotdQualifierRank.Web.Utils;
 
 public class QueueService(
-    NadeoApiController nadeoApiController,
+    NadeoApiService nadeoApiService,
     NadeoCompetitionService nadeoCompetitionService,
     CompetitionService competitionService)
 {
@@ -56,7 +56,7 @@ public class QueueService(
         if (!Competition.IsValidMapUid(mapUid))
             return;
 
-        var mapResponse = await nadeoApiController.GetTodtInfoForMap(mapUid);
+        var mapResponse = await nadeoApiService.GetTodtInfoForMap(mapUid);
         if (mapResponse is not null)
         {
             var result = await mapResponse.Content.ReadAsStringAsync();
@@ -123,7 +123,7 @@ public class QueueService(
 
         for (int i = 0; i < nadeoCompetition.NbPlayers; i += 100)
         {
-            var leaderboardFragment = await nadeoApiController.GetLeaderboard(challengeId, 100, i);
+            var leaderboardFragment = await nadeoApiService.GetLeaderboard(challengeId, 100, i);
 
             if (leaderboardFragment is not null && leaderboardFragment.Results is not null)
             {
@@ -140,7 +140,7 @@ public class QueueService(
         var newCompetition = new Competition
         {
             NadeoCompetitionId = nadeoCompetition.Id,
-            NadeoChallengeId = await nadeoApiController.GetChallengeId(nadeoCompetition.Id),
+            NadeoChallengeId = await nadeoApiService.GetChallengeId(nadeoCompetition.Id),
             NadeoMapUid = mapUid,
             Date = mapTotdDate
         };
@@ -154,7 +154,7 @@ public class QueueService(
         var offset = 0;
         while (offset < offsetLimit)
         {
-            var compResponse = await nadeoApiController.GetCompetitions(100, offset);
+            var compResponse = await nadeoApiService.GetCompetitions(100, offset);
             if (compResponse is not null)
             {
                 var compResult = await compResponse.Content.ReadAsStringAsync();

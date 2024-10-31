@@ -18,7 +18,7 @@ public class LeaderboardQueueWorker(IServiceProvider services) : IHostedService,
     private async void DoWork(object? state)
     {
         using var scope = services.CreateScope();
-        var nadeoApiController = scope.ServiceProvider.GetRequiredService<NadeoApiController>();
+        var nadeoApiController = scope.ServiceProvider.GetRequiredService<NadeoApiService>();
         var competitionService = scope.ServiceProvider.GetRequiredService<CompetitionService>();
         var nadeoCompetitionService = scope.ServiceProvider.GetRequiredService<NadeoCompetitionService>();
 

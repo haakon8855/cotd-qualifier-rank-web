@@ -11,12 +11,10 @@ public class NadeoCredentialsManager
     {
         _configuration = configuration;
 
-        Console.WriteLine("starting");
         var accountId = _configuration["nadeo-accountid"];
         var login = _configuration["nadeo-login"];
         var password = _configuration["nadeo-password"];
         var useragent = _configuration["nadeo-useragent"];
-        var connectionstring = _configuration["database-connection-string"];
 
         Credentials = new Credentials
         {
@@ -25,11 +23,5 @@ public class NadeoCredentialsManager
             Password = password,
             UserAgent = useragent
         };
-
-        Console.WriteLine(connectionstring);
-        Console.WriteLine(accountId);
-        Console.WriteLine(login);
-        Console.WriteLine(password);
-        Console.WriteLine(useragent);
     }
 }
