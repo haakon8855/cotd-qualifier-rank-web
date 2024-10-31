@@ -2,6 +2,7 @@ using Azure.Identity;
 using CotdQualifierRank.Database;
 using CotdQualifierRank.Web.Controllers;
 using CotdQualifierRank.Web.Data;
+using CotdQualifierRank.Web.Repositories;
 using CotdQualifierRank.Web.Services;
 using CotdQualifierRank.Web.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,8 @@ builder.Services.AddSingleton<NadeoApiController>();
 
 builder.Services.AddScoped<NadeoCompetitionService>();
 builder.Services.AddScoped<CompetitionService>();
-builder.Services.AddScoped<RankController>();
+builder.Services.AddScoped<CotdRepository>();
+builder.Services.AddScoped<RankService>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

@@ -14,7 +14,6 @@ public class Competition
     public int NadeoChallengeId { get; set; }
 
     [Display(Name = "Map UID")]
-
     public string? NadeoMapUid { get; set; }
 
     public DateTime Date { get; set; }
