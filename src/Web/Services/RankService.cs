@@ -1,4 +1,5 @@
 ﻿using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Repositories;
 using CotdQualifierRank.Web.Utils;
@@ -7,40 +8,36 @@ namespace CotdQualifierRank.Web.Services;
 
 public class RankService(CotdRepository repository)
 {
-    public RankDTO? GetRank(string mapUid, int time)
+    public RankDTO? GetRank(MapUid mapUid, int time)
     {
         var cotd = repository.GetCompetitionByMapUid(mapUid);
 
         if (cotd is null)
         {
             if (!QueueService.QueueContains(mapUid))
-            {
                 QueueService.AddToQueue(mapUid);
-            }
-
             return null;
         }
 
         return GetRank(cotd, time);
     }
-    
+
     public RankDTO? GetRank(Competition cotd, int time)
     {
         var rank = FindRankInLeaderboard(cotd, time);
 
-        return new RankDTO
-        {
-            MapUid = cotd.NadeoMapUid ?? "",
-            CompetitionId = cotd.NadeoCompetitionId,
-            ChallengeId = cotd.NadeoChallengeId,
-            Date = cotd.Date,
-            Time = time,
-            Rank = rank,
-            PlayerCount = cotd.Leaderboard?.Count ?? 0,
-            LeaderboardIsEmpty = cotd.Leaderboard is null || cotd.Leaderboard.Count == 0,
-        };
+        return new RankDTO(
+            new MapUid(cotd.NadeoMapUid),
+            cotd.NadeoCompetitionId,
+            cotd.NadeoChallengeId,
+            cotd.Date,
+            time,
+            rank,
+            cotd.Leaderboard?.Count ?? 0,
+            cotd.Leaderboard is null || cotd.Leaderboard.Count == 0
+        );
     }
-    
+
     private static int FindRankInLeaderboard(Competition? cotd, int time)
     {
         // Binary search on the leaderboard to find the rank as if

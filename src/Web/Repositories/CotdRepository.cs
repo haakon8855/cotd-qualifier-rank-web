@@ -1,5 +1,6 @@
 ﻿using CotdQualifierRank.Database;
 using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.DTOs;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,12 +8,12 @@ namespace CotdQualifierRank.Web.Repositories;
 
 public class CotdRepository(CotdContext context)
 {
-    public Competition? GetCompetitionByMapUid(string mapUid, bool includeLeaderboard = true)
+    public Competition? GetCompetitionByMapUid(MapUid mapUid, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid);
+        return competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid.Value);
     }
 
     public Competition? GetCompetitionByCompetitionId(int competitionId, bool includeLeaderboard = true)
@@ -66,12 +67,12 @@ public class CotdRepository(CotdContext context)
         );
     }
 
-    public List<Record>? GetLeaderboardByMapUid(string mapUid)
+    public List<Record>? GetLeaderboardByMapUid(MapUid mapUid)
     {
         return context.Competitions
             .AsNoTracking()
             .Include(c => c.Leaderboard)
-            .Where(c => c.NadeoMapUid == mapUid)
+            .Where(c => c.NadeoMapUid == mapUid.Value)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
     }

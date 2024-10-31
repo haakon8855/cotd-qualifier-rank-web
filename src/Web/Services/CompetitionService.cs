@@ -1,4 +1,5 @@
 ﻿using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Repositories;
 
@@ -6,7 +7,7 @@ namespace CotdQualifierRank.Web.Services;
 
 public class CompetitionService(CotdRepository repository)
 {
-    public CompetitionDTO? GetCompetitionByMapUid(string mapUid, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionByMapUid(MapUid mapUid, bool includeLeaderboard = true)
     {
         var competition = repository.GetCompetitionByMapUid(mapUid, includeLeaderboard);
         
@@ -36,7 +37,7 @@ public class CompetitionService(CotdRepository repository)
         );
     }
 
-    public List<int> GetLeaderboardByMapUid(string mapUid)
+    public List<int> GetLeaderboardByMapUid(MapUid mapUid)
     {
         var leaderboard = repository.GetLeaderboardByMapUid(mapUid);
 

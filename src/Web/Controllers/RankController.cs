@@ -1,4 +1,5 @@
 ﻿using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,10 @@ public class RankController(RankService rankService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public IActionResult GetQualifierRank(string mapUid, int time)
     {
-        if (!Competition.IsValidMapUid(mapUid))
+        if (!MapUid.IsValid(mapUid))
             return BadRequest("Requested mapUid is not valid");
 
-        var rankDTO = rankService.GetRank(mapUid, time);
+        var rankDTO = rankService.GetRank(new MapUid(mapUid), time);
 
         if (rankDTO is null)
         {

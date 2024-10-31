@@ -1,4 +1,5 @@
-﻿using CotdQualifierRank.Web.DTOs;
+﻿using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,10 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetCompetitionByMap(string mapUid)
     {
-        var competitionDTO = competitionService.GetCompetitionByMapUid(mapUid, false);
+        if (!MapUid.IsValid(mapUid))
+            return BadRequest("Requested mapUid is not valid");
+                
+        var competitionDTO = competitionService.GetCompetitionByMapUid(new MapUid(mapUid), false);
 
         if (competitionDTO is null)
             return NotFound();
@@ -39,7 +43,10 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
     {
-        return Ok(competitionService.GetLeaderboardByMapUid(mapUid));
+        if (!MapUid.IsValid(mapUid))
+            return BadRequest("Requested mapUid is not valid");
+                
+        return Ok(competitionService.GetLeaderboardByMapUid(new MapUid(mapUid)));
     }
 
     [HttpGet("{competitionId:int}/leaderboard")]

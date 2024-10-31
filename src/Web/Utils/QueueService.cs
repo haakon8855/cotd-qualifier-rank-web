@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Services;
 
@@ -12,15 +13,15 @@ public class QueueService(
     NadeoCompetitionService nadeoCompetitionService,
     CompetitionService competitionService)
 {
-    private static readonly Queue<string> MapLeaderboardsToFetch = new();
+    private static readonly Queue<MapUid> MapLeaderboardsToFetch = new();
     private static bool IsProcessing { get; set; }
 
-    public static void AddToQueue(string mapUid)
+    public static void AddToQueue(MapUid mapUid)
     {
         MapLeaderboardsToFetch.Enqueue(mapUid);
     }
 
-    public static bool QueueContains(string mapUid)
+    public static bool QueueContains(MapUid mapUid)
     {
         return MapLeaderboardsToFetch.Contains(mapUid);
     }
@@ -49,12 +50,8 @@ public class QueueService(
         IsProcessing = false;
     }
 
-    private async Task FetchCompetitionFromNadeo(string mapUid)
+    private async Task FetchCompetitionFromNadeo(MapUid mapUid)
     {
-        // check if mapUid matches pattern
-        if (!Competition.IsValidMapUid(mapUid))
-            return;
-
         var mapResponse = await nadeoApiService.GetTodtInfoForMap(mapUid);
         if (mapResponse is not null)
         {
@@ -134,13 +131,13 @@ public class QueueService(
         return fullLeaderboard;
     }
 
-    private async Task FetchCompetition(NadeoCompetition nadeoCompetition, string mapUid, DateTime mapTotdDate)
+    private async Task FetchCompetition(NadeoCompetition nadeoCompetition, MapUid mapUid, DateTime mapTotdDate)
     {
         var newCompetition = new Competition
         {
             NadeoCompetitionId = nadeoCompetition.Id,
             NadeoChallengeId = await nadeoApiService.GetChallengeId(nadeoCompetition.Id),
-            NadeoMapUid = mapUid,
+            NadeoMapUid = mapUid.Value,
             Date = mapTotdDate
         };
         newCompetition.Leaderboard =

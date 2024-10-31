@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.Data;
 using CotdQualifierRank.Web.DTOs;
 
@@ -125,7 +126,7 @@ public class NadeoApiService
         }
     }
 
-    public async Task<HttpResponseMessage?> GetTodtInfoForMap(string mapUid)
+    public async Task<HttpResponseMessage?> GetTodtInfoForMap(MapUid mapUid)
     {
         SetDefaultRequestHeaders(LiveClient);
         var endpointURI = $"/api/campaign/map/{mapUid}";
