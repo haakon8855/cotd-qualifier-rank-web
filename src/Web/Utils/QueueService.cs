@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using CotdQualifierRank.Database.Models;
-using CotdQualifierRank.Web.Controllers;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Services;
 

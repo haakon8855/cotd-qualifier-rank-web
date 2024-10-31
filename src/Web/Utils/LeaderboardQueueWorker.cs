@@ -1,5 +1,4 @@
-﻿using CotdQualifierRank.Web.Controllers;
-using CotdQualifierRank.Web.Services;
+﻿using CotdQualifierRank.Web.Services;
 
 namespace CotdQualifierRank.Web.Utils;
 

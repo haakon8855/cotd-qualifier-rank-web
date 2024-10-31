@@ -1,9 +1,6 @@
-﻿using CotdQualifierRank.Database;
-using CotdQualifierRank.Database.Models;
+﻿using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Repositories;
-using Microsoft.CodeAnalysis.Completion;
-using Microsoft.EntityFrameworkCore;
 
 namespace CotdQualifierRank.Web.Services;
 
