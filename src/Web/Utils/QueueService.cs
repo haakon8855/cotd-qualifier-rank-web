@@ -57,57 +57,50 @@ public class QueueService(
         {
             var result = await mapResponse.Content.ReadAsStringAsync();
             // get date of totd from response
-            try
+            var mapTotdInfo = JsonConvert.DeserializeObject<NadeoMapTotdInfoDTO>(result);
+
+            // Response is null or empty or map is not TOTD
+            if (mapTotdInfo?.TotdMaps is null || mapTotdInfo.TotdYear == -1)
+                return;
+
+            var dayOfWeek = (mapTotdInfo.TotdMaps.IndexOf(mapUid.Value) + 1) % 7;
+            var mapTotdDate = ISOWeek.ToDateTime(mapTotdInfo.TotdYear, mapTotdInfo.Week, (DayOfWeek)dayOfWeek);
+            mapTotdDate = mapTotdDate.AddHours(19);
+
+            var currentTime =
+                TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Central European Standard Time");
+
+            // If the requested map is today's map
+            if (currentTime.Date == mapTotdDate.Date)
             {
-                var mapTotdInfo = JsonConvert.DeserializeObject<NadeoMapTotdInfoDTO>(result);
-
-                // Response is null or empty or map is not TOTD
-                if (mapTotdInfo is null || mapTotdInfo.TotdMaps is null || mapTotdInfo.TotdYear == -1)
+                // If the time is before 19:30, we assume the leaderboard is not available yet and return null
+                if (currentTime < mapTotdDate.AddMinutes(30))
                     return;
-
-                var dayOfWeek = (mapTotdInfo.TotdMaps.IndexOf(mapUid) + 1) % 7;
-                var mapTotdDate = ISOWeek.ToDateTime(mapTotdInfo.TotdYear, mapTotdInfo.Week, (DayOfWeek)dayOfWeek);
-                mapTotdDate = mapTotdDate.AddHours(19);
-
-                var currentTime =
-                    TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Central European Standard Time");
-
-                // If the requested map is today's map
-                if (currentTime.Date == mapTotdDate.Date)
-                {
-                    // If the time is before 19:30, we assume the leaderboard is not available yet and return null
-                    if (currentTime < mapTotdDate.AddMinutes(30))
-                        return;
-                }
-
-                if (mapTotdDate < new DateTime(2020, 11, 16))
-                    return;
-
-                // Check if we have a NadeoCompetition with that date
-                // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
-                var nadeoCompetition = nadeoCompetitionService
-                    .GetNadeoCompetitions()
-                    .FirstOrDefault(
-                        comp => NadeoCompetition.ParseDate(comp.Name ?? "2020-07-01").Date == mapTotdDate.Date);
-
-                if (nadeoCompetition is not null)
-                {
-                    await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
-                }
-                else
-                {
-                    // If not, fetch competitions from Nadeo until we find a match
-                    nadeoCompetition = await FetchNadeoCompetition(mapTotdDate);
-                    // When we find it, fetch the leaderboard and store it in the db
-                    if (nadeoCompetition is null)
-                        return;
-
-                    await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
-                }
             }
-            catch (Exception e)
+
+            if (mapTotdDate < new DateTime(2020, 11, 16))
+                return;
+
+            // Check if we have a NadeoCompetition with that date
+            // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
+            var nadeoCompetition = nadeoCompetitionService
+                .GetAllNadeoCompetitions()
+                .FirstOrDefault(
+                    comp => NadeoCompetition.ParseDate(comp.Name ?? "2020-07-01").Date == mapTotdDate.Date);
+
+            if (nadeoCompetition is not null)
             {
-                Console.WriteLine(e.Message);
+                await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
+            }
+            else
+            {
+                // If not, fetch competitions from Nadeo until we find a match
+                nadeoCompetition = await FetchNadeoCompetition(mapTotdDate);
+                // When we find it, fetch the leaderboard and store it in the db
+                if (nadeoCompetition is null)
+                    return;
+
+                await FetchCompetition(nadeoCompetition, mapUid, mapTotdDate);
             }
         }
     }
@@ -164,7 +157,6 @@ public class QueueService(
                     if (offset == 0)
                         offsetLimit = competitions.First().Id;
 
-                    //var cotdCompetitions = competitions.Where(comp => Regex.IsMatch(comp.Name is null ? "" : comp.Name, @"COTD 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] #1$")).ToList();
                     var cotdCompetitions = competitions.Where(comp => Regex.IsMatch(comp.Name ?? "",
                         @"(COTD|Cup of the Day) 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]($| #1$)")).ToList();
 

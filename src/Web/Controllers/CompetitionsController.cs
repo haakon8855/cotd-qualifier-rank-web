@@ -17,7 +17,7 @@ public class CompetitionsController(CompetitionService competitionService) : Con
         if (!MapUid.IsValid(mapUid))
             return BadRequest("Requested mapUid is not valid");
                 
-        var competitionDTO = competitionService.GetCompetitionByMapUid(new MapUid(mapUid), false);
+        var competitionDTO = competitionService.GetCompetitionDTOByMapUid(new MapUid(mapUid), false);
 
         if (competitionDTO is null)
             return NotFound();
@@ -30,7 +30,7 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetCompetitionByCompetitionId(int competitionId)
     {
-        var competition = competitionService.GetCompetitionByCompetitionId(competitionId, false);
+        var competition = competitionService.GetCompetitionDTOByCompetitionId(competitionId, false);
 
         if (competition is null)
             return NotFound();

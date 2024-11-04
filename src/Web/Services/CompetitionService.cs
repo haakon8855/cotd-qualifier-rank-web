@@ -7,7 +7,7 @@ namespace CotdQualifierRank.Web.Services;
 
 public class CompetitionService(CotdRepository repository)
 {
-    public CompetitionDTO? GetCompetitionByMapUid(MapUid mapUid, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionDTOByMapUid(MapUid mapUid, bool includeLeaderboard = true)
     {
         var competition = repository.GetCompetitionByMapUid(mapUid, includeLeaderboard);
         
@@ -22,7 +22,7 @@ public class CompetitionService(CotdRepository repository)
         );
     }
 
-    public CompetitionDTO? GetCompetitionByCompetitionId(int competitionId, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionDTOByCompetitionId(int competitionId, bool includeLeaderboard = true)
     {
         var competition = repository.GetCompetitionByCompetitionId(competitionId, includeLeaderboard);
 
@@ -35,6 +35,11 @@ public class CompetitionService(CotdRepository repository)
             competition.NadeoMapUid,
             competition.Date
         );
+    }
+    
+    public Competition? GetCompetitionByCompetitionId(int competitionId, bool includeLeaderboard = true)
+    {
+        return repository.GetCompetitionByCompetitionId(competitionId, includeLeaderboard);
     }
 
     public List<int> GetLeaderboardByMapUid(MapUid mapUid)
@@ -74,7 +79,7 @@ public class CompetitionService(CotdRepository repository)
         return repository.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous);
     }
 
-    public List<string?> GetMapsUids()
+    public List<string> GetMapsUids()
     {
         return repository.GetMapsUids();
     }

@@ -4,7 +4,7 @@ namespace CotdQualifierRank.Web.Utils;
 
 public class LeaderboardQueueWorker(IServiceProvider services) : IHostedService, IDisposable
 {
-    private Timer? _timer = null;
+    private Timer? _timer;
 
     public Task StartAsync(CancellationToken stoppingToken)
     {
@@ -28,9 +28,7 @@ public class LeaderboardQueueWorker(IServiceProvider services) : IHostedService,
     public Task StopAsync(CancellationToken stoppingToken)
     {
         Console.WriteLine("LeaderboardQueueWorker stopping.");
-
         _timer?.Change(Timeout.Infinite, 0);
-
         return Task.CompletedTask;
     }
 

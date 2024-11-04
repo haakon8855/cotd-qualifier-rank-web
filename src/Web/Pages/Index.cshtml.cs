@@ -27,7 +27,7 @@ public class IndexModel : PageModel
     public List<Competition> Competitions { get; set; } = default!;
     public List<int> CompetitionPlayerCounts { get; set; } = default!;
 
-    public async Task OnGet()
+    public void OnGet()
     {
         var year = int.Parse(PageMonth.Split("-")[0]);
         var month = int.Parse(PageMonth.Split("-")[1]);

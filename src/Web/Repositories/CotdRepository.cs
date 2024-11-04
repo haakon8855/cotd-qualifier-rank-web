@@ -87,11 +87,11 @@ public class CotdRepository(CotdContext context)
             .FirstOrDefault();
     }
     
-    public List<string?> GetMapsUids()
+    public List<string> GetMapsUids()
     {
         return context.Competitions
             .AsNoTracking()
-            .Where(c => c.NadeoMapUid != null)
+            .Where(c => string.IsNullOrWhiteSpace(c.NadeoMapUid))
             .OrderBy(c => c.Date)
             .Select(c => c.NadeoMapUid)
             .ToList();
@@ -100,6 +100,24 @@ public class CotdRepository(CotdContext context)
     public void AddCompetition(Competition competition)
     {
         context.Competitions.Add(competition);
-        context.SaveChangesAsync();
+        context.SaveChanges();
+    }
+    
+    public List<NadeoCompetition> GetAllNadeoCompetitions()
+    {
+        return context.NadeoCompetitions.ToList();
+    }
+
+    public void InsertNadeoCompetitions(List<NadeoCompetition> nadeoCompetitions)
+    {
+        foreach (var comp in nadeoCompetitions)
+        {
+            var compExists = context.NadeoCompetitions.Any(c => c.Id == comp.Id);
+            if (!compExists)
+            {
+                context.NadeoCompetitions.Add(comp);
+            }
+        }
+        context.SaveChanges();
     }
 }

@@ -1,15 +1,11 @@
-using CotdQualifierRank.Database;
-using CotdQualifierRank.Web.Controllers;
-using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace CotdQualifierRank.Web.Pages;
 
-public class DetailsModel(CotdContext context, RankService rankService) : PageModel
+public class DetailsModel(RankService rankService, CompetitionService competitionService) : PageModel
 {
     [BindProperty] public int Time { get; set; } = 0;
 
@@ -26,18 +22,18 @@ public class DetailsModel(CotdContext context, RankService rankService) : PageMo
     public List<Record> FirstSeedDifference { get; set; } = default!;
     public Dictionary<string, string> PageStatistics { get; set; } = new Dictionary<string, string>();
 
-    private async Task Initialise(int? id)
+    private void Initialise(int? id)
     {
         if (PageNo < 1)
             PageNo = 1;
 
-        if (id is null || context.Competitions is null)
+        if (id is null)
             return;
 
-        var competition = await context.Competitions.Include(c => c.Leaderboard).FirstOrDefaultAsync(m => m.Id == id);
+        var competition = competitionService.GetCompetitionByCompetitionId(id ?? 0);
         if (competition?.Leaderboard is null)
             return;
-        
+
         PlayerCount = competition.Leaderboard.Count;
         PageCount = (int)Math.Ceiling((double)PlayerCount / (double)PageSize);
         if (PageNo > PageCount)
@@ -82,9 +78,9 @@ public class DetailsModel(CotdContext context, RankService rankService) : PageMo
         FirstSeedDifference = PaginatedLeaderboard.Select(r => r - firstSeed).ToList();
     }
 
-    public async Task OnGet(int? id)
+    public void OnGet(int? id)
     {
-        await Initialise(id);
+        Initialise(id);
 
         if (TempData.TryGetValue("Rank", out var rankData) && rankData is not null)
             Rank = (int)rankData;
@@ -93,17 +89,15 @@ public class DetailsModel(CotdContext context, RankService rankService) : PageMo
             Time = (int)timeData;
     }
 
-    public async Task<IActionResult> OnPostPB(int? id)
+    public IActionResult OnPostPB(int? id)
     {
-        await Initialise(id);
-        if (Competition.NadeoMapUid is null)
-            return RedirectToPage();
+        Initialise(id);
 
         var rankDTO = rankService.GetRank(Competition, Time);
 
         if (rankDTO is null)
             return RedirectToPage(new { id = Competition.Id });
-        
+
         TempData["Rank"] = rankDTO.Rank;
         TempData["Time"] = Time;
 

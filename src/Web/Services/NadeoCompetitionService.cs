@@ -1,40 +1,17 @@
-﻿using CotdQualifierRank.Database;
-using CotdQualifierRank.Database.Models;
+﻿using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Web.Repositories;
 
 namespace CotdQualifierRank.Web.Services;
 
-public class NadeoCompetitionService(CotdContext context)
+public class NadeoCompetitionService(CotdRepository repository)
 {
-    public List<NadeoCompetition> GetNadeoCompetitions()
+    public List<NadeoCompetition> GetAllNadeoCompetitions()
     {
-        return context.NadeoCompetitions.ToList();
-    }
-
-    public NadeoCompetition? GetNadeoCompetition(int id)
-    {
-        return context.NadeoCompetitions.Find(id);
+        return repository.GetAllNadeoCompetitions();
     }
 
     public void AddNadeoCompetitions(List<NadeoCompetition> nadeoCompetitions)
     {
-        foreach (var comp in nadeoCompetitions)
-        {
-            var compExists = context.NadeoCompetitions.Any(c => c.Id == comp.Id);
-            if (!compExists)
-            {
-                context.NadeoCompetitions.Add(comp);
-            }
-        }
-
-        context.SaveChanges();
-    }
-
-    public bool DateExists(DateTime date)
-    {
-        return context.NadeoCompetitions
-            .Where(c => c.Name != null)
-            .ToList()
-            .Select(c => NadeoCompetition.ParseDate(c.Name is null ? "2020-07-01" : c.Name).Date)
-            .Any(d => d == date);
+        repository.InsertNadeoCompetitions(nadeoCompetitions);
     }
 }
