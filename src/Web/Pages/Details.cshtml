@@ -76,8 +76,8 @@
                             <dt class="col-sm-6">
                                 <input
                                     aria-label="Enter your PB in milliseconds"
-                                    asp-for="Time"
-                                    value="@(Model.Time==0?"":Model.Time)"
+                                    asp-for="SearchBoxTime"
+                                    value="@(Model.SearchBoxTime==0?"":Model.SearchBoxTime)"
                                     class="form-control mt-0 mb-3"
                                     placeholder="Your PB (ms)"
                                 />
@@ -94,7 +94,7 @@
                                 >
                                     <a
                                         aria-label="Send GET request to Rank endpoint"
-                                        href="./api/rank/@Model.Competition.NadeoMapUid/@(Model.Time==0?"45000":Model.Time)"
+                                        href="./api/rank/@Model.Competition.NadeoMapUid/@(Model.SearchBoxTime==0?"45000":Model.SearchBoxTime)"
                                         class="btn btn-outline-primary"
                                     >
                                         Rank API
@@ -106,7 +106,7 @@
 
                     @if (Model.Rank != 0)
                     {
-                        var inputRecord = new Record { Time = Model.Time };
+                        var inputRecord = new Record { Time = Model.SearchBoxTime };
                         <dl class="row">
                             <dt class="col-sm-6">
                                 Time:
@@ -380,7 +380,7 @@
                                 {
                                     <tr>
                                         <td class="fw-bold px-3">
-                                            @(item.i + 1 + (Model.PageNo - 1) * Model.PageSize)
+                                            @(item.i + 1 + (Model.PageNo - 1) * DetailsModel.PageSize)
                                         </td>
                                         <td class="px-4" style="text-align:right">
                                             @item.record.FormattedTime()

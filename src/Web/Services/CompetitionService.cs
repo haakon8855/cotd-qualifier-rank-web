@@ -22,9 +22,9 @@ public class CompetitionService(CotdRepository repository)
         );
     }
 
-    public CompetitionDTO? GetCompetitionDTOByCompetitionId(int competitionId, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionDTOById(int competitionId, bool includeLeaderboard = true)
     {
-        var competition = repository.GetCompetitionByCompetitionId(competitionId, includeLeaderboard);
+        var competition = repository.GetCompetitionByNadeoId(competitionId, includeLeaderboard);
 
         if (competition is null)
             return null;
@@ -37,9 +37,14 @@ public class CompetitionService(CotdRepository repository)
         );
     }
     
-    public Competition? GetCompetitionByCompetitionId(int competitionId, bool includeLeaderboard = true)
+    public Competition? GetCompetitionById(int id, bool includeLeaderboard = true)
     {
-        return repository.GetCompetitionByCompetitionId(competitionId, includeLeaderboard);
+        return repository.GetCompetitionById(id, includeLeaderboard);
+    }
+    
+    public Competition? GetCompetitionByNadeoId(int nadeoCompetitionId, bool includeLeaderboard = true)
+    {
+        return repository.GetCompetitionByNadeoId(nadeoCompetitionId, includeLeaderboard);
     }
 
     public List<int> GetLeaderboardByMapUid(MapUid mapUid)
@@ -79,8 +84,8 @@ public class CompetitionService(CotdRepository repository)
         return repository.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous);
     }
 
-    public List<string> GetMapsUids()
+    public IEnumerable<string> GetMapsUids()
     {
-        return repository.GetMapsUids();
+        return repository.GetMapsUids().Select(m => m.Value);
     }
 }

@@ -1,4 +1,5 @@
 using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,20 +8,20 @@ namespace CotdQualifierRank.Web.Pages;
 
 public class DetailsModel(RankService rankService, CompetitionService competitionService) : PageModel
 {
-    [BindProperty] public int Time { get; set; } = 0;
+    [BindProperty] public int SearchBoxTime { get; set; }
 
-    public int Rank { get; set; } = 0;
+    public int Rank { get; set; }
 
     [FromQuery(Name = "pageNo")] public int PageNo { get; set; } = 1;
 
-    public readonly int PageSize = 64;
-    public int PageCount { get; set; } = 0;
-    public int PlayerCount { get; set; } = 0;
+    public const int PageSize = 64;
+    public int PageCount { get; set; }
+    public int PlayerCount { get; set; }
 
     public Competition Competition { get; set; } = default!;
     public List<Record> PaginatedLeaderboard { get; set; } = default!;
     public List<Record> FirstSeedDifference { get; set; } = default!;
-    public Dictionary<string, string> PageStatistics { get; set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> PageStatistics { get; set; } = new();
 
     private void Initialise(int? id)
     {
@@ -30,12 +31,12 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         if (id is null)
             return;
 
-        var competition = competitionService.GetCompetitionByCompetitionId(id ?? 0);
+        var competition = competitionService.GetCompetitionById(id ?? 0);
         if (competition?.Leaderboard is null)
             return;
 
         PlayerCount = competition.Leaderboard.Count;
-        PageCount = (int)Math.Ceiling((double)PlayerCount / (double)PageSize);
+        PageCount = (int)Math.Ceiling((double)PlayerCount / PageSize);
         if (PageNo > PageCount)
             PageNo = PageCount;
 
@@ -83,23 +84,30 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         Initialise(id);
 
         if (TempData.TryGetValue("Rank", out var rankData) && rankData is not null)
+        {
             Rank = (int)rankData;
+        }
 
         if (TempData.TryGetValue("Time", out var timeData) && timeData is not null)
-            Time = (int)timeData;
+        {
+            SearchBoxTime = (int)timeData;
+        }
     }
 
     public IActionResult OnPostPB(int? id)
     {
         Initialise(id);
 
-        var rankDTO = rankService.GetRank(Competition, Time);
+        if (!Time.IsValid(SearchBoxTime))
+            return RedirectToPage(new { id = Competition.Id });
+        
+        var rankDTO = rankService.GetRank(Competition, new Time(SearchBoxTime));
 
         if (rankDTO is null)
             return RedirectToPage(new { id = Competition.Id });
 
         TempData["Rank"] = rankDTO.Rank;
-        TempData["Time"] = Time;
+        TempData["Time"] = SearchBoxTime;
 
         return RedirectToPage(new { id = Competition.Id });
     }

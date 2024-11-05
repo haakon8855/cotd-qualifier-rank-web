@@ -8,13 +8,13 @@ namespace CotdQualifierRank.Web.Controllers;
 public class MapsController(CompetitionService competitionService) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetUids()
+    public ActionResult<List<string>> GetUids()
     {
         var maps = competitionService.GetMapsUids();
 
-        if (maps.Count == 0)
+        if (!maps.Any())
             return NotFound();
 
         return Ok(maps);

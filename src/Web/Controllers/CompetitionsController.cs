@@ -30,7 +30,7 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetCompetitionByCompetitionId(int competitionId)
     {
-        var competition = competitionService.GetCompetitionDTOByCompetitionId(competitionId, false);
+        var competition = competitionService.GetCompetitionDTOById(competitionId, false);
 
         if (competition is null)
             return NotFound();

@@ -15,13 +15,21 @@ public class CotdRepository(CotdContext context)
             competitions = competitions.Include(c => c.Leaderboard);
         return competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid.Value);
     }
-
-    public Competition? GetCompetitionByCompetitionId(int competitionId, bool includeLeaderboard = true)
+    
+    public Competition? GetCompetitionById(int id, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.NadeoCompetitionId == competitionId);
+        return competitions.FirstOrDefault(c => c.Id == id);
+    }
+
+    public Competition? GetCompetitionByNadeoId(int nadeoCompetitionId, bool includeLeaderboard = true)
+    {
+        var competitions = context.Competitions.AsNoTracking();
+        if (includeLeaderboard)
+            competitions = competitions.Include(c => c.Leaderboard);
+        return competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId);
     }
     
     public CompetitionListDTO GetCompetitionsAndPlayerCounts(int year, int month, bool filterAnomalous = false)
@@ -87,14 +95,16 @@ public class CotdRepository(CotdContext context)
             .FirstOrDefault();
     }
     
-    public List<string> GetMapsUids()
+    public IEnumerable<MapUid> GetMapsUids()
     {
         return context.Competitions
             .AsNoTracking()
-            .Where(c => string.IsNullOrWhiteSpace(c.NadeoMapUid))
+            .Where(c => !string.IsNullOrWhiteSpace(c.NadeoMapUid))
             .OrderBy(c => c.Date)
             .Select(c => c.NadeoMapUid)
-            .ToList();
+            .ToList()
+            .Where(MapUid.IsValid)
+            .Select(m => new MapUid(m));
     }
 
     public void AddCompetition(Competition competition)

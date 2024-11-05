@@ -8,7 +8,7 @@ public class Competition
 
     public int NadeoChallengeId { get; set; }
 
-    public string NadeoMapUid { get; set; }
+    public required string NadeoMapUid { get; set; }
 
     public DateTime Date { get; set; }
 

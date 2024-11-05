@@ -8,7 +8,7 @@ namespace CotdQualifierRank.Web.Services;
 
 public class RankService(CotdRepository repository)
 {
-    public RankDTO? GetRank(MapUid mapUid, int time)
+    public RankDTO? GetRank(MapUid mapUid, Time time)
     {
         var cotd = repository.GetCompetitionByMapUid(mapUid);
 
@@ -22,50 +22,42 @@ public class RankService(CotdRepository repository)
         return GetRank(cotd, time);
     }
 
-    public RankDTO? GetRank(Competition cotd, int time)
+    public RankDTO? GetRank(Competition cotd, Time time)
     {
         var rank = FindRankInLeaderboard(cotd, time);
 
         return new RankDTO(
-            new MapUid(cotd.NadeoMapUid),
+            cotd.NadeoMapUid,
             cotd.NadeoCompetitionId,
             cotd.NadeoChallengeId,
             cotd.Date,
-            time,
+            time.Value,
             rank,
             cotd.Leaderboard?.Count ?? 0,
             cotd.Leaderboard is null || cotd.Leaderboard.Count == 0
         );
     }
 
-    private static int FindRankInLeaderboard(Competition? cotd, int time)
+    private static int FindRankInLeaderboard(Competition? cotd, Time time)
     {
         // Binary search on the leaderboard to find the rank as if
         // it would have been part of the sorted list
-        if (cotd is null || cotd.Leaderboard is null)
-        {
+        if (cotd?.Leaderboard is null)
             return -1;
-        }
 
         cotd.Leaderboard.Sort((a, b) => a.Time.CompareTo(b.Time));
-        int rank = 0;
-        int min = 0;
-        int max = cotd.Leaderboard.Count;
+        var rank = 0;
+        var min = 0;
+        var max = cotd.Leaderboard.Count;
         while (min < max)
         {
-            int mid = (min + max) / 2;
-            if (cotd.Leaderboard[mid].Time < time)
-            {
+            var mid = (min + max) / 2;
+            if (cotd.Leaderboard[mid].Time < time.Value)
                 min = mid + 1;
-            }
             else
-            {
                 max = mid;
-            }
         }
-
         rank = min + 1;
-
         return rank;
     }
 }

@@ -3,7 +3,7 @@
 namespace CotdQualifierRank.Web.DTOs;
 
 public class RankDTO(
-    MapUid mapUid,
+    string mapUid,
     int competitionId,
     int challengeId,
     DateTime date,
@@ -12,7 +12,7 @@ public class RankDTO(
     int playerCount,
     bool leaderboardIsEmpty)
 {
-    public MapUid MapUid { get; set; } = mapUid;
+    public string MapUid { get; set; } = mapUid;
     public int CompetitionId { get; set; } = competitionId;
     public int ChallengeId { get; set; } = challengeId;
     public DateTime Date { get; set; } = date;

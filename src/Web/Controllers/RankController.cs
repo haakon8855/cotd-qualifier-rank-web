@@ -18,14 +18,14 @@ public class RankController(RankService rankService) : ControllerBase
                                      "Please retry in " + RequestedTimeout + " seconds.";
 
     [HttpGet("{mapUid}/{time:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RankDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public IActionResult GetQualifierRank(string mapUid, int time)
+    public ActionResult<RankDTO> GetQualifierRank(string mapUid, int time)
     {
-        if (!MapUid.IsValid(mapUid))
+        if (!MapUid.IsValid(mapUid) || !Time.IsValid(time))
             return BadRequest("Requested mapUid is not valid");
 
-        var rankDTO = rankService.GetRank(new MapUid(mapUid), time);
+        var rankDTO = rankService.GetRank(new MapUid(mapUid), new Time(time));
 
         if (rankDTO is null)
         {
