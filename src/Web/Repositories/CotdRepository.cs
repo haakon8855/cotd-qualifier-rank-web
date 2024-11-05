@@ -63,9 +63,9 @@ public class CotdRepository(CotdContext context)
             fetchedComps = baseQuery.Where(c => c.Date.Year == year && c.Date.Month == month);
         }
 
-        var competitions = fetchedComps.ToList();
+        var competitions = fetchedComps.ToArray();
         var competitionPlayerCounts =
-            fetchedComps.Select(c => c.Leaderboard == null ? 0 : c.Leaderboard.Count).ToList();
+            fetchedComps.Select(c => c.Leaderboard == null ? 0 : c.Leaderboard.Count).ToArray();
 
         return new(
             competitions,

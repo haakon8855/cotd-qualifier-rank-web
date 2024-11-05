@@ -6,12 +6,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CotdQualifierRank.Web.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel(CompetitionService competitionService) : PageModel
 {
-    private readonly CompetitionService _competitionService;
-
-    public List<Competition> PaginatedCompetitions { get; set; } = default!;
-
     [FromQuery(Name = "filterAnomalous")] public bool FilterAnomalous { get; set; } = false;
 
     [FromQuery(Name = "pageMonth")] public string PageMonth { get; set; } = DateTime.Now.ToString("yyyy-MM");
@@ -19,20 +15,15 @@ public class IndexModel : PageModel
     public DateTime NewestMonth { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
     public DateTime OldestMonth { get; set; } = new DateTime(2020, 11, 1);
 
-    public IndexModel(CompetitionService competitionService)
-    {
-        _competitionService = competitionService;
-    }
-
-    public List<Competition> Competitions { get; set; } = default!;
-    public List<int> CompetitionPlayerCounts { get; set; } = default!;
+    public Competition[] Competitions { get; set; } = default!;
+    public int[] CompetitionPlayerCounts { get; set; } = default!;
 
     public void OnGet()
     {
         var year = int.Parse(PageMonth.Split("-")[0]);
         var month = int.Parse(PageMonth.Split("-")[1]);
         var compsAndPlayerCounts =
-            _competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
+            competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
         Competitions = compsAndPlayerCounts.Competitions;
         CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
         NewestMonth = new DateTime(compsAndPlayerCounts.NewestDate.Year, compsAndPlayerCounts.NewestDate.Month, 1);

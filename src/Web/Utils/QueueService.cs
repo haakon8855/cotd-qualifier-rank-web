@@ -63,7 +63,7 @@ public class QueueService(
             if (mapTotdInfo?.TotdMaps is null || mapTotdInfo.TotdYear == -1)
                 return;
 
-            var dayOfWeek = (mapTotdInfo.TotdMaps.IndexOf(mapUid.Value) + 1) % 7;
+            var dayOfWeek = (Array.IndexOf(mapTotdInfo.TotdMaps, mapUid.Value) + 1) % 7;
             var mapTotdDate = ISOWeek.ToDateTime(mapTotdInfo.TotdYear, mapTotdInfo.Week, (DayOfWeek)dayOfWeek);
             mapTotdDate = mapTotdDate.AddHours(19);
 
@@ -114,9 +114,9 @@ public class QueueService(
         {
             var leaderboardFragment = await nadeoApiService.GetLeaderboard(challengeId, 100, i);
 
-            if (leaderboardFragment is not null && leaderboardFragment.Results is not null)
+            if (leaderboardFragment?.Results != null)
             {
-                var records = leaderboardFragment.Results.Select(entry => new Record { Time = entry.Score }).ToList();
+                var records = leaderboardFragment.Results.Select(entry => new Record { Time = entry.Score }).ToArray();
                 fullLeaderboard.AddRange(records);
             }
         }
