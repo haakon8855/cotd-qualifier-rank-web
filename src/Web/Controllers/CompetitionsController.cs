@@ -17,7 +17,7 @@ public class CompetitionsController(CompetitionService competitionService) : Con
         if (!MapUid.IsValid(mapUid))
             return BadRequest("Requested mapUid is not valid");
                 
-        var competitionDTO = competitionService.GetCompetitionDTOByMapUid(new MapUid(mapUid), false);
+        var competitionDTO = competitionService.GetCompetitionDTO(new MapUid(mapUid), false);
 
         if (competitionDTO is null)
             return NotFound();
@@ -33,7 +33,7 @@ public class CompetitionsController(CompetitionService competitionService) : Con
         if (!NadeoCompetitionId.IsValid(competitionId))
             return BadRequest("Requested competitionId is not valid");
         
-        var competition = competitionService.GetCompetitionDTOByNadeoCompetitionId(new NadeoCompetitionId(competitionId), false);
+        var competition = competitionService.GetCompetitionDTO(new NadeoCompetitionId(competitionId), false);
 
         if (competition is null)
             return NotFound();
@@ -49,7 +49,7 @@ public class CompetitionsController(CompetitionService competitionService) : Con
         if (!MapUid.IsValid(mapUid))
             return BadRequest("Requested mapUid is not valid");
                 
-        return Ok(competitionService.GetLeaderboardByMapUid(new MapUid(mapUid)));
+        return Ok(competitionService.GetLeaderboard(new MapUid(mapUid)));
     }
 
     [HttpGet("{competitionId:int}/leaderboard")]
@@ -60,6 +60,6 @@ public class CompetitionsController(CompetitionService competitionService) : Con
         if (!NadeoCompetitionId.IsValid(competitionId))
             return BadRequest("Requested competitionId is not valid");
         
-        return Ok(competitionService.GetLeaderboardByNadeoCompetitionId(new NadeoCompetitionId(competitionId)));
+        return Ok(competitionService.GetLeaderboard(new NadeoCompetitionId(competitionId)));
     }
 }

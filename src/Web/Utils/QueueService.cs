@@ -83,10 +83,7 @@ public class QueueService(
 
             // Check if we have a NadeoCompetition with that date
             // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
-            var nadeoCompetition = nadeoCompetitionService
-                .GetAllNadeoCompetitions()
-                .FirstOrDefault(
-                    comp => NadeoCompetition.ParseDate(comp.Name ?? "2020-07-01").Date == mapTotdDate.Date);
+            var nadeoCompetition = nadeoCompetitionService.GetNadeoCompetition(mapTotdDate.Date);
 
             if (nadeoCompetition is not null)
             {
@@ -158,7 +155,7 @@ public class QueueService(
                         offsetLimit = competitions.First().Id;
 
                     var cotdCompetitions = competitions.Where(comp => Regex.IsMatch(comp.Name ?? "",
-                        @"(COTD|Cup of the Day) 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]($| #1$)")).ToList();
+                        @"(COTD|Cup of the Day) 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]($| #1$)")).ToArray();
 
                     // store all competitions while searching
                     nadeoCompetitionService.AddNadeoCompetitions(cotdCompetitions);

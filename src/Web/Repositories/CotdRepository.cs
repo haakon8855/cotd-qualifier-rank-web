@@ -113,12 +113,16 @@ public class CotdRepository(CotdContext context)
         context.SaveChanges();
     }
     
-    public List<NadeoCompetition> GetAllNadeoCompetitions()
+    public NadeoCompetition? GetNadeoCompetition(DateTime date)
     {
-        return context.NadeoCompetitions.ToList();
+        // Due to inefficient storage here (storing the date as part of the competition name only
+        // we have to fetch the whole table and then find the match in memory :/
+        return context.NadeoCompetitions
+            .ToArray()
+            .FirstOrDefault(comp => NadeoCompetition.ParseDate(comp.Name ?? "2020-07-01").Date == date);
     }
 
-    public void InsertNadeoCompetitions(List<NadeoCompetition> nadeoCompetitions)
+    public void InsertNadeoCompetitions(NadeoCompetition[] nadeoCompetitions)
     {
         foreach (var comp in nadeoCompetitions)
         {

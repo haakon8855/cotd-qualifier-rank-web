@@ -23,7 +23,7 @@ public class IndexModel(CompetitionService competitionService) : PageModel
         var year = int.Parse(PageMonth.Split("-")[0]);
         var month = int.Parse(PageMonth.Split("-")[1]);
         var compsAndPlayerCounts =
-            competitionService.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous: FilterAnomalous);
+            competitionService.GetCompetitionListDTO(year, month, filterAnomalous: FilterAnomalous);
         Competitions = compsAndPlayerCounts.Competitions;
         CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
         NewestMonth = new DateTime(compsAndPlayerCounts.NewestDate.Year, compsAndPlayerCounts.NewestDate.Month, 1);

@@ -7,7 +7,7 @@ namespace CotdQualifierRank.Web.Services;
 
 public class CompetitionService(CotdRepository repository)
 {
-    public CompetitionDTO? GetCompetitionDTOByMapUid(MapUid mapUid, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionDTO(MapUid mapUid, bool includeLeaderboard = true)
     {
         var competition = repository.GetCompetitionByMapUid(mapUid, includeLeaderboard);
         
@@ -22,7 +22,7 @@ public class CompetitionService(CotdRepository repository)
         );
     }
 
-    public CompetitionDTO? GetCompetitionDTOByNadeoCompetitionId(NadeoCompetitionId competitionId, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionDTO(NadeoCompetitionId competitionId, bool includeLeaderboard = true)
     {
         var competition = repository.GetCompetitionByNadeoCompetitionId(competitionId, includeLeaderboard);
 
@@ -37,12 +37,12 @@ public class CompetitionService(CotdRepository repository)
         );
     }
     
-    public Competition? GetCompetitionById(CompetitionId id, bool includeLeaderboard = true)
+    public Competition? GetCompetition(CompetitionId id, bool includeLeaderboard = true)
     {
         return repository.GetCompetitionById(id, includeLeaderboard);
     }
 
-    public List<int> GetLeaderboardByMapUid(MapUid mapUid)
+    public List<int> GetLeaderboard(MapUid mapUid)
     {
         var leaderboard = repository.GetLeaderboardByMapUid(mapUid);
 
@@ -55,7 +55,7 @@ public class CompetitionService(CotdRepository repository)
             .ToList();
     }
     
-    public List<int> GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
+    public List<int> GetLeaderboard(NadeoCompetitionId competitionId)
     {
         var leaderboard = repository.GetLeaderboardByNadeoCompetitionId(competitionId);
 
@@ -74,13 +74,13 @@ public class CompetitionService(CotdRepository repository)
             repository.AddCompetition(competition);
     }
 
-    public CompetitionListDTO GetCompetitionsAndPlayerCounts(int year, int month, bool filterAnomalous = false)
+    public CompetitionListDTO GetCompetitionListDTO(int year, int month, bool filterAnomalous = false)
     {
         return repository.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous);
     }
 
-    public IEnumerable<string> GetMapsUids()
+    public string[] GetMapsUids()
     {
-        return repository.GetMapsUids().Select(m => m.Value);
+        return repository.GetMapsUids().Select(m => m.Value).ToArray();
     }
 }

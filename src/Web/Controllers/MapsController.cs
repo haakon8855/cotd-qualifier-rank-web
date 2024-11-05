@@ -10,7 +10,7 @@ public class MapsController(CompetitionService competitionService) : ControllerB
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<List<string>> GetUids()
+    public ActionResult<string[]> GetUids()
     {
         var maps = competitionService.GetMapsUids();
 

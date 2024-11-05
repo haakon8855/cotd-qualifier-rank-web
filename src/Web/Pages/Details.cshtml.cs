@@ -31,7 +31,7 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         if (id is null || !CompetitionId.IsValid(id))
             return;
 
-        var competition = competitionService.GetCompetitionById(new CompetitionId((int)id));
+        var competition = competitionService.GetCompetition(new CompetitionId((int)id));
         if (competition?.Leaderboard is null)
             return;
 
