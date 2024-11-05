@@ -10,9 +10,9 @@ namespace CotdQualifierRank.Web.Controllers;
 public class CompetitionsController(CompetitionService competitionService) : ControllerBase
 {
     [HttpGet("{mapUid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetCompetitionByMap(string mapUid)
+    public ActionResult<CompetitionDTO> GetCompetitionByMap(string mapUid)
     {
         if (!MapUid.IsValid(mapUid))
             return BadRequest("Requested mapUid is not valid");
@@ -26,9 +26,9 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     }
 
     [HttpGet("{competitionId:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompetitionDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetCompetitionByCompetitionId(int competitionId)
+    public ActionResult<CompetitionDTO> GetCompetitionByCompetitionId(int competitionId)
     {
         var competition = competitionService.GetCompetitionDTOById(competitionId, false);
 
@@ -39,9 +39,9 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     }
 
     [HttpGet("{mapUid}/leaderboard")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetCompetitionLeaderboardByMapUid(string mapUid)
+    public ActionResult<List<int>> GetCompetitionLeaderboardByMapUid(string mapUid)
     {
         if (!MapUid.IsValid(mapUid))
             return BadRequest("Requested mapUid is not valid");
@@ -50,9 +50,9 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     }
 
     [HttpGet("{competitionId:int}/leaderboard")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<int>))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetCompetitionLeaderboardByChallengeId(int competitionId)
+    public ActionResult<List<int>> GetCompetitionLeaderboardByChallengeId(int competitionId)
     {
         return Ok(competitionService.GetLeaderboardByCompetitionId(competitionId));
     }
