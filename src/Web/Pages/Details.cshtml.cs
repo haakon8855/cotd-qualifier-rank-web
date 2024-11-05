@@ -28,10 +28,10 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         if (PageNo < 1)
             PageNo = 1;
 
-        if (id is null)
+        if (id is null || !CompetitionId.IsValid(id))
             return;
 
-        var competition = competitionService.GetCompetitionById(id ?? 0);
+        var competition = competitionService.GetCompetitionById(new CompetitionId((int)id));
         if (competition?.Leaderboard is null)
             return;
 
@@ -49,26 +49,17 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
 
     private void CalculateStatistics()
     {
-        if (Competition is null ||
-            Competition.Leaderboard is null ||
-            PaginatedLeaderboard is null ||
-            Competition.Leaderboard.Count == 0)
-        {
+        if (Competition.Leaderboard is null || Competition.Leaderboard.Count == 0)
             return;
-        }
 
         // Calculate cutoff time of the division above
-        Record betterDivCutoff;
-        if (PageNo == 1)
-            betterDivCutoff = Competition.Leaderboard[0];
-        else
-            betterDivCutoff = Competition.Leaderboard[(PageNo - 1) * PageSize - 1];
+        var betterDivCutoff = PageNo == 1 ? Competition.Leaderboard[0] : Competition.Leaderboard[(PageNo - 1) * PageSize - 1];
 
         // Calculate cutoff of current division
-        Record currentDivCutoff = PaginatedLeaderboard.Last();
+        var currentDivCutoff = PaginatedLeaderboard.Last();
 
         // Calculate window of current division
-        Record currentDivWindow = currentDivCutoff - betterDivCutoff;
+        var currentDivWindow = currentDivCutoff - betterDivCutoff;
 
         PageStatistics.Add("BetterDivCutoff", betterDivCutoff.FormattedTime());
         PageStatistics.Add("CurrentDivCutoff", currentDivCutoff.FormattedTime());
@@ -100,7 +91,7 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
 
         if (!Time.IsValid(SearchBoxTime))
             return RedirectToPage(new { id = Competition.Id });
-        
+
         var rankDTO = rankService.GetRank(Competition, new Time(SearchBoxTime));
 
         if (rankDTO is null)

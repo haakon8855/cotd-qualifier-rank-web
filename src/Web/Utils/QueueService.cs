@@ -105,7 +105,7 @@ public class QueueService(
         }
     }
 
-    private async Task<List<Record>> FetchQualificationLeaderboard(NadeoCompetition nadeoCompetition, int challengeId)
+    private async Task<List<Record>> FetchQualificationLeaderboard(NadeoCompetition nadeoCompetition, NadeoChallengeId challengeId)
     {
         // Fetch the qualification leaderboard
         var fullLeaderboard = new List<Record>();
@@ -129,12 +129,12 @@ public class QueueService(
         var newCompetition = new Competition
         {
             NadeoCompetitionId = nadeoCompetition.Id,
-            NadeoChallengeId = await nadeoApiService.GetChallengeId(nadeoCompetition.Id),
+            NadeoChallengeId = await nadeoApiService.GetChallengeId(new NadeoCompetitionId(nadeoCompetition.Id)),
             NadeoMapUid = mapUid.Value,
             Date = mapTotdDate
         };
         newCompetition.Leaderboard =
-            await FetchQualificationLeaderboard(nadeoCompetition, newCompetition.NadeoChallengeId);
+            await FetchQualificationLeaderboard(nadeoCompetition, new NadeoChallengeId(newCompetition.NadeoChallengeId));
         competitionService.AddCompetition(newCompetition);
     }
 

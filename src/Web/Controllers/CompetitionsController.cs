@@ -30,7 +30,10 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<CompetitionDTO> GetCompetitionByCompetitionId(int competitionId)
     {
-        var competition = competitionService.GetCompetitionDTOById(competitionId, false);
+        if (!NadeoCompetitionId.IsValid(competitionId))
+            return BadRequest("Requested competitionId is not valid");
+        
+        var competition = competitionService.GetCompetitionDTOByNadeoCompetitionId(new NadeoCompetitionId(competitionId), false);
 
         if (competition is null)
             return NotFound();
@@ -54,6 +57,9 @@ public class CompetitionsController(CompetitionService competitionService) : Con
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<List<int>> GetCompetitionLeaderboardByChallengeId(int competitionId)
     {
-        return Ok(competitionService.GetLeaderboardByCompetitionId(competitionId));
+        if (!NadeoCompetitionId.IsValid(competitionId))
+            return BadRequest("Requested competitionId is not valid");
+        
+        return Ok(competitionService.GetLeaderboardByNadeoCompetitionId(new NadeoCompetitionId(competitionId)));
     }
 }

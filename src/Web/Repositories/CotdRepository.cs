@@ -16,20 +16,20 @@ public class CotdRepository(CotdContext context)
         return competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid.Value);
     }
     
-    public Competition? GetCompetitionById(int id, bool includeLeaderboard = true)
+    public Competition? GetCompetitionById(CompetitionId id, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.Id == id);
+        return competitions.FirstOrDefault(c => c.Id == id.Value);
     }
 
-    public Competition? GetCompetitionByNadeoId(int nadeoCompetitionId, bool includeLeaderboard = true)
+    public Competition? GetCompetitionByNadeoCompetitionId(NadeoCompetitionId nadeoCompetitionId, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId);
+        return competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId.Value);
     }
     
     public CompetitionListDTO GetCompetitionsAndPlayerCounts(int year, int month, bool filterAnomalous = false)
@@ -85,12 +85,12 @@ public class CotdRepository(CotdContext context)
             .FirstOrDefault();
     }
     
-    public List<Record>? GetLeaderboardByCompetitionId(int competitionId)
+    public List<Record>? GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
     {
         return context.Competitions
             .AsNoTracking()
             .Include(c => c.Leaderboard)
-            .Where(c => c.NadeoCompetitionId == competitionId)
+            .Where(c => c.NadeoCompetitionId == competitionId.Value)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
     }

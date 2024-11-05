@@ -22,9 +22,9 @@ public class CompetitionService(CotdRepository repository)
         );
     }
 
-    public CompetitionDTO? GetCompetitionDTOById(int competitionId, bool includeLeaderboard = true)
+    public CompetitionDTO? GetCompetitionDTOByNadeoCompetitionId(NadeoCompetitionId competitionId, bool includeLeaderboard = true)
     {
-        var competition = repository.GetCompetitionByNadeoId(competitionId, includeLeaderboard);
+        var competition = repository.GetCompetitionByNadeoCompetitionId(competitionId, includeLeaderboard);
 
         if (competition is null)
             return null;
@@ -37,14 +37,9 @@ public class CompetitionService(CotdRepository repository)
         );
     }
     
-    public Competition? GetCompetitionById(int id, bool includeLeaderboard = true)
+    public Competition? GetCompetitionById(CompetitionId id, bool includeLeaderboard = true)
     {
         return repository.GetCompetitionById(id, includeLeaderboard);
-    }
-    
-    public Competition? GetCompetitionByNadeoId(int nadeoCompetitionId, bool includeLeaderboard = true)
-    {
-        return repository.GetCompetitionByNadeoId(nadeoCompetitionId, includeLeaderboard);
     }
 
     public List<int> GetLeaderboardByMapUid(MapUid mapUid)
@@ -60,9 +55,9 @@ public class CompetitionService(CotdRepository repository)
             .ToList();
     }
     
-    public List<int> GetLeaderboardByCompetitionId(int competitionId)
+    public List<int> GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
     {
-        var leaderboard = repository.GetLeaderboardByCompetitionId(competitionId);
+        var leaderboard = repository.GetLeaderboardByNadeoCompetitionId(competitionId);
 
         if (leaderboard is null)
             return [];

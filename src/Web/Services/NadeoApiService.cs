@@ -168,7 +168,7 @@ public class NadeoApiService
         return null;
     }
 
-    public async Task<int> GetChallengeId(int competitionId)
+    public async Task<int> GetChallengeId(NadeoCompetitionId competitionId)
     {
         await SetAuthenticationHeaders(MeetClient);
         var endpointURI = $"/api/competitions/{competitionId}/rounds";
@@ -189,7 +189,7 @@ public class NadeoApiService
                     return 0;
                 }
 
-                var round = rounds.First();
+                var round = rounds.FirstOrDefault();
                 if (round is not null)
                 {
                     return round.QualifierChallengeId;
@@ -208,7 +208,7 @@ public class NadeoApiService
         return 0;
     }
 
-    public async Task<NadeoChallengeLeaderboardDTO?> GetLeaderboard(int challengeId, int length, int offset)
+    public async Task<NadeoChallengeLeaderboardDTO?> GetLeaderboard(NadeoChallengeId challengeId, int length, int offset)
     {
         await SetAuthenticationHeaders(MeetClient);
         var endpointURI = $"/api/challenges/{challengeId}/leaderboard?length={length}&offset={offset}";
