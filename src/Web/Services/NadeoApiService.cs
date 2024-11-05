@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Web.Data;
 using CotdQualifierRank.Web.DTOs;
 

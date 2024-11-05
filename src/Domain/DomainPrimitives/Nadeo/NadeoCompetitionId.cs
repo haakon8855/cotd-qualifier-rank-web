@@ -1,5 +1,10 @@
-﻿namespace CotdQualifierRank.Domain.DomainPrimitives;
+﻿namespace CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 
+/*
+ * The CompetitionId is the Id Nadeo uses as identifier for different competition.
+ * In the context of COTD, a single COTD session is a single competition. While
+ * COTM or COTN is in turn their own competitions with unique Ids.
+ */
 public class NadeoCompetitionId : DomainPrimitive
 {
     public int Value { get; }

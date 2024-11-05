@@ -1,4 +1,4 @@
-﻿namespace CotdQualifierRank.Domain.DomainPrimitives;
+﻿namespace CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 
 /*
  * The ChallengeId is the Id Nadeo uses as ids for individual rounds in competitions.

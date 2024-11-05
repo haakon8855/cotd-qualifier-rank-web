@@ -1,4 +1,5 @@
 ﻿using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Services;
 using Microsoft.AspNetCore.Mvc;

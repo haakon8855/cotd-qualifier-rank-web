@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Web.DTOs;
 using CotdQualifierRank.Web.Services;
 
