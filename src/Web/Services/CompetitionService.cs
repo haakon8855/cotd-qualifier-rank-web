@@ -75,7 +75,7 @@ public class CompetitionService(CotdRepository repository)
             repository.AddCompetition(competition);
     }
 
-    public CompetitionListDTO GetCompetitionListDTO(int year, int month, bool filterAnomalous = false)
+    public CompetitionListDTO GetCompetitionListDTO(CompetitionYear year, CompetitionMonth month, bool filterAnomalous = false)
     {
         return repository.GetCompetitionsAndPlayerCounts(year, month, filterAnomalous);
     }

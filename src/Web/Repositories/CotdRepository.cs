@@ -33,7 +33,7 @@ public class CotdRepository(CotdContext context)
         return competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId.Value);
     }
     
-    public CompetitionListDTO GetCompetitionsAndPlayerCounts(int year, int month, bool filterAnomalous = false)
+    public CompetitionListDTO GetCompetitionsAndPlayerCounts(CompetitionYear year, CompetitionMonth month, bool filterAnomalous = false)
     {
         var baseQuery = context.Competitions
             .OrderByDescending(c => c.Date)
@@ -61,7 +61,7 @@ public class CotdRepository(CotdContext context)
         }
         else
         {
-            fetchedComps = baseQuery.Where(c => c.Date.Year == year && c.Date.Month == month);
+            fetchedComps = baseQuery.Where(c => c.Date.Year == year.Value && c.Date.Month == month.Value);
         }
 
         var competitions = fetchedComps.ToArray();

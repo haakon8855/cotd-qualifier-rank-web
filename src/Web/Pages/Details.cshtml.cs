@@ -23,17 +23,17 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
     public List<Record> FirstSeedDifference { get; set; } = default!;
     public Dictionary<string, string> PageStatistics { get; set; } = new();
 
-    private void Initialise(int? id)
+    private bool Initialise(int? id)
     {
         if (PageNo < 1)
             PageNo = 1;
 
         if (id is null || !CompetitionId.IsValid(id))
-            return;
+            return false;
 
         var competition = competitionService.GetCompetition(new CompetitionId((int)id));
         if (competition?.Leaderboard is null)
-            return;
+            return false;
 
         PlayerCount = competition.Leaderboard.Count;
         PageCount = (int)Math.Ceiling((double)PlayerCount / PageSize);
@@ -45,6 +45,7 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         Competition = competition;
 
         CalculateStatistics();
+        return true;
     }
 
     private void CalculateStatistics()
@@ -70,9 +71,11 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         FirstSeedDifference = PaginatedLeaderboard.Select(r => r - firstSeed).ToList();
     }
 
-    public void OnGet(int? id)
+    public IActionResult OnGet(int? id)
     {
-        Initialise(id);
+        var success = Initialise(id);
+        if (!success)
+            return RedirectToPage("index");
 
         if (TempData.TryGetValue("Rank", out var rankData) && rankData is not null)
         {
@@ -83,6 +86,8 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
         {
             SearchBoxTime = (int)timeData;
         }
+
+        return Page();
     }
 
     public IActionResult OnPostPB(int? id)
