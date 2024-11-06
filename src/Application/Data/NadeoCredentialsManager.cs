@@ -1,6 +1,7 @@
 ﻿using CotdQualifierRank.Database.Models;
+using Microsoft.Extensions.Configuration;
 
-namespace CotdQualifierRank.Web.Data;
+namespace CotdQualifierRank.Application.Data;
 
 public class NadeoCredentialsManager
 {

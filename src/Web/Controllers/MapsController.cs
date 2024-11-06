@@ -1,4 +1,4 @@
-﻿using CotdQualifierRank.Web.Services;
+﻿using CotdQualifierRank.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CotdQualifierRank.Web.Controllers;

@@ -1,10 +1,10 @@
 ﻿using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
-using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Repositories;
-using CotdQualifierRank.Web.Utils;
+using CotdQualifierRank.Application.DTOs;
+using CotdQualifierRank.Application.Repositories;
+using CotdQualifierRank.Application.Utils;
 
-namespace CotdQualifierRank.Web.Services;
+namespace CotdQualifierRank.Application.Services;
 
 public class RankService(CotdRepository repository)
 {

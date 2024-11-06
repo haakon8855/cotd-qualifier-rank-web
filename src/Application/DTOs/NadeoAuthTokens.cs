@@ -1,4 +1,4 @@
-﻿namespace CotdQualifierRank.Web.DTOs;
+﻿namespace CotdQualifierRank.Application.DTOs;
 
 public class NadeoAuthTokens
 {

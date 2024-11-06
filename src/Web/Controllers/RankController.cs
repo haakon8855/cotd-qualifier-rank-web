@@ -1,7 +1,7 @@
 ﻿using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
-using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Services;
+using CotdQualifierRank.Application.DTOs;
+using CotdQualifierRank.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CotdQualifierRank.Web.Controllers;

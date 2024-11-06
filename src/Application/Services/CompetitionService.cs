@@ -1,10 +1,10 @@
 ﻿using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
-using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Repositories;
+using CotdQualifierRank.Application.DTOs;
+using CotdQualifierRank.Application.Repositories;
 
-namespace CotdQualifierRank.Web.Services;
+namespace CotdQualifierRank.Application.Services;
 
 public class CompetitionService(CotdRepository repository)
 {

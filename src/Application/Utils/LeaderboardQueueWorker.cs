@@ -1,6 +1,8 @@
-﻿using CotdQualifierRank.Web.Services;
+﻿using CotdQualifierRank.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace CotdQualifierRank.Web.Utils;
+namespace CotdQualifierRank.Application.Utils;
 
 public class LeaderboardQueueWorker(IServiceProvider services) : IHostedService, IDisposable
 {

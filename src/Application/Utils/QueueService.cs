@@ -4,10 +4,10 @@ using System.Text.RegularExpressions;
 using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
-using CotdQualifierRank.Web.DTOs;
-using CotdQualifierRank.Web.Services;
+using CotdQualifierRank.Application.DTOs;
+using CotdQualifierRank.Application.Services;
 
-namespace CotdQualifierRank.Web.Utils;
+namespace CotdQualifierRank.Application.Utils;
 
 public class QueueService(
     NadeoApiService nadeoApiService,

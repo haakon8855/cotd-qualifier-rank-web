@@ -1,9 +1,9 @@
 using Azure.Identity;
 using CotdQualifierRank.Database;
-using CotdQualifierRank.Web.Data;
-using CotdQualifierRank.Web.Repositories;
-using CotdQualifierRank.Web.Services;
-using CotdQualifierRank.Web.Utils;
+using CotdQualifierRank.Application.Data;
+using CotdQualifierRank.Application.Repositories;
+using CotdQualifierRank.Application.Services;
+using CotdQualifierRank.Application.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

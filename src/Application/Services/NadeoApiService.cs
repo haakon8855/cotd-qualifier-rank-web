@@ -3,10 +3,10 @@ using System.Net.Http.Headers;
 using System.Text;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
-using CotdQualifierRank.Web.Data;
-using CotdQualifierRank.Web.DTOs;
+using CotdQualifierRank.Application.Data;
+using CotdQualifierRank.Application.DTOs;
 
-namespace CotdQualifierRank.Web.Services;
+namespace CotdQualifierRank.Application.Services;
 
 public class NadeoApiService
 {

@@ -1,6 +1,6 @@
 ﻿using CotdQualifierRank.Database.Models;
 
-namespace CotdQualifierRank.Web.DTOs;
+namespace CotdQualifierRank.Application.DTOs;
 
 public class CompetitionListDTO(
     Competition[] competitions,

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace CotdQualifierRank.Web.Utils;
+namespace CotdQualifierRank.Application.Utils;
 
 public static class DateTimeExtensions
 {

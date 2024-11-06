@@ -1,7 +1,7 @@
 ﻿using CotdQualifierRank.Database.Models;
-using CotdQualifierRank.Web.Repositories;
+using CotdQualifierRank.Application.Repositories;
 
-namespace CotdQualifierRank.Web.Services;
+namespace CotdQualifierRank.Application.Services;
 
 public class NadeoCompetitionService(CotdRepository repository)
 {

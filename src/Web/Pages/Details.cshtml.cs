@@ -1,6 +1,6 @@
 using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
-using CotdQualifierRank.Web.Services;
+using CotdQualifierRank.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

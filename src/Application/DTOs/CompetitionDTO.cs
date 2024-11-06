@@ -1,4 +1,4 @@
-﻿namespace CotdQualifierRank.Web.DTOs;
+﻿namespace CotdQualifierRank.Application.DTOs;
 
 public class CompetitionDTO(int competitionId, int challengeId, string? mapUid, DateTime date)
 {

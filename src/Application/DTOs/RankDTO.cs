@@ -1,6 +1,4 @@
-﻿using CotdQualifierRank.Domain.DomainPrimitives;
-
-namespace CotdQualifierRank.Web.DTOs;
+﻿namespace CotdQualifierRank.Application.DTOs;
 
 public class RankDTO(
     string mapUid,

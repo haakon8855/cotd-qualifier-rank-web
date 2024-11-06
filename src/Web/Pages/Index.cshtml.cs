@@ -1,7 +1,7 @@
 using CotdQualifierRank.Database.Models;
 using CotdQualifierRank.Domain.DomainPrimitives;
-using CotdQualifierRank.Web.Utils;
-using CotdQualifierRank.Web.Services;
+using CotdQualifierRank.Application.Utils;
+using CotdQualifierRank.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
