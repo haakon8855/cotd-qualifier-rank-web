@@ -133,6 +133,8 @@ public class QueueService(
         };
         newCompetition.Leaderboard =
             await FetchQualificationLeaderboard(nadeoCompetition, new NadeoChallengeId(newCompetition.NadeoChallengeId));
+        newCompetition.PlayerCount = newCompetition.Leaderboard.Count;
+        
         competitionService.AddCompetition(newCompetition);
     }
 

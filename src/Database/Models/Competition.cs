@@ -13,4 +13,6 @@ public class Competition
     public DateTime Date { get; set; }
 
     public List<Record>? Leaderboard { get; set; }
+    
+    public int PlayerCount { get; set; }
 }
