@@ -13,11 +13,10 @@ public class IndexModel(CompetitionService competitionService) : PageModel
 
     [FromQuery(Name = "pageMonth")] public string PageMonth { get; set; } = DateTime.Now.ToString("yyyy-MM");
 
-    public DateTime NewestMonth { get; set; } = new(DateTime.Now.Year, DateTime.Now.Month, 1);
-    public DateTime OldestMonth { get; set; } = new(2020, 11, 1);
+    public readonly DateTime OldestMonth = new(2020, 11, 1);
+    public readonly DateTime NewestMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-    public Competition[] Competitions { get; set; } = default!;
-    public int[] CompetitionPlayerCounts { get; set; } = default!;
+    public Competition[] Competitions { get; private set; } = default!;
 
     public IActionResult OnGet()
     {
@@ -31,25 +30,17 @@ public class IndexModel(CompetitionService competitionService) : PageModel
             competitionService.GetCompetitionListDTO(new CompetitionYear(year), new CompetitionMonth(month),
                 filterAnomalous: FilterAnomalous);
         Competitions = compsAndPlayerCounts.Competitions;
-        CompetitionPlayerCounts = compsAndPlayerCounts.PlayerCounts;
-        NewestMonth = new DateTime(compsAndPlayerCounts.NewestDate.Year, compsAndPlayerCounts.NewestDate.Month, 1);
-        OldestMonth = new DateTime(compsAndPlayerCounts.OldestDate.Year, compsAndPlayerCounts.OldestDate.Month, 1);
         
         return Page();
     }
 
     public string NewPageMonth(int monthsToAdd, bool getMonthName = false)
     {
-        DateTime currentMonth = GetPageMonthDateTime();
-        DateTime newMonth = currentMonth.AddMonths(monthsToAdd);
+        var currentMonth = GetPageMonthDateTime();
+        var newMonth = currentMonth.AddMonths(monthsToAdd);
         if (!getMonthName)
-        {
             return newMonth.ToPageMonthString();
-        }
-        else
-        {
-            return newMonth.ToMonthString();
-        }
+        return newMonth.ToMonthString();
     }
 
     public DateTime GetPageMonthDateTime()

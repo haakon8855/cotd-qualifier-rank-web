@@ -16,7 +16,7 @@ public class CotdRepository(CotdContext context)
             competitions = competitions.Include(c => c.Leaderboard);
         return competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid.Value);
     }
-    
+
     public Competition? GetCompetitionById(CompetitionId id, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
@@ -25,55 +25,49 @@ public class CotdRepository(CotdContext context)
         return competitions.FirstOrDefault(c => c.Id == id.Value);
     }
 
-    public Competition? GetCompetitionByNadeoCompetitionId(NadeoCompetitionId nadeoCompetitionId, bool includeLeaderboard = true)
+    public Competition? GetCompetitionByNadeoCompetitionId(NadeoCompetitionId nadeoCompetitionId,
+        bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
         return competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId.Value);
     }
-    
-    public CompetitionListDTO GetCompetitionsAndPlayerCounts(CompetitionYear year, CompetitionMonth month, bool filterAnomalous = false)
+
+    public CompetitionListDTO GetCompetitionsAndPlayerCounts(CompetitionYear year, CompetitionMonth month,
+        bool filterAnomalous = false)
     {
         var baseQuery = context.Competitions
             .OrderByDescending(c => c.Date)
             .AsNoTracking();
-
-        var oldestDate = baseQuery.LastOrDefault()?.Date ?? new DateTime(2020, 11, 02);
-        var newestDate = baseQuery.FirstOrDefault()?.Date ?? DateTime.Now;
 
         IQueryable<Competition> fetchedComps;
         if (filterAnomalous)
         {
             fetchedComps = context.NadeoCompetitions
                 .Join(
-                    context.Competitions.Include(c => c.Leaderboard),
+                    context.Competitions,
                     nc => nc.Id,
                     c => c.NadeoCompetitionId,
                     (nc, c) => new { NadeoCompetition = nc, Competition = c })
                 .AsNoTracking()
                 .Where(
                     jc => jc.Competition.Leaderboard == null ||
-                          jc.Competition.Leaderboard.Count == 0 ||
-                          jc.NadeoCompetition.NbPlayers != jc.Competition.Leaderboard.Count)
+                          jc.Competition.PlayerCount == 0 ||
+                          jc.NadeoCompetition.NbPlayers != jc.Competition.PlayerCount)
                 .Select(jc => jc.Competition)
                 .OrderByDescending(c => c.Date);
         }
         else
         {
-            fetchedComps = baseQuery.Where(c => c.Date.Year == year.Value && c.Date.Month == month.Value);
+            var queriedMonthFirstDay = new DateTime(year.Value, month.Value, 1);
+            var queriedMonthLastDay = new DateTime(year.Value, month.Value, DateTime.DaysInMonth(year.Value, month.Value));
+            fetchedComps = baseQuery.Where(c => c.Date >= queriedMonthFirstDay && c.Date < queriedMonthLastDay.AddDays(1));
         }
 
         var competitions = fetchedComps.ToArray();
-        var competitionPlayerCounts =
-            fetchedComps.Select(c => c.Leaderboard == null ? 0 : c.Leaderboard.Count).ToArray();
 
-        return new(
-            competitions,
-            competitionPlayerCounts,
-            oldestDate,
-            newestDate
-        );
+        return new(competitions);
     }
 
     public List<Record>? GetLeaderboardByMapUid(MapUid mapUid)
@@ -85,7 +79,7 @@ public class CotdRepository(CotdContext context)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
     }
-    
+
     public List<Record>? GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
     {
         return context.Competitions
@@ -95,7 +89,7 @@ public class CotdRepository(CotdContext context)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
     }
-    
+
     public IEnumerable<MapUid> GetMapsUids()
     {
         return context.Competitions
@@ -113,7 +107,7 @@ public class CotdRepository(CotdContext context)
         context.Competitions.Add(competition);
         context.SaveChanges();
     }
-    
+
     public NadeoCompetition? GetNadeoCompetition(DateTime date)
     {
         // Due to inefficient storage here (storing the date as part of the competition name only
@@ -133,6 +127,7 @@ public class CotdRepository(CotdContext context)
                 context.NadeoCompetitions.Add(comp);
             }
         }
+
         context.SaveChanges();
     }
 }
