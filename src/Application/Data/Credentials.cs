@@ -1,4 +1,4 @@
-﻿namespace CotdQualifierRank.Database.Models;
+﻿namespace CotdQualifierRank.Application.Data;
 
 public class Credentials
 {
