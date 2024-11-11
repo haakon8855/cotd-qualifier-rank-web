@@ -5,12 +5,12 @@ namespace CotdQualifierRank.Application.Services;
 
 public class NadeoCompetitionService(CotdRepository repository)
 {
-    public NadeoCompetition? GetNadeoCompetition(DateTime date)
+    public NadeoCompetitionEntity? GetNadeoCompetition(DateTime date)
     {
         return repository.GetNadeoCompetition(date);
     }
 
-    public void AddNadeoCompetitions(NadeoCompetition[] nadeoCompetitions)
+    public void AddNadeoCompetitions(NadeoCompetitionEntity[] nadeoCompetitions)
     {
         repository.InsertNadeoCompetitions(nadeoCompetitions);
     }

@@ -16,7 +16,7 @@ public class IndexModel(CompetitionService competitionService) : PageModel
     public readonly DateTime OldestMonth = new(2020, 11, 1);
     public readonly DateTime NewestMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-    public Competition[] Competitions { get; private set; } = default!;
+    public CompetitionEntity[] Competitions { get; private set; } = default!;
 
     public IActionResult OnGet()
     {

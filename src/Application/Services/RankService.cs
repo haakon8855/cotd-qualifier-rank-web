@@ -22,7 +22,7 @@ public class RankService(CotdRepository repository)
         return GetRank(cotd, time);
     }
 
-    public RankDTO? GetRank(Competition cotd, Time time)
+    public RankDTO? GetRank(CompetitionEntity cotd, Time time)
     {
         var rank = FindRankInLeaderboard(cotd, time);
 
@@ -38,7 +38,7 @@ public class RankService(CotdRepository repository)
         );
     }
 
-    private static int FindRankInLeaderboard(Competition? cotd, Time time)
+    private static int FindRankInLeaderboard(CompetitionEntity? cotd, Time time)
     {
         // Binary search on the leaderboard to find the rank as if
         // it would have been part of the sorted list

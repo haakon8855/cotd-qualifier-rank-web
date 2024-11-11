@@ -18,9 +18,9 @@ public class DetailsModel(RankService rankService, CompetitionService competitio
     public int PageCount { get; set; }
     public int PlayerCount { get; set; }
 
-    public Competition Competition { get; set; } = default!;
-    public List<Record> PaginatedLeaderboard { get; set; } = default!;
-    public List<Record> FirstSeedDifference { get; set; } = default!;
+    public CompetitionEntity Competition { get; set; } = default!;
+    public List<RecordEntity> PaginatedLeaderboard { get; set; } = default!;
+    public List<RecordEntity> FirstSeedDifference { get; set; } = default!;
     public Dictionary<string, string> PageStatistics { get; set; } = new();
 
     private bool Initialise(int? id)

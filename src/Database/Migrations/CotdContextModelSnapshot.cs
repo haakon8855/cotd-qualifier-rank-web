@@ -48,7 +48,7 @@ namespace CotdQualifierRank.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Competitions");
+                    b.ToTable("Competitions", (string)null);
                 });
 
             modelBuilder.Entity("CotdQualifierRank.Database.Models.NadeoCompetition", b =>
@@ -70,7 +70,7 @@ namespace CotdQualifierRank.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NadeoCompetitions");
+                    b.ToTable("NadeoCompetitions", (string)null);
                 });
 
             modelBuilder.Entity("CotdQualifierRank.Database.Models.Record", b =>
@@ -91,7 +91,7 @@ namespace CotdQualifierRank.Database.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.ToTable("Records");
+                    b.ToTable("Records", (string)null);
                 });
 
             modelBuilder.Entity("CotdQualifierRank.Database.Models.Record", b =>

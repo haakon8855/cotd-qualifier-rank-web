@@ -10,14 +10,19 @@ public class CotdContext : DbContext
     {
     }
 
-    public DbSet<Competition> Competitions { get; set; } = default!;
-    public DbSet<Record> Records { get; set; } = default!;
-    public DbSet<NadeoCompetition> NadeoCompetitions { get; set; } = default!;
+    public DbSet<CompetitionEntity> Competitions { get; set; } = default!;
+    public DbSet<RecordEntity> Records { get; set; } = default!;
+    public DbSet<NadeoCompetitionEntity> NadeoCompetitions { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // enable identity insert for NadeoCompetitions
-        modelBuilder.Entity<NadeoCompetition>()
+        modelBuilder.Entity<RecordEntity>()
+            .HasOne(r => r.Competition)
+            .WithMany(c => c.Leaderboard)
+            .HasForeignKey("CompetitionId");
+        
+        // Enable identity insert for NadeoCompetitions
+        modelBuilder.Entity<NadeoCompetitionEntity>()
             .Property(p => p.Id)
             .ValueGeneratedNever();
     }

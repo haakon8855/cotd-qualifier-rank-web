@@ -38,7 +38,7 @@ public class CompetitionService(CotdRepository repository)
         );
     }
     
-    public Competition? GetCompetition(CompetitionId id, bool includeLeaderboard = true)
+    public CompetitionEntity? GetCompetition(CompetitionId id, bool includeLeaderboard = true)
     {
         return repository.GetCompetitionById(id, includeLeaderboard);
     }
@@ -69,7 +69,7 @@ public class CompetitionService(CotdRepository repository)
             .ToList();
     }
 
-    public void AddCompetition(Competition? competition)
+    public void AddCompetition(CompetitionEntity? competition)
     {
         if (competition is not null)
             repository.AddCompetition(competition);

@@ -2,7 +2,7 @@
 
 namespace CotdQualifierRank.Database.Models;
 
-public class NadeoCompetition
+public class NadeoCompetitionEntity
 {
     public int Id { get; set; }
     public string? liveId { get; set; }

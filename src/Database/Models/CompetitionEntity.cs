@@ -1,6 +1,6 @@
 namespace CotdQualifierRank.Database.Models;
 
-public class Competition
+public class CompetitionEntity
 {
     public int Id { get; set; }
 
@@ -12,7 +12,7 @@ public class Competition
 
     public DateTime Date { get; set; }
 
-    public List<Record>? Leaderboard { get; set; }
+    public List<RecordEntity>? Leaderboard { get; set; }
     
     public int PlayerCount { get; set; }
 }

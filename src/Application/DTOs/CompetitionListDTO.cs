@@ -2,7 +2,7 @@
 
 namespace CotdQualifierRank.Application.DTOs;
 
-public class CompetitionListDTO(Competition[] competitions)
+public class CompetitionListDTO(CompetitionEntity[] competitions)
 {
-    public Competition[] Competitions { get; } = competitions;
+    public CompetitionEntity[] Competitions { get; } = competitions;
 }

@@ -1,9 +1,10 @@
 ﻿namespace CotdQualifierRank.Database.Models;
 
-public class Record
+public class RecordEntity
 {
     public int Id { get; set; }
     public int Time { get; set; }
+    public CompetitionEntity? Competition { get; set; }
 
     public string FormattedTime()
     {
@@ -25,8 +26,8 @@ public class Record
         return "+" + FormattedTime();
     }
 
-    public static Record operator -(Record a, Record b)
+    public static RecordEntity operator -(RecordEntity a, RecordEntity b)
     {
-        return new Record { Id = 0, Time = a.Time - b.Time };
+        return new RecordEntity { Id = 0, Time = a.Time - b.Time };
     }
 }

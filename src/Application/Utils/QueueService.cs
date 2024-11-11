@@ -103,10 +103,10 @@ public class QueueService(
         }
     }
 
-    private async Task<List<Record>> FetchQualificationLeaderboard(NadeoCompetition nadeoCompetition, NadeoChallengeId challengeId)
+    private async Task<List<RecordEntity>> FetchQualificationLeaderboard(NadeoCompetitionEntity nadeoCompetition, NadeoChallengeId challengeId)
     {
         // Fetch the qualification leaderboard
-        var fullLeaderboard = new List<Record>();
+        var fullLeaderboard = new List<RecordEntity>();
 
         for (int i = 0; i < nadeoCompetition.NbPlayers; i += 100)
         {
@@ -114,7 +114,7 @@ public class QueueService(
 
             if (leaderboardFragment?.Results != null)
             {
-                var records = leaderboardFragment.Results.Select(entry => new Record { Time = entry.Score }).ToArray();
+                var records = leaderboardFragment.Results.Select(entry => new RecordEntity { Time = entry.Score }).ToArray();
                 fullLeaderboard.AddRange(records);
             }
         }
@@ -122,9 +122,9 @@ public class QueueService(
         return fullLeaderboard;
     }
 
-    private async Task FetchCompetition(NadeoCompetition nadeoCompetition, MapUid mapUid, DateTime mapTotdDate)
+    private async Task FetchCompetition(NadeoCompetitionEntity nadeoCompetition, MapUid mapUid, DateTime mapTotdDate)
     {
-        var newCompetition = new Competition
+        var newCompetition = new CompetitionEntity
         {
             NadeoCompetitionId = nadeoCompetition.Id,
             NadeoChallengeId = await nadeoApiService.GetChallengeId(new NadeoCompetitionId(nadeoCompetition.Id)),
@@ -138,7 +138,7 @@ public class QueueService(
         competitionService.AddCompetition(newCompetition);
     }
 
-    private async Task<NadeoCompetition?> FetchNadeoCompetition(DateTime mapTotdDate)
+    private async Task<NadeoCompetitionEntity?> FetchNadeoCompetition(DateTime mapTotdDate)
     {
         var offsetLimit = 10000;
         var offset = 0;
@@ -150,7 +150,7 @@ public class QueueService(
                 var compResult = await compResponse.Content.ReadAsStringAsync();
                 try
                 {
-                    var competitions = JsonConvert.DeserializeObject<List<NadeoCompetition>>(compResult);
+                    var competitions = JsonConvert.DeserializeObject<List<NadeoCompetitionEntity>>(compResult);
                     if (competitions is null)
                         return null;
 
@@ -167,7 +167,7 @@ public class QueueService(
                     // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
                     var competition = cotdCompetitions
                         .FirstOrDefault(
-                            comp => NadeoCompetition.ParseDate(
+                            comp => NadeoCompetitionEntity.ParseDate(
                                 comp.Name ?? "2020-07-01"
                             ).Date == mapTotdDate.Date);
 
