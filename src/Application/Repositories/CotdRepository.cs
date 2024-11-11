@@ -88,7 +88,7 @@ public class CotdRepository(CotdContext context)
         return new(competitions.Select(ModelMapper.CompetitionEntityToModel).ToArray());
     }
 
-    public List<RecordModel>? GetLeaderboardByMapUid(MapUid mapUid)
+    public List<Time>? GetLeaderboardByMapUid(MapUid mapUid)
     {
         var leaderboard = context.Competitions
             .AsNoTracking()
@@ -97,10 +97,10 @@ public class CotdRepository(CotdContext context)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
 
-        return leaderboard?.Select(ModelMapper.RecordEntityToModel).ToList();
+        return leaderboard?.Select(ModelMapper.RecordEntityToTimeDomainPrimitive).ToList();
     }
 
-    public List<RecordModel>? GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
+    public List<Time>? GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
     {
         var leaderboard = context.Competitions
             .AsNoTracking()
@@ -109,7 +109,7 @@ public class CotdRepository(CotdContext context)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
 
-        return leaderboard?.Select(ModelMapper.RecordEntityToModel).ToList();
+        return leaderboard?.Select(ModelMapper.RecordEntityToTimeDomainPrimitive).ToList();
     }
 
     public IEnumerable<MapUid> GetMapsUids()
@@ -133,7 +133,7 @@ public class CotdRepository(CotdContext context)
             NadeoChallengeId = competition.NadeoChallengeId,
             NadeoMapUid = competition.NadeoMapUid,
             Date = competition.Date,
-            Leaderboard = competition.Leaderboard?.Select(r => new RecordEntity { Time = r.Time }).ToList(),
+            Leaderboard = competition.Leaderboard?.Select(r => new RecordEntity { Time = r.Value }).ToList(),
             PlayerCount = competition.PlayerCount
         };
         context.Competitions.Add(newCompetition);

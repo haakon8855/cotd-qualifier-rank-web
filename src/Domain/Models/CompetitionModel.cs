@@ -1,30 +1,21 @@
-﻿namespace CotdQualifierRank.Domain.Models;
+﻿using CotdQualifierRank.Domain.DomainPrimitives;
 
-public class CompetitionModel
+namespace CotdQualifierRank.Domain.Models;
+
+public class CompetitionModel(
+    int id,
+    int nadeoCompetitionId,
+    int nadeoChallengeId,
+    string nadeoMapUid,
+    DateTime date,
+    List<Time> leaderboard,
+    int playerCount)
 {
-    public CompetitionModel(
-        int id,
-        int nadeoCompetitionId,
-        int nadeoChallengeId,
-        string nadeoMapUid,
-        DateTime date,
-        List<RecordModel> leaderboard,
-        int playerCount)
-    {
-        Id = id;
-        NadeoCompetitionId = nadeoCompetitionId;
-        NadeoChallengeId = nadeoChallengeId;
-        NadeoMapUid = nadeoMapUid;
-        Date = date;
-        Leaderboard = leaderboard;
-        PlayerCount = playerCount;
-    }
-
-    public int Id { get; set; }
-    public int NadeoCompetitionId { get; set; }
-    public int NadeoChallengeId { get; set; }
-    public string NadeoMapUid { get; set; }
-    public DateTime Date { get; set; }
-    public List<RecordModel>? Leaderboard { get; set; }
-    public int PlayerCount { get; set; }
+    public int Id { get; } = id;
+    public int NadeoCompetitionId { get; } = nadeoCompetitionId;
+    public int NadeoChallengeId { get; } = nadeoChallengeId;
+    public string NadeoMapUid { get; } = nadeoMapUid;
+    public DateTime Date { get; } = date;
+    public List<Time>? Leaderboard { get; } = leaderboard;
+    public int PlayerCount { get; } = playerCount;
 }

@@ -18,8 +18,8 @@ public class DetailsModel(CompetitionService competitionService) : PageModel
     public int PlayerCount { get; set; }
 
     public CompetitionModel Competition { get; set; } = default!;
-    public List<RecordModel> PaginatedLeaderboard { get; set; } = default!;
-    public List<RecordModel> FirstSeedDifference { get; set; } = default!;
+    public List<Time> PaginatedLeaderboard { get; set; } = default!;
+    public List<Time> FirstSeedDifference { get; set; } = default!;
     public Dictionary<string, string> PageStatistics { get; set; } = new();
 
     private bool Initialise(int? id)
@@ -39,7 +39,7 @@ public class DetailsModel(CompetitionService competitionService) : PageModel
         if (PageNo > PageCount)
             PageNo = PageCount;
 
-        competition.Leaderboard = competition.Leaderboard.OrderBy(r => r).ToList();
+        competition.Leaderboard.Sort();
         PaginatedLeaderboard = competition.Leaderboard.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
         Competition = competition;
 

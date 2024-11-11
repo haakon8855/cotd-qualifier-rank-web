@@ -2,27 +2,18 @@
 
 namespace CotdQualifierRank.Domain.Models;
 
-public class NadeoCompetitionModel
+public class NadeoCompetitionModel(
+    int id,
+    string? liveId,
+    string? name,
+    string? description,
+    int nbPlayers)
 {
-    public NadeoCompetitionModel(
-        int id,
-        string? liveId,
-        string? name,
-        string? description,
-        int nbPlayers)
-    {
-        Id = id;
-        LiveId = liveId ?? string.Empty;
-        Name = name ?? string.Empty;
-        Description = description ?? string.Empty;
-        NbPlayers = nbPlayers;
-    }
-
-    public int Id { get; set; }
-    public string LiveId { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int NbPlayers { get; set; }
+    public int Id { get; } = id;
+    public string LiveId { get; } = liveId ?? string.Empty;
+    public string Name { get; } = name ?? string.Empty;
+    public string Description { get; } = description ?? string.Empty;
+    public int NbPlayers { get; } = nbPlayers;
 
     public static DateTime ParseDate(string input)
     {

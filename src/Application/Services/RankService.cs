@@ -45,14 +45,13 @@ public class RankService(CotdRepository repository)
         if (cotd?.Leaderboard is null)
             return -1;
 
-        // TODO: Remove lambda
-        cotd.Leaderboard.Sort((a, b) => a.Time.CompareTo(b.Time));
+        cotd.Leaderboard.Sort();
         var min = 0;
         var max = cotd.Leaderboard.Count;
         while (min < max)
         {
             var mid = (min + max) / 2;
-            if (cotd.Leaderboard[mid].Time < time.Value)
+            if (cotd.Leaderboard[mid] < time)
                 min = mid + 1;
             else
                 max = mid;

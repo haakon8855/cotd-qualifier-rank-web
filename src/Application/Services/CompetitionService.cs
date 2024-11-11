@@ -43,7 +43,7 @@ public class CompetitionService(CotdRepository repository)
         return repository.GetCompetitionById(id, includeLeaderboard);
     }
 
-    public List<RecordModel> GetLeaderboard(MapUid mapUid)
+    public List<int> GetLeaderboard(MapUid mapUid)
     {
         var leaderboard = repository.GetLeaderboardByMapUid(mapUid);
 
@@ -51,11 +51,12 @@ public class CompetitionService(CotdRepository repository)
             return [];
 
         return leaderboard
-            .OrderBy(l => l.Time)
+            .OrderBy(l => l.Value)
+            .Select(l => l.Value)
             .ToList();
     }
     
-    public List<RecordModel> GetLeaderboard(NadeoCompetitionId competitionId)
+    public List<int> GetLeaderboard(NadeoCompetitionId competitionId)
     {
         var leaderboard = repository.GetLeaderboardByNadeoCompetitionId(competitionId);
 
@@ -63,7 +64,8 @@ public class CompetitionService(CotdRepository repository)
             return [];
 
         return leaderboard
-            .OrderBy(l => l.Time)
+            .OrderBy(l => l.Value)
+            .Select(l => l.Value)
             .ToList();
     }
 

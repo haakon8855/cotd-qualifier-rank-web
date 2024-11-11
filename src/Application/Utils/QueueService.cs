@@ -103,11 +103,11 @@ public class QueueService(
         }
     }
 
-    private async Task<List<RecordModel>> FetchQualificationLeaderboard(NadeoCompetitionModel nadeoCompetition,
+    private async Task<List<Time>> FetchQualificationLeaderboard(NadeoCompetitionModel nadeoCompetition,
         NadeoChallengeId challengeId)
     {
         // Fetch the qualification leaderboard
-        var fullLeaderboard = new List<RecordModel>();
+        var fullLeaderboard = new List<Time>();
 
         for (int i = 0; i < nadeoCompetition.NbPlayers; i += 100)
         {
@@ -115,7 +115,7 @@ public class QueueService(
 
             if (leaderboardFragment?.Results != null)
             {
-                var records = leaderboardFragment.Results.Select(entry => new RecordModel(0, entry.Score)).ToArray();
+                var records = leaderboardFragment.Results.Select(entry => new Time(entry.Score)).ToArray();
                 fullLeaderboard.AddRange(records);
             }
         }
@@ -161,7 +161,8 @@ public class QueueService(
 
                     var cotdCompetitions = competitions.Where(comp => Regex.IsMatch(comp.Name ?? "",
                         @"(COTD|Cup of the Day) 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]($| #1$)")).ToArray();
-                    var cotdCompetitionModels = cotdCompetitions.Select(ModelMapper.NadeoCompetitionDTOToModel).ToArray();
+                    var cotdCompetitionModels =
+                        cotdCompetitions.Select(ModelMapper.NadeoCompetitionDTOToModel).ToArray();
 
                     // store all competitions while searching
                     nadeoCompetitionService.AddNadeoCompetitions(cotdCompetitionModels);

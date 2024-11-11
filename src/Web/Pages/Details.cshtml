@@ -1,4 +1,5 @@
 @page
+@using CotdQualifierRank.Domain.DomainPrimitives
 @using CotdQualifierRank.Domain.Models
 @model DetailsModel
 
@@ -106,7 +107,7 @@
 
                     @if (Model.Rank != 0)
                     {
-                        var inputRecord = new RecordModel(0, Model.SearchBoxTime);
+                        var inputRecord = new Time(Model.SearchBoxTime);
                         <dl class="row">
                             <dt class="col-sm-6">
                                 Time:
