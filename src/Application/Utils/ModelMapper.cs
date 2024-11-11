@@ -1,8 +1,8 @@
 ﻿using CotdQualifierRank.Application.DTOs;
 using CotdQualifierRank.Domain.Models;
-using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
+using CotdQualifierRank.Database.Entities;
 
 namespace CotdQualifierRank.Application.Utils;
 
@@ -30,7 +30,7 @@ public static class ModelMapper
     {
         return new NadeoCompetitionModel(
             new NadeoCompetitionId(entity.Id),
-            entity.liveId ?? string.Empty,
+            entity.LiveId ?? string.Empty,
             entity.Name ?? string.Empty,
             entity.Description ?? string.Empty,
             entity.NbPlayers
@@ -53,7 +53,7 @@ public static class ModelMapper
         return new NadeoCompetitionEntity
         {
             Id = model.Id.Value,
-            liveId = model.LiveId,
+            LiveId = model.LiveId,
             Name = model.Name,
             Description = model.Description,
             NbPlayers = model.NbPlayers
