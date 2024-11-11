@@ -39,14 +39,14 @@
                             aria-label="Open competition number @Model.Competition.NadeoCompetitionId on Trackmania.io"
                             href="@($"https://trackmania.io/#/cotd/{Model.Competition.NadeoCompetitionId}")"
                         >
-                            @Html.DisplayFor(model => model.Competition.NadeoCompetitionId)
+                            @Model.Competition.NadeoCompetitionId
                         </a>
                     </dd>
                     <dt class="col-sm-4">
                         @Html.DisplayNameFor(model => model.Competition.NadeoChallengeId)
                     </dt>
                     <dd class="col-sm-8">
-                        @Html.DisplayFor(model => model.Competition.NadeoChallengeId)
+                        @Model.Competition.NadeoChallengeId
                     </dd>
                     <dt class="col-sm-4">
                         @Html.DisplayNameFor(model => model.Competition.NadeoMapUid)

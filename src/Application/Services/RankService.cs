@@ -27,9 +27,9 @@ public class RankService(CotdRepository repository)
         var rank = FindRankInLeaderboard(cotd, time);
 
         return new RankDTO(
-            cotd.NadeoMapUid,
-            cotd.NadeoCompetitionId,
-            cotd.NadeoChallengeId,
+            cotd.NadeoMapUid.Value,
+            cotd.NadeoCompetitionId.Value,
+            cotd.NadeoChallengeId.Value,
             cotd.Date,
             time.Value,
             rank,

@@ -2,6 +2,7 @@
 using CotdQualifierRank.Domain.Models;
 using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 
 namespace CotdQualifierRank.Application.Utils;
 
@@ -10,10 +11,10 @@ public static class ModelMapper
     public static CompetitionModel CompetitionEntityToModel(CompetitionEntity entity)
     {
         return new CompetitionModel(
-            entity.Id,
-            entity.NadeoCompetitionId,
-            entity.NadeoChallengeId,
-            entity.NadeoMapUid,
+            new CompetitionId(entity.Id),
+            new NadeoCompetitionId(entity.NadeoCompetitionId),
+            new NadeoChallengeId(entity.NadeoChallengeId),
+            new MapUid(entity.NadeoMapUid),
             entity.Date,
             entity.Leaderboard is not null ? entity.Leaderboard.Select(RecordEntityToTimeDomainPrimitive).ToList() : [],
             entity.PlayerCount

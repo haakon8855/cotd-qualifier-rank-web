@@ -128,10 +128,10 @@ public class CotdRepository(CotdContext context)
     {
         var newCompetition = new CompetitionEntity
         {
-            Id = competition.Id,
-            NadeoCompetitionId = competition.NadeoCompetitionId,
-            NadeoChallengeId = competition.NadeoChallengeId,
-            NadeoMapUid = competition.NadeoMapUid,
+            Id = competition.Id.Value,
+            NadeoCompetitionId = competition.NadeoCompetitionId.Value,
+            NadeoChallengeId = competition.NadeoChallengeId.Value,
+            NadeoMapUid = competition.NadeoMapUid.Value,
             Date = competition.Date,
             Leaderboard = competition.Leaderboard?.Select(r => new RecordEntity { Time = r.Value }).ToList(),
             PlayerCount = competition.PlayerCount

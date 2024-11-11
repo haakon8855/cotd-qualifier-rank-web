@@ -16,9 +16,9 @@ public class CompetitionService(CotdRepository repository)
             return null;
         
         return new CompetitionDTO(
-            competition.NadeoCompetitionId,
-            competition.NadeoChallengeId,
-            competition.NadeoMapUid,
+            competition.NadeoCompetitionId.Value,
+            competition.NadeoChallengeId.Value,
+            competition.NadeoMapUid.Value,
             competition.Date
         );
     }
@@ -31,9 +31,9 @@ public class CompetitionService(CotdRepository repository)
             return null;
         
         return new CompetitionDTO(
-            competition.NadeoCompetitionId,
-            competition.NadeoChallengeId,
-            competition.NadeoMapUid,
+            competition.NadeoCompetitionId.Value,
+            competition.NadeoChallengeId.Value,
+            competition.NadeoMapUid.Value,
             competition.Date
         );
     }

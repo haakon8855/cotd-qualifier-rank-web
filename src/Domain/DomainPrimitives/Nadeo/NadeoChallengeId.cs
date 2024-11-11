@@ -21,7 +21,7 @@ public class NadeoChallengeId : DomainPrimitive
 
     public override string ToString()
     {
-        return $"{Value}";
+        return Value.ToString();
     }
 
     private static void AssertValid(int value)
