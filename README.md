@@ -1,11 +1,12 @@
 # Cup of the Day Qualifier Rank<br>Website and API
+
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-0ba300)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Cup of the Day Qualifier Rank is a website and API for finding the seeding 
-of your current PB in an arbitrary COTD qualifying session. It provides a 
+Cup of the Day Qualifier Rank is a website and API for finding the seeding
+of your current PB in an arbitrary COTD qualifying session. It provides a
 Web UI for browsing information and leaderboards from previous COTD qualifying
-sessions, as well as an API for fetching this data in a structured manner. 
+sessions, as well as an API for fetching this data in a structured manner.
 
 __Note:__ _This project is still a work in progress and is therefore not
 publicly available or integrated with an accompanying
@@ -41,10 +42,11 @@ publicly available or integrated with an accompanying
 Have you ever been playing an old Track of the Day and wondered
 which division you would have gotten with your current PB on that map?
 
-This problem can be solved in a couple ways, but ultimately, someone needs to 
+This problem can be solved in a couple ways, but ultimately, someone needs to
 fetch COTD data from the Trackmania Web Services API provided by Nadeo.
 
 ### The Decentralised Approach
+
 An OpenPlanet plugin can be created that runs the required requests client-side
 within Trackmania 2020. This solution does not rely on a centralised server and
 fetches all required data directly from Nadeo.
@@ -66,7 +68,7 @@ However, there are several problems with this solution:
 ### The Centralised Approach
 
 Another approach to this problem is to create a centralised server handling
-all communication with Nadeo's API. This way, both qualification 
+all communication with Nadeo's API. This way, both qualification
 leaderboard IDs and leaderboard data can be cached in one server database.
 Additionally, since historical TOTD data never changes after qualification
 commences, caching only needs to happen once per map.
@@ -87,10 +89,10 @@ been if they drove their current PB during the COTD qualifying session for
 that TOTD. This API tries to provide this functionality in an efficient manner
 without contacting Nadeo's own API for every request.
 
-When the rank from a specific qualifying session is requested, the server 
+When the rank from a specific qualifying session is requested, the server
 searches its database for the corresponding leaderboard in order to provide
-the requested rank. If this data is not yet stored in the server's database, 
-it fetches the necessary data from Nadeo and stores it for future requests. 
+the requested rank. If this data is not yet stored in the server's database,
+it fetches the necessary data from Nadeo and stores it for future requests.
 Due to this implementation, the first request for any COTD qualifying session
 will return a 503 response and promt the client to retry after a few seconds.
 This is intended behaviour as this initial request prompts the server to start
@@ -102,10 +104,10 @@ __Note:__ _Only the [Rank endpoint](#rank) will fetch leaderboard data from
 Nadeo when data is not cached. If data has not been cached for other endpoints,
 a 404 response code is returned._
 
-The API is made to accompany the 
-openplanet plugin 
+The API is made to accompany the
+openplanet plugin
 [COTD Qualifier Rank](https://github.com/haakon8855/COTD-qualifier-rank)
-for Trackmania 2020. 
+for Trackmania 2020.
 
 ## API Documentation
 
@@ -117,35 +119,36 @@ and COTD leaderboards (challenges). These include endpoints for competition
 metadata, TOTD MapUids, qualifier rank and qualifier leaderboards.
 
 The Rank endpoint is considered the main use-case of this API, providing the
-rank for a given time on a specied TOTD as if that time was driven during the 
+rank for a given time on a specied TOTD as if that time was driven during the
 COTD 15-minute qualifying session. This endpoint is made to accompany the
 [COTD Qualifier Rank](https://github.com/haakon8855/COTD-qualifier-rank)
-plugin (WIP). 
+plugin (WIP).
 
 The following is a list of the available endpoints and details about them.
 
 ### Rank
-- **URL**: `/api/rank/{mapUid}/{time}`
-- **Method**: GET
-- **Description**: Returns the seeding/rank of the given time
+
+- __URL__ `/api/rank/{mapUid}/{time}`
+- __Method__ GET
+- __Description__ Returns the seeding/rank of the given time
   on the given MapUID  
   - If the requested leaderboard has not previously been fetched from Nadeo,
     the server responds with response code 503 and promts the client to retry
-    after a few seconds. This happens because fetching of a leaderboard from 
+    after a few seconds. This happens because fetching of a leaderboard from
     Nadeo usually takes about 30 seconds.
-- **Values**:
+- __Values__
   - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
     data has not yet been fetched from Nadeo by the server, no data is returned.
   - `time (int)`: The time in milliseconds for which a rank is returned
     (e.g. your current PB on the track).
 
-**Example Request**:
+__Example Request__:
 
 ```shell
 curl -X GET http://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
 ```
 
- **Response**:
+ __Response__:
 
 ```json
 {
@@ -159,9 +162,10 @@ curl -X GET http://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
 ```
 
 ### Maps
-- **URL**: `/api/maps`
-- **Method**: GET
-- **Description**: Returns a list of MapUids for all COTD leaderboards that are
+
+- __URL__: `/api/maps`
+- __Method__: GET
+- __Description__: Returns a list of MapUids for all COTD leaderboards that are
   currently in the server's database, sorted by COTD date.
   New TOTDs are not automatically added to the server's database and are
   fetched from Nadeo on a JIT basis. I.e. competition and map data is only
@@ -169,13 +173,13 @@ curl -X GET http://localhost:5000/api/rank/ae262K904I12Kbj_AaBGeTqE1F0/49302
   COTD is fetched from Nadeo, the track's MapUid is added to the database and
   will then be returned as part of this list.  
 
-**Example Request**:
+__Example Request__:
 
 ```shell
 curl -X GET http://localhost:5000/api/maps
 ```
 
- **Response**:
+ __Response__:
 
 ```json
 [
@@ -189,27 +193,30 @@ curl -X GET http://localhost:5000/api/maps
 ```
 
 ### Competitions
-- **URL**: `/api/competitions/{mapUid|competitionId}`
-- **Method**: GET
-- **Description**: Returns information about a COTD given its CompetitionId or
+
+- __URL__: `/api/competitions/{mapUid|competitionId}`
+- __Method__: GET
+- __Description__: Returns information about a COTD given its CompetitionId or
   the MapUid of its associated track.
-- **Values**:
+- __Values__:
   - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
     data has not yet been fetched from Nadeo by the server, no data is returned.
   - `competitionId (int)`: The ID of any COTD. If the COTD competition data has not
     yet been fetched from Nadeo by the server, no data is returned.
 
-**Example Request**:
+__Example Request__:
 
 ```shell
 curl -X GET http://localhost:5000/api/competitions/rbzxGFuf_dKyzxir8RgzvX5Ss65
 ```
+
 or
+
 ```shell
 curl -X GET http://localhost:5000/api/competitions/9447
 ```
 
- **Response**:
+ __Response__:
 
 ```json
 {
@@ -221,31 +228,34 @@ curl -X GET http://localhost:5000/api/competitions/9447
 ```
 
 ### Qualifying Leaderboard
-- **URL**: `/api/competitions/{mapUid|competitionId}/leaderboard`
-- **Method**: GET
-- **Description**: Returns the leaderboard from the qualifying session in a
+
+- __URL__: `/api/competitions/{mapUid|competitionId}/leaderboard`
+- __Method__: GET
+- __Description__: Returns the leaderboard from the qualifying session in a
   COTD given the cup's CompetitionId or the associated track's MapUid.  
   A normal COTD normally has somewhere between 1000 and 5000 players, usually
   depending on how recent it was. E.g. COTDs from 2020 saw around 1.5k players
   while COTDs after console release regularly contain upwards of 3k players.
   Expect the size of the returned list to in this range.
-- **Values**:
+- __Values__:
   - `mapUid (str)`: The UID of any TOTD. If the associated COTD competition's
     data has not yet been fetched from Nadeo by the server, no data is returned.
   - `competitionId (int)`: The ID of any COTD. If the COTD competition data has
     not yet been fetched from Nadeo by the server, no data is returned.
 
-**Example Requests**:
+__Example Requests__:
 
 ```shell
 curl -X GET http://localhost:5000/api/competitions/rbzxGFuf_dKyzxir8RgzvX5Ss65/leaderboard
 ```
+
 or
+
 ```shell
 curl -X GET http://localhost:5000/api/competitions/9447/leaderboard
 ```
 
- **Response**:
+ __Response__:
 
 ```json
 [
@@ -294,6 +304,7 @@ server locally.
 ### Prerequisites
 
 To successfully run this server locally, you will need the following:
+
 - An active Trackmania Club Access Subscription
 - .NET 8.0
 
@@ -340,11 +351,14 @@ Take note of your server login, as well as the generated
 ### Provide Credentials for the Server
 
 Create a file in `CotdQualifierRankWeb/` named `credentials.json`
+
 ```shell
 touch CotdQualifierRankWeb/credentials.json
 ```
+
 and store your dedicated server account credentials inside
 with the following format:
+
 ```json
 {
     "Login": "<dedicated-server-account-login>",
@@ -353,15 +367,18 @@ with the following format:
     "UserAgent": "<your-user-agent>",
 }
 ```
+
 You'll also need to provide a User-Agent in the credentials file,
 which is usually on the following format:
-```
+
+```user-agent
 Application Name / your-email-address@example.com
 ```
 
 ### Create the Database
 
 To create the database run the following commands:
+
 ```shell
 cd CotdQualifierRankWeb/
 dotnet ef database update
@@ -370,18 +387,21 @@ dotnet ef database update
 ### Run the Server
 
 Open a terminal inside the repo and run the following commands:
+
 ```shell
 cd CotdQualifierRankWeb/
 dotnet run
 ```
 
 ## License
+
 The code in this repository is protected by the
 [GNU General Public License v3](./LICENSE).
 
 ## Credits
 
 This project would not be possible without:
+
 - The Openplanet team's
   [Trackmania Web Services API Documentation](https://webservices.openplanet.dev/)
 - Numerous helpful individuals from the Openplanet discord server
