@@ -29,7 +29,7 @@ public static class ModelMapper
     public static NadeoCompetitionModel NadeoCompetitionEntityToModel(NadeoCompetitionEntity entity)
     {
         return new NadeoCompetitionModel(
-            entity.Id,
+            new NadeoCompetitionId(entity.Id),
             entity.liveId ?? string.Empty,
             entity.Name ?? string.Empty,
             entity.Description ?? string.Empty,
@@ -40,7 +40,7 @@ public static class ModelMapper
     public static NadeoCompetitionModel NadeoCompetitionDTOToModel(NadeoCompetitionDTO dto)
     {
         return new NadeoCompetitionModel(
-            dto.Id,
+            new NadeoCompetitionId(dto.Id),
             dto.liveId ?? string.Empty,
             dto.Name ?? string.Empty,
             dto.Description ?? string.Empty,
@@ -52,7 +52,7 @@ public static class ModelMapper
     {
         return new NadeoCompetitionEntity
         {
-            Id = model.Id,
+            Id = model.Id.Value,
             liveId = model.LiveId,
             Name = model.Name,
             Description = model.Description,

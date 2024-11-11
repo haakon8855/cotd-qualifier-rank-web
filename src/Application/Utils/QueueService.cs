@@ -125,17 +125,19 @@ public class QueueService(
 
     private async Task FetchCompetition(NadeoCompetitionModel nadeoCompetition, MapUid mapUid, DateTime mapTotdDate)
     {
-        var challengeId = await nadeoApiService.GetChallengeId(new NadeoCompetitionId(nadeoCompetition.Id));
-        if (!NadeoChallengeId.IsValid(challengeId))
-            await Console.Error.WriteLineAsync($"Invalid Nadeo Challenge Id or invalid validation rules: {challengeId}");
-        if (!NadeoCompetitionId.IsValid(nadeoCompetition.Id))
-            await Console.Error.WriteLineAsync($"Invalid Nadeo Competition Id or invalid validation rules: {nadeoCompetition.Id}");
-        
-        var leaderboard = await FetchQualificationLeaderboard(nadeoCompetition, new NadeoChallengeId(challengeId));
+        var challengeIdInt = await nadeoApiService.GetChallengeId(nadeoCompetition.Id);
+        if (!NadeoChallengeId.IsValid(challengeIdInt))
+        {
+            await Console.Error.WriteLineAsync(
+                $"Invalid Nadeo Challenge Id or invalid validation rules: {challengeIdInt}");
+            return;
+        }
+        var challengeId = new NadeoChallengeId(challengeIdInt);
+        var leaderboard = await FetchQualificationLeaderboard(nadeoCompetition, challengeId);
         var newCompetition = new CompetitionModel(
             new CompetitionId(0),
-            new NadeoCompetitionId(nadeoCompetition.Id),
-            new NadeoChallengeId(challengeId),
+            nadeoCompetition.Id,
+            challengeId,
             mapUid,
             mapTotdDate,
             leaderboard,
