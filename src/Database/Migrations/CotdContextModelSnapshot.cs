@@ -22,7 +22,7 @@ namespace CotdQualifierRank.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CotdQualifierRank.Database.Models.Competition", b =>
+            modelBuilder.Entity("CotdQualifierRank.Database.Entities.CompetitionEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace CotdQualifierRank.Database.Migrations
                     b.ToTable("Competitions", (string)null);
                 });
 
-            modelBuilder.Entity("CotdQualifierRank.Database.Models.NadeoCompetition", b =>
+            modelBuilder.Entity("CotdQualifierRank.Database.Entities.NadeoCompetitionEntity", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -73,7 +73,7 @@ namespace CotdQualifierRank.Database.Migrations
                     b.ToTable("NadeoCompetitions", (string)null);
                 });
 
-            modelBuilder.Entity("CotdQualifierRank.Database.Models.Record", b =>
+            modelBuilder.Entity("CotdQualifierRank.Database.Entities.RecordEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,14 +94,14 @@ namespace CotdQualifierRank.Database.Migrations
                     b.ToTable("Records", (string)null);
                 });
 
-            modelBuilder.Entity("CotdQualifierRank.Database.Models.Record", b =>
+            modelBuilder.Entity("CotdQualifierRank.Database.Entities.RecordEntity", b =>
                 {
-                    b.HasOne("CotdQualifierRank.Database.Models.Competition", null)
+                    b.HasOne("CotdQualifierRank.Database.Entities.CompetitionEntity", null)
                         .WithMany("Leaderboard")
                         .HasForeignKey("CompetitionId");
                 });
 
-            modelBuilder.Entity("CotdQualifierRank.Database.Models.Competition", b =>
+            modelBuilder.Entity("CotdQualifierRank.Database.Entities.CompetitionEntity", b =>
                 {
                     b.Navigation("Leaderboard");
                 });

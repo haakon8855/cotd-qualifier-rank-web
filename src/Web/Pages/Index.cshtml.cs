@@ -1,4 +1,4 @@
-using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Application.Utils;
 using CotdQualifierRank.Application.Services;

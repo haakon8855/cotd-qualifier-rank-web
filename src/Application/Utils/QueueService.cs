@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Application.DTOs;

@@ -1,4 +1,4 @@
-﻿namespace CotdQualifierRank.Database.Models;
+﻿namespace CotdQualifierRank.Database.Entities;
 
 public class RecordEntity
 {

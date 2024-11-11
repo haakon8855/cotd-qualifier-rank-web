@@ -1,4 +1,4 @@
-﻿using CotdQualifierRank.Database.Models;
+﻿using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Application.Repositories;
 
 namespace CotdQualifierRank.Application.Services;

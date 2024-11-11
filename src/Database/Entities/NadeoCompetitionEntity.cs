@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace CotdQualifierRank.Database.Models;
+namespace CotdQualifierRank.Database.Entities;
 
 public class NadeoCompetitionEntity
 {

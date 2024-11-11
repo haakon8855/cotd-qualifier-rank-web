@@ -1,5 +1,4 @@
-﻿using CotdQualifierRank.Database.Models;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace CotdQualifierRank.Application.Data;
 

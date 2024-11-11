@@ -1,5 +1,5 @@
 ﻿using CotdQualifierRank.Database;
-using CotdQualifierRank.Database.Models;
+using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Application.DTOs;

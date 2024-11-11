@@ -1,4 +1,4 @@
-﻿using CotdQualifierRank.Database.Models;
+﻿using CotdQualifierRank.Database.Entities;
 
 namespace CotdQualifierRank.Application.DTOs;
 
