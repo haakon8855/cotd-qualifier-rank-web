@@ -6,7 +6,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Recent Cup of the Days @(Model.FilterAnomalous ? "" : "- " + Model.GetPageMonthDateTime().ToMonthAndYearString())</h1>
+<h1>Cup of the Day @(Model.FilterAnomalous ? "" : "- " + Model.GetPageMonthDateTime().ToMonthAndYearString())</h1>
 @if (Model.FilterAnomalous)
 {
     <h2>Anomalous Leaderboards <span title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</span></h2>
