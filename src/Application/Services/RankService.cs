@@ -1,5 +1,5 @@
-﻿using CotdQualifierRank.Database.Entities;
-using CotdQualifierRank.Domain.DomainPrimitives;
+﻿using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.Models;
 using CotdQualifierRank.Application.DTOs;
 using CotdQualifierRank.Application.Repositories;
 using CotdQualifierRank.Application.Utils;
@@ -22,7 +22,7 @@ public class RankService(CotdRepository repository)
         return GetRank(cotd, time);
     }
 
-    public RankDTO? GetRank(CompetitionEntity cotd, Time time)
+    public static RankDTO GetRank(CompetitionModel cotd, Time time)
     {
         var rank = FindRankInLeaderboard(cotd, time);
 
@@ -38,15 +38,15 @@ public class RankService(CotdRepository repository)
         );
     }
 
-    private static int FindRankInLeaderboard(CompetitionEntity? cotd, Time time)
+    private static int FindRankInLeaderboard(CompetitionModel? cotd, Time time)
     {
         // Binary search on the leaderboard to find the rank as if
         // it would have been part of the sorted list
         if (cotd?.Leaderboard is null)
             return -1;
 
+        // TODO: Remove lambda
         cotd.Leaderboard.Sort((a, b) => a.Time.CompareTo(b.Time));
-        var rank = 0;
         var min = 0;
         var max = cotd.Leaderboard.Count;
         while (min < max)
@@ -57,7 +57,7 @@ public class RankService(CotdRepository repository)
             else
                 max = mid;
         }
-        rank = min + 1;
+        var rank = min + 1;
         return rank;
     }
 }

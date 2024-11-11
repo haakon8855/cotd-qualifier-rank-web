@@ -1,8 +1,8 @@
-﻿using CotdQualifierRank.Database.Entities;
+﻿using CotdQualifierRank.Domain.Models;
 
 namespace CotdQualifierRank.Application.DTOs;
 
-public class CompetitionListDTO(CompetitionEntity[] competitions)
+public class CompetitionListDTO(CompetitionModel[] competitions)
 {
-    public CompetitionEntity[] Competitions { get; } = competitions;
+    public CompetitionModel[] Competitions { get; } = competitions;
 }

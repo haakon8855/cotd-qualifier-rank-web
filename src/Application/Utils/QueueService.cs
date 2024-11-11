@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using CotdQualifierRank.Database.Entities;
-using CotdQualifierRank.Domain.DomainPrimitives;
-using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Application.DTOs;
 using CotdQualifierRank.Application.Services;
+using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
+using CotdQualifierRank.Domain.Models;
 
 namespace CotdQualifierRank.Application.Utils;
 
@@ -103,10 +103,11 @@ public class QueueService(
         }
     }
 
-    private async Task<List<RecordEntity>> FetchQualificationLeaderboard(NadeoCompetitionEntity nadeoCompetition, NadeoChallengeId challengeId)
+    private async Task<List<RecordModel>> FetchQualificationLeaderboard(NadeoCompetitionModel nadeoCompetition,
+        NadeoChallengeId challengeId)
     {
         // Fetch the qualification leaderboard
-        var fullLeaderboard = new List<RecordEntity>();
+        var fullLeaderboard = new List<RecordModel>();
 
         for (int i = 0; i < nadeoCompetition.NbPlayers; i += 100)
         {
@@ -114,7 +115,7 @@ public class QueueService(
 
             if (leaderboardFragment?.Results != null)
             {
-                var records = leaderboardFragment.Results.Select(entry => new RecordEntity { Time = entry.Score }).ToArray();
+                var records = leaderboardFragment.Results.Select(entry => new RecordModel(0, entry.Score)).ToArray();
                 fullLeaderboard.AddRange(records);
             }
         }
@@ -122,23 +123,24 @@ public class QueueService(
         return fullLeaderboard;
     }
 
-    private async Task FetchCompetition(NadeoCompetitionEntity nadeoCompetition, MapUid mapUid, DateTime mapTotdDate)
+    private async Task FetchCompetition(NadeoCompetitionModel nadeoCompetition, MapUid mapUid, DateTime mapTotdDate)
     {
-        var newCompetition = new CompetitionEntity
-        {
-            NadeoCompetitionId = nadeoCompetition.Id,
-            NadeoChallengeId = await nadeoApiService.GetChallengeId(new NadeoCompetitionId(nadeoCompetition.Id)),
-            NadeoMapUid = mapUid.Value,
-            Date = mapTotdDate
-        };
-        newCompetition.Leaderboard =
-            await FetchQualificationLeaderboard(nadeoCompetition, new NadeoChallengeId(newCompetition.NadeoChallengeId));
-        newCompetition.PlayerCount = newCompetition.Leaderboard.Count;
-        
+        var challengeId = await nadeoApiService.GetChallengeId(new NadeoCompetitionId(nadeoCompetition.Id));
+        var leaderboard = await FetchQualificationLeaderboard(nadeoCompetition, new NadeoChallengeId(challengeId));
+        var newCompetition = new CompetitionModel(
+            0,
+            nadeoCompetition.Id,
+            challengeId,
+            mapUid.Value,
+            mapTotdDate,
+            leaderboard,
+            leaderboard.Count
+        );
+
         competitionService.AddCompetition(newCompetition);
     }
 
-    private async Task<NadeoCompetitionEntity?> FetchNadeoCompetition(DateTime mapTotdDate)
+    private async Task<NadeoCompetitionModel?> FetchNadeoCompetition(DateTime mapTotdDate)
     {
         var offsetLimit = 10000;
         var offset = 0;
@@ -150,7 +152,7 @@ public class QueueService(
                 var compResult = await compResponse.Content.ReadAsStringAsync();
                 try
                 {
-                    var competitions = JsonConvert.DeserializeObject<List<NadeoCompetitionEntity>>(compResult);
+                    var competitions = JsonConvert.DeserializeObject<List<NadeoCompetitionDTO>>(compResult);
                     if (competitions is null)
                         return null;
 
@@ -159,19 +161,17 @@ public class QueueService(
 
                     var cotdCompetitions = competitions.Where(comp => Regex.IsMatch(comp.Name ?? "",
                         @"(COTD|Cup of the Day) 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]($| #1$)")).ToArray();
+                    var cotdCompetitionModels = cotdCompetitions.Select(ModelMapper.NadeoCompetitionDTOToModel).ToArray();
 
                     // store all competitions while searching
-                    nadeoCompetitionService.AddNadeoCompetitions(cotdCompetitions);
+                    nadeoCompetitionService.AddNadeoCompetitions(cotdCompetitionModels);
 
-                    // Check if we have a nadeocompetition with that date
+                    // Check if we have a NadeoCompetition with that date
                     // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
-                    var competition = cotdCompetitions
-                        .FirstOrDefault(
-                            comp => NadeoCompetitionEntity.ParseDate(
-                                comp.Name ?? "2020-07-01"
-                            ).Date == mapTotdDate.Date);
+                    var competition = cotdCompetitionModels
+                        .FirstOrDefault(comp => NadeoCompetitionModel.ParseDate(comp.Name).Date == mapTotdDate.Date);
 
-                    // when we find it, fetch the leaderboard and store it in the db
+                    // When we find it, fetch the leaderboard and store it in the db
                     if (competition is not null)
                         return competition;
                 }

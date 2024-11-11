@@ -1,16 +1,16 @@
-﻿using CotdQualifierRank.Database.Entities;
+﻿using CotdQualifierRank.Domain.Models;
 using CotdQualifierRank.Application.Repositories;
 
 namespace CotdQualifierRank.Application.Services;
 
 public class NadeoCompetitionService(CotdRepository repository)
 {
-    public NadeoCompetitionEntity? GetNadeoCompetition(DateTime date)
+    public NadeoCompetitionModel? GetNadeoCompetition(DateTime date)
     {
         return repository.GetNadeoCompetition(date);
     }
 
-    public void AddNadeoCompetitions(NadeoCompetitionEntity[] nadeoCompetitions)
+    public void AddNadeoCompetitions(NadeoCompetitionModel[] nadeoCompetitions)
     {
         repository.InsertNadeoCompetitions(nadeoCompetitions);
     }

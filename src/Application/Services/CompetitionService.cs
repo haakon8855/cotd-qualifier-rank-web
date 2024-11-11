@@ -1,6 +1,6 @@
-﻿using CotdQualifierRank.Database.Entities;
-using CotdQualifierRank.Domain.DomainPrimitives;
+﻿using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
+using CotdQualifierRank.Domain.Models;
 using CotdQualifierRank.Application.DTOs;
 using CotdQualifierRank.Application.Repositories;
 
@@ -38,12 +38,12 @@ public class CompetitionService(CotdRepository repository)
         );
     }
     
-    public CompetitionEntity? GetCompetition(CompetitionId id, bool includeLeaderboard = true)
+    public CompetitionModel? GetCompetition(CompetitionId id, bool includeLeaderboard = true)
     {
         return repository.GetCompetitionById(id, includeLeaderboard);
     }
 
-    public List<int> GetLeaderboard(MapUid mapUid)
+    public List<RecordModel> GetLeaderboard(MapUid mapUid)
     {
         var leaderboard = repository.GetLeaderboardByMapUid(mapUid);
 
@@ -51,12 +51,11 @@ public class CompetitionService(CotdRepository repository)
             return [];
 
         return leaderboard
-            .Select(r => r.Time)
-            .Order()
+            .OrderBy(l => l.Time)
             .ToList();
     }
     
-    public List<int> GetLeaderboard(NadeoCompetitionId competitionId)
+    public List<RecordModel> GetLeaderboard(NadeoCompetitionId competitionId)
     {
         var leaderboard = repository.GetLeaderboardByNadeoCompetitionId(competitionId);
 
@@ -64,12 +63,11 @@ public class CompetitionService(CotdRepository repository)
             return [];
 
         return leaderboard
-            .Select(r => r.Time)
-            .Order()
+            .OrderBy(l => l.Time)
             .ToList();
     }
 
-    public void AddCompetition(CompetitionEntity? competition)
+    public void AddCompetition(CompetitionModel? competition)
     {
         if (competition is not null)
             repository.AddCompetition(competition);

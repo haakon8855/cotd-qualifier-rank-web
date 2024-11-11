@@ -3,35 +3,52 @@ using CotdQualifierRank.Database.Entities;
 using CotdQualifierRank.Domain.DomainPrimitives;
 using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 using CotdQualifierRank.Application.DTOs;
+using CotdQualifierRank.Application.Utils;
+using CotdQualifierRank.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CotdQualifierRank.Application.Repositories;
 
 public class CotdRepository(CotdContext context)
 {
-    public CompetitionEntity? GetCompetitionByMapUid(MapUid mapUid, bool includeLeaderboard = true)
+    public CompetitionModel? GetCompetitionByMapUid(MapUid mapUid, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid.Value);
+        var entity = competitions.FirstOrDefault(c => c.NadeoMapUid == mapUid.Value);
+
+        if (entity is null)
+            return null;
+
+        return ModelMapper.CompetitionEntityToModel(entity);
     }
 
-    public CompetitionEntity? GetCompetitionById(CompetitionId id, bool includeLeaderboard = true)
+    public CompetitionModel? GetCompetitionById(CompetitionId id, bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.Id == id.Value);
+        var entity = competitions.FirstOrDefault(c => c.Id == id.Value);
+
+        if (entity is null)
+            return null;
+
+        return ModelMapper.CompetitionEntityToModel(entity);
     }
 
-    public CompetitionEntity? GetCompetitionByNadeoCompetitionId(NadeoCompetitionId nadeoCompetitionId,
+    public CompetitionModel? GetCompetitionByNadeoCompetitionId(NadeoCompetitionId nadeoCompetitionId,
         bool includeLeaderboard = true)
     {
         var competitions = context.Competitions.AsNoTracking();
         if (includeLeaderboard)
             competitions = competitions.Include(c => c.Leaderboard);
-        return competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId.Value);
+        var entity = competitions.FirstOrDefault(c => c.NadeoCompetitionId == nadeoCompetitionId.Value);
+
+        if (entity is null)
+            return null;
+
+        return ModelMapper.CompetitionEntityToModel(entity);
     }
 
     public CompetitionListDTO GetCompetitionsAndPlayerCounts(CompetitionYear year, CompetitionMonth month,
@@ -61,33 +78,38 @@ public class CotdRepository(CotdContext context)
         else
         {
             var queriedMonthFirstDay = new DateTime(year.Value, month.Value, 1);
-            var queriedMonthLastDay = new DateTime(year.Value, month.Value, DateTime.DaysInMonth(year.Value, month.Value));
-            fetchedComps = baseQuery.Where(c => c.Date >= queriedMonthFirstDay && c.Date < queriedMonthLastDay.AddDays(1));
+            var queriedMonthLastDay =
+                new DateTime(year.Value, month.Value, DateTime.DaysInMonth(year.Value, month.Value));
+            fetchedComps =
+                baseQuery.Where(c => c.Date >= queriedMonthFirstDay && c.Date < queriedMonthLastDay.AddDays(1));
         }
 
         var competitions = fetchedComps.ToArray();
-
-        return new(competitions);
+        return new(competitions.Select(ModelMapper.CompetitionEntityToModel).ToArray());
     }
 
-    public List<RecordEntity>? GetLeaderboardByMapUid(MapUid mapUid)
+    public List<RecordModel>? GetLeaderboardByMapUid(MapUid mapUid)
     {
-        return context.Competitions
+        var leaderboard = context.Competitions
             .AsNoTracking()
             .Include(c => c.Leaderboard)
             .Where(c => c.NadeoMapUid == mapUid.Value)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
+
+        return leaderboard?.Select(ModelMapper.RecordEntityToModel).ToList();
     }
 
-    public List<RecordEntity>? GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
+    public List<RecordModel>? GetLeaderboardByNadeoCompetitionId(NadeoCompetitionId competitionId)
     {
-        return context.Competitions
+        var leaderboard = context.Competitions
             .AsNoTracking()
             .Include(c => c.Leaderboard)
             .Where(c => c.NadeoCompetitionId == competitionId.Value)
             .Select(c => c.Leaderboard)
             .FirstOrDefault();
+
+        return leaderboard?.Select(ModelMapper.RecordEntityToModel).ToList();
     }
 
     public IEnumerable<MapUid> GetMapsUids()
@@ -102,24 +124,38 @@ public class CotdRepository(CotdContext context)
             .Select(m => new MapUid(m));
     }
 
-    public void AddCompetition(CompetitionEntity competition)
+    public void AddCompetition(CompetitionModel competition)
     {
-        context.Competitions.Add(competition);
+        var newCompetition = new CompetitionEntity
+        {
+            Id = competition.Id,
+            NadeoCompetitionId = competition.NadeoCompetitionId,
+            NadeoChallengeId = competition.NadeoChallengeId,
+            NadeoMapUid = competition.NadeoMapUid,
+            Date = competition.Date,
+            Leaderboard = competition.Leaderboard?.Select(r => new RecordEntity { Time = r.Time }).ToList(),
+            PlayerCount = competition.PlayerCount
+        };
+        context.Competitions.Add(newCompetition);
         context.SaveChanges();
     }
 
-    public NadeoCompetitionEntity? GetNadeoCompetition(DateTime date)
+    public NadeoCompetitionModel? GetNadeoCompetition(DateTime date)
     {
         // Due to inefficient storage here (storing the date as part of the competition name only
         // we have to fetch the whole table and then find the match in memory :/
-        return context.NadeoCompetitions
+        var entity = context.NadeoCompetitions
             .ToArray()
-            .FirstOrDefault(comp => NadeoCompetitionEntity.ParseDate(comp.Name ?? "2020-07-01").Date == date);
+            .FirstOrDefault(comp => NadeoCompetitionModel.ParseDate(comp.Name ?? "2020-07-01").Date == date);
+        return entity is null ? null : ModelMapper.NadeoCompetitionEntityToModel(entity);
     }
 
-    public void InsertNadeoCompetitions(NadeoCompetitionEntity[] nadeoCompetitions)
+    public void InsertNadeoCompetitions(NadeoCompetitionModel[] nadeoCompetitions)
     {
-        foreach (var comp in nadeoCompetitions)
+        var nadeoCompetitionsEntities = nadeoCompetitions
+            .Select(ModelMapper.NadeoCompetitionModelToEntity);
+
+        foreach (var comp in nadeoCompetitionsEntities)
         {
             var compExists = context.NadeoCompetitions.Any(c => c.Id == comp.Id);
             if (!compExists)

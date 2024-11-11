@@ -1,7 +1,7 @@
-using CotdQualifierRank.Database.Entities;
-using CotdQualifierRank.Domain.DomainPrimitives;
-using CotdQualifierRank.Application.Utils;
 using CotdQualifierRank.Application.Services;
+using CotdQualifierRank.Application.Utils;
+using CotdQualifierRank.Domain.DomainPrimitives;
+using CotdQualifierRank.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -16,21 +16,21 @@ public class IndexModel(CompetitionService competitionService) : PageModel
     public readonly DateTime OldestMonth = new(2020, 11, 1);
     public readonly DateTime NewestMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-    public CompetitionEntity[] Competitions { get; private set; } = default!;
+    public CompetitionModel[] Competitions { get; private set; } = default!;
 
     public IActionResult OnGet()
     {
         var year = int.Parse(PageMonth.Split("-")[0]);
         var month = int.Parse(PageMonth.Split("-")[1]);
-        
+
         if (!CompetitionYear.IsValid(year) || !CompetitionMonth.IsValid(month))
             return RedirectToPage();
-        
+
         var compsAndPlayerCounts =
             competitionService.GetCompetitionListDTO(new CompetitionYear(year), new CompetitionMonth(month),
                 filterAnomalous: FilterAnomalous);
         Competitions = compsAndPlayerCounts.Competitions;
-        
+
         return Page();
     }
 
