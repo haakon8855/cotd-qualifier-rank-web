@@ -175,9 +175,8 @@ public class QueueService(
                     nadeoCompetitionService.AddNadeoCompetitions(cotdCompetitionModels);
 
                     // Check if we have a NadeoCompetition with that date
-                    // If the competition name is null, we set the date to 2020-07-01 so that we will never find a match
                     var competition = cotdCompetitionModels
-                        .FirstOrDefault(comp => NadeoCompetitionModel.ParseDate(comp.Name).Date == mapTotdDate.Date);
+                        .FirstOrDefault(comp => comp.Date == mapTotdDate.Date);
 
                     // When we find it, fetch the leaderboard and store it in the db
                     if (competition is not null)

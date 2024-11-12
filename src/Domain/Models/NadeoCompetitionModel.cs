@@ -3,18 +3,45 @@ using CotdQualifierRank.Domain.DomainPrimitives.Nadeo;
 
 namespace CotdQualifierRank.Domain.Models;
 
-public class NadeoCompetitionModel(
-    NadeoCompetitionId id,
-    string? liveId,
-    string? name,
-    string? description,
-    int nbPlayers)
+public class NadeoCompetitionModel
 {
-    public NadeoCompetitionId Id { get; } = id;
-    public string LiveId { get; } = liveId ?? string.Empty;
-    public string Name { get; } = name ?? string.Empty;
-    public string Description { get; } = description ?? string.Empty;
-    public int NbPlayers { get; } = nbPlayers;
+    public NadeoCompetitionModel(
+        NadeoCompetitionId id,
+        string? liveId,
+        string? name,
+        string? description,
+        int nbPlayers)
+    {
+        Id = id;
+        LiveId = liveId ?? "";
+        Name = name ?? "";
+        Description = description ?? "";
+        NbPlayers = nbPlayers;
+        Date = ParseDate(name ?? "");
+    }
+
+    public NadeoCompetitionModel(
+        NadeoCompetitionId id,
+        string? liveId,
+        string? name,
+        string? description,
+        int nbPlayers,
+        DateTime date)
+    {
+        Id = id;
+        LiveId = liveId ?? "";
+        Name = name ?? "";
+        Description = description ?? "";
+        NbPlayers = nbPlayers;
+        Date = date;
+    }
+
+    public NadeoCompetitionId Id { get; }
+    public string LiveId { get; }
+    public string Name { get; }
+    public string Description { get; }
+    public int NbPlayers { get; }
+    public DateTime Date { get; }
 
     public static DateTime ParseDate(string input)
     {

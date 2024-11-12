@@ -33,7 +33,8 @@ public static class ModelMapper
             entity.LiveId ?? string.Empty,
             entity.Name ?? string.Empty,
             entity.Description ?? string.Empty,
-            entity.NbPlayers
+            entity.NbPlayers,
+            entity.Date
         );
     }
 
@@ -56,7 +57,8 @@ public static class ModelMapper
             LiveId = model.LiveId,
             Name = model.Name,
             Description = model.Description,
-            NbPlayers = model.NbPlayers
+            NbPlayers = model.NbPlayers,
+            Date = model.Date
         };
     }
 }

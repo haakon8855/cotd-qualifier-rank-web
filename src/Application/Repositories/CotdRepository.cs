@@ -142,12 +142,8 @@ public class CotdRepository(CotdContext context)
 
     public NadeoCompetitionModel? GetNadeoCompetition(DateTime date)
     {
-        // Due to inefficient storage here (storing the date as part of the competition name only
-        // we have to fetch the whole table and then find the match in memory :/
-        var entity = context.NadeoCompetitions
-            .ToArray()
-            .FirstOrDefault(comp => NadeoCompetitionModel.ParseDate(comp.Name ?? "2020-07-01").Date == date);
-        return entity is null ? null : ModelMapper.NadeoCompetitionEntityToModel(entity);
+        var competition = context.NadeoCompetitions.FirstOrDefault(comp => comp.Date == date);
+        return competition is null ? null : ModelMapper.NadeoCompetitionEntityToModel(competition);
     }
 
     public void InsertNadeoCompetitions(NadeoCompetitionModel[] nadeoCompetitions)
