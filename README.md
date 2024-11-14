@@ -1,6 +1,6 @@
 # Cup of the Day Qualifier Rank<br>Website and API
 
-[![.NET 8.0](https://img.shields.io/badge/.NET-8.0-0ba300)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+[![.NET 9.0](https://img.shields.io/badge/.NET-9.0-0ba300)](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Cup of the Day Qualifier Rank is a website and API for finding the seeding
@@ -306,12 +306,12 @@ server locally.
 To successfully run this server locally, you will need the following:
 
 - An active Trackmania Club Access Subscription
-- .NET 8.0
+- .NET 9.0
 
 ### Install .NET
 
 Make sure you have
-[.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+[.NET 9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 installed.
 
 To verify you have the correct version, run the following command in the
@@ -321,7 +321,7 @@ terminal:
 dotnet --version
 ```
 
-This should return `8.0.x`
+This should return `9.0.x`
 
 ### Download Source Code
 
