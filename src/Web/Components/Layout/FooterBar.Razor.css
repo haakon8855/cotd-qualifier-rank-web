@@ -1,0 +1,10 @@
+﻿.footer {
+    background-color: #292c2e;
+    position: fixed;
+    color: #cfcfcf;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
