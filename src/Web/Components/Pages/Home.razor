@@ -1,7 +1,245 @@
 ﻿@page "/"
+@using CotdQualifierRank.Application.Services
+@using CotdQualifierRank.Application.Utils
+@using CotdQualifierRank.Domain.DomainPrimitives
+@using CotdQualifierRank.Domain.Models
+@inject NavigationManager NavManager
+@inject CompetitionService CompetitionService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>COTD Qualifier Rank</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (!FilterAnomalous)
+{
+    <h1>Cup of the Day - @_currentMonth.ToMonthAndYearString()</h1>
+}
+else
+{
+    <h1>Cup of the Day</h1>
+    <h2>
+        Anomalous Leaderboards <span title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</span>
+    </h2>
+}
 
-Welcome to your new app.
+@if (!FilterAnomalous)
+{
+    <div class="index-pagination-container">
+        <div class="filter-container"></div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @if (_currentMonth.Year != _oldestMonth.Year || _currentMonth.Month != _oldestMonth.Month)
+                {
+                    <li class="page-item">
+                        <button
+                            @onclick="() => HandleNavigation(_oldestMonth)"
+                            class="page-link page-link-dark">
+                            <pre class="m-0">&lt;&lt;</pre>
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button
+                            @onclick="() => HandleNavigation(_currentMonth.AddMonths(-1))"
+                            class="page-link page-link-dark">
+                            <pre class="m-0">&lt;&nbsp;@NewPageMonth(-1, true)</pre>
+                        </button>
+                    </li>
+                }
+                @if (_currentMonth != _newestMonth)
+                {
+                    <li class="page-item">
+                        <button
+                            @onclick="() => HandleNavigation(_currentMonth.AddMonths(1))"
+                            class="page-link page-link-dark">
+                            <pre class="m-0">@NewPageMonth(1, true)&nbsp;&gt;</pre>
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button
+                            @onclick="() => HandleNavigation(_newestMonth)"
+                            class="page-link page-link-dark">
+                            <pre class="m-0">&gt;&gt;</pre>
+                        </button>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}
+
+<table class="table table-borderless table-striped table-dark-bg">
+    <thead>
+    <tr>
+        <th>
+            Date
+        </th>
+        <th>
+            Player Count
+        </th>
+        <th class="d-none d-sm-table-cell">
+            Competition ID
+        </th>
+        <th class="d-none d-md-table-cell">
+            Challenge ID
+        </th>
+        <th class="fit d-none d-xl-table-cell">
+            Map UID
+        </th>
+        <th class="d-none d-md-table-cell"></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var comp in _competitions)
+    {
+        <tr>
+            <td>
+                @if (FilterAnomalous)
+                {
+                    @comp.Date.ToString("dd.MM.yyyy")
+                }
+                else
+                {
+                    @comp.Date.ToShortDayString()
+                }
+            </td>
+            <td>
+                @comp.PlayerCount
+            </td>
+            <td class="d-none d-sm-table-cell">
+                @comp.NadeoCompetitionId
+            </td>
+            <td class="d-none d-md-table-cell">
+                @comp.NadeoChallengeId
+            </td>
+            <td class="fit d-none d-xl-table-cell">
+                <code class="mapuid-code">@comp.NadeoMapUid</code>
+            </td>
+            <td class="d-none d-md-table-cell">
+                <a
+                    aria-label="Send GET request to Rank endpoint"
+                    href="./api/rank/@comp.NadeoMapUid/45000"
+                >
+                    Rank API
+                </a>
+            </td>
+            <td>
+                <a href=@($"./details/{comp.Id}")>
+                    Details
+                </a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<div class="filter-container">
+    <div class="d-flex">
+        <a class="pe-2" href="" @onclick="HandleToggleFilterAnomalous">
+            @if (FilterAnomalous)
+            {
+                <div>Show all COTDs</div>
+            }
+            else
+            {
+                <div>Show only anomalous COTDs</div>
+            }
+        </a>
+        <div title="Anomalous COTDs are those with empty or otherwise incomplete leaderboards">&#9432;</div>
+    </div>
+</div>
+
+@code {
+
+    [SupplyParameterFromQuery(Name = "anomalous")]
+    public bool FilterAnomalous { get; set; }
+
+    [SupplyParameterFromQuery(Name = "month")]
+    public string Month { get; set; } = "";
+
+    private readonly DateTime _oldestMonth = new(2020, 11, 1);
+    private readonly DateTime _newestMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+    private CompetitionModel[] _competitions = [];
+    private DateTime _currentMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+    protected override void OnInitialized()
+    {
+        if (TryParseMonthQueryParameter(Month, out DateTime monthDateTime))
+            _currentMonth = monthDateTime;
+
+        FetchData();
+    }
+
+    private void FetchData()
+    {
+        var year = _currentMonth.Year;
+        var month = _currentMonth.Month;
+
+        // todo create error page
+        if (!CompetitionYear.IsValid(year) || !CompetitionMonth.IsValid(month))
+            NavManager.NavigateTo("/error");
+
+        var compsAndPlayerCounts =
+            CompetitionService.GetCompetitionListDTO(new CompetitionYear(year), new CompetitionMonth(month), filterAnomalous: FilterAnomalous);
+        _competitions = compsAndPlayerCounts.Competitions;
+    }
+
+    private bool TryParseMonthQueryParameter(string? monthString, out DateTime month)
+    {
+        month = DateTime.Now;
+        if (string.IsNullOrWhiteSpace(monthString))
+            return false;
+
+        var dateComponents = monthString.Split("-");
+        if (dateComponents.Length != 2)
+            return false;
+
+        if (int.TryParse(dateComponents[0], out int parsedYear) && int.TryParse(dateComponents[1], out int parsedMonth))
+        {
+            if (!CompetitionYear.IsValid(parsedYear) || !CompetitionMonth.IsValid(parsedMonth))
+                return false;
+            month = new DateTime(parsedYear, parsedMonth, 1);
+            return true;
+        }
+
+        return false;
+    }
+
+    private string NewPageMonth(int monthsToAdd, bool getMonthName = false)
+    {
+        var currentMonth = new DateTime(_currentMonth.Year, _currentMonth.Month, 1);
+        var newMonth = currentMonth.AddMonths(monthsToAdd);
+        if (!getMonthName)
+            return newMonth.ToPageMonthString();
+        return newMonth.ToMonthString();
+    }
+
+    private void HandleNavigation(DateTime month)
+    {
+        _currentMonth = month;
+        FetchData();
+        var uri = NavManager.GetUriWithQueryParameters(
+            new Dictionary<string, object?>
+            {
+                ["anomalous"] = null,
+                ["month"] = (string?)$"{_currentMonth.Year}-{_currentMonth.Month}"
+            }
+        );
+        NavManager.NavigateTo(uri, false);
+    }
+
+    private void HandleToggleFilterAnomalous()
+    {
+        FilterAnomalous = !FilterAnomalous;
+        FetchData();
+    
+        var uri = NavManager.GetUriWithQueryParameters(
+            new Dictionary<string, object?>
+            {
+                ["anomalous"] = FilterAnomalous ? true : null,
+                ["month"] = null
+            }
+        );
+        NavManager.NavigateTo(uri, false);
+    }
+    
+}

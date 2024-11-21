@@ -1,5 +1,8 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #1d1f20;
+    color: #cfcfcf;
+    font-size: 16px;
 }
 
 a, .btn-link {
@@ -57,4 +60,112 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}
+
+
+
+
+
+
+td {
+    color: #cfcfcf;
+}
+
+.table-dark-bg tr td, .table-dark-bg tr th {
+    background-color: #1d1f20 !important;
+    color: #cfcfcf;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td {
+    background-color: #1d1f20;
+    --bs-table-accent-bg: #1d1f20;
+}
+
+.table-striped > tbody > tr:nth-child(2n+1) > td {
+    background-color: #252729 !important;
+    --bs-table-accent-bg: #252729 !important;
+}
+
+pre {
+    white-space: normal;
+}
+
+.mapUid {
+    font-size: 16px;
+}
+
+.mapuid-code{
+    color: #cfcfcf;
+}
+
+.page-link-dark {
+    background-color: #0d6efd;
+    color: white;
+    border: solid 1px #1d1f20;
+}
+
+.page-link-dots {
+    background-color: #1d1f20;
+    color: white;
+    border: solid 1px #1d1f20;
+}
+
+.page-link-dots:hover {
+    background-color: #1d1f20;
+    color: white;
+    border: solid 1px #1d1f20;
+}
+
+.page-link-disabled {
+    background-color: #555555;
+    color: white;
+    border: solid 1px #1d1f20;
+    transition: none;
+}
+
+.page-link-disabled:hover {
+    background-color: #555555;
+    color: white;
+    border: solid 1px #1d1f20;
+    transition: none;
+}
+
+.page-item.active .page-link {
+    border: solid 1px #1d1f20;
+    background-color: white;
+    color: #0a58ca;
+}
+
+.pagination-code {
+    display: block;
+    width: 24px;
+    text-align: center;
+}
+
+.first-seed-difference-td {
+    width: 100px;
+}
+
+.first-seed-difference{
+    color: #d56262;
+}
+
+.index-pagination-container {
+    display: flex;
+    justify-content: center;
+}
+
+.filter-container {
+    width: -webkit-fill-available;
+    display: flex;
+    justify-content: end;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.table td.fit,
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 30px
 }
