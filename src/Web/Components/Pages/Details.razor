@@ -1,0 +1,546 @@
+﻿@page "/details/{id}"
+@using CotdQualifierRank.Application.Services
+@using CotdQualifierRank.Domain.DomainPrimitives
+@using CotdQualifierRank.Domain.Models
+@inject CompetitionService CompService
+@inject NavigationManager NavManager
+@inject IJSRuntime JsRuntime
+
+<h1>Cup of the Day - @Competition.Date.DayOfWeek @Competition.Date.ToString("dd.MM.yyyy")</h1>
+
+<div>
+    <h4>Qualification Leaderboard</h4>
+    <hr/>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <dl class="row">
+                    <dt class="col-sm-4">
+                        Date
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Competition.Date.ToString("dd.MM.yyyy")
+                    </dd>
+                    <dt class="col-sm-4">
+                        Player Count
+                    </dt>
+                    <dd class="col-sm-8">
+                        @PlayerCount
+                    </dd>
+                    <dt class="col-sm-4">
+                        Competition Id
+                    </dt>
+                    <dd class="col-sm-8">
+                        <a
+                            target="_blank"
+                            aria-label="Open competition number @Competition.NadeoCompetitionId on Trackmania.io"
+                            href="@($"https://trackmania.io/#/cotd/{Competition.NadeoCompetitionId}")"
+                        >
+                            @Competition.NadeoCompetitionId
+                        </a>
+                    </dd>
+                    <dt class="col-sm-4">
+                        Challenge Id
+                    </dt>
+                    <dd class="col-sm-8">
+                        @Competition.NadeoChallengeId
+                    </dd>
+                    <dt class="col-sm-4">
+                        Map UID
+                    </dt>
+                    <dd class="col-sm-8">
+                        <pre class="mapUid">
+                        <a
+                            target="_blank"
+                            aria-label="Open corresponding map on Trackmania.io (MapUID: @Competition.NadeoMapUid)"
+                            href="@($"https://trackmania.io/#/leaderboard/{Competition.NadeoMapUid}")"
+                        >
+                        <code>
+                                    @Competition.NadeoMapUid
+                                </code>
+                            </a>
+                        </pre>
+                    </dd>
+                </dl>
+            </div>
+
+            @if (Competition.Leaderboard is not null &&
+                 Competition.Leaderboard.Count > 0)
+            {
+                <div class="col-lg-6">
+                    <div>
+                    <form @onsubmit="HandleSearchTime">
+                        <dl class="row mb-0 mt-1">
+                                <dt class="col-sm-6">
+                                    <InputNumber
+                                        @bind-Value="SearchBoxTime"
+                                        class="form-control mt-0 mb-3"
+                                        placeholder="Your PB (ms)"/>
+                                </dt>
+                                <dd class="col-sm-6">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary">
+                                        Get rank
+                                    </button>
+                                    <span
+                                        class="mx-3">
+                                    <a
+                                        aria-label="Send GET request to Rank endpoint"
+                                        href="./api/rank/@Competition.NadeoMapUid/@(SearchBoxTime == 0 ? "45000" : SearchBoxTime)"
+                                        class="btn btn-outline-primary">
+                                        Rank API
+                                    </a>
+                                </span>
+                                </dd>
+                        </dl>
+                    </form>
+
+                        @if (_rankStatistics is not null)
+                        {
+                            <dl class="row">
+                                <dt class="col-sm-6">
+                                    Time:
+                                </dt>
+                                <dd class="col-sm-6">
+                                    @(_rankStatistics?.Time.FormattedTime())
+
+                                    @if (Competition.Leaderboard is not null)
+                                    {
+                                        <span class="first-seed-difference">
+                                        (@((_rankStatistics!.Time - Competition.Leaderboard[0]).FormattedDiffTime()))
+                                    </span>
+                                    }
+                                </dd>
+                                <dt class="col-sm-6">
+                                    Rank:
+                                </dt>
+                                <dd class="col-sm-6">
+                                    @_rankStatistics!.Rank
+                                </dd>
+                                <dt class="col-sm-6">
+                                    Division:
+                                </dt>
+                                <dd class="col-sm-6">
+                                    @(((@_rankStatistics!.Rank - 1) / 64) + 1)
+                                </dd>
+                            </dl>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<hr/>
+
+@if (Competition.Leaderboard is not null &&
+     Competition.Leaderboard.Count > 0)
+{
+    <script>
+        function unfocus() {
+            document.activeElement.blur();
+        }
+    </script>
+    <nav aria-label="Page navigation" class="d-none d-sm-block">
+        <ul class="pagination">
+            <li class="page-item">
+                @if (PageNo > 1)
+                {
+                    <button
+                        @onclick="() => HandlePageChange(PageNo - 1)"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
+                    </button>
+                }
+                else
+                {
+                    <button class="page-link page-link-disabled">
+                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
+                    </button>
+                }
+            </li>
+
+            @if (PageCount < 8)
+            {
+                @for (int i = 0; i < PageCount; i++)
+                {
+                    <li class="page-item @(PageNo == i + 1 ? "active" : "")">
+                        <button @onclick="() => HandlePageChange(i + 1)" class="page-link page-link-dark">
+                            <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
+                        </button>
+                    </li>
+                }
+            }
+            else
+            {
+                <li class="page-item @(PageNo == 1 ? "active" : "")">
+                    <button @onclick="() => HandlePageChange(1)"
+                            class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code">1</code></pre>
+                    </button>
+                </li>
+                @if (PageNo > 4)
+                {
+                    <li class="page-item">
+                        <a class="page-link page-link-dots">
+                            <code class="pagination-code">...</code>
+                        </a>
+                    </li>
+                }
+
+                var start = Math.Max(PageNo - 3, 1);
+                var startLost = start - (PageNo - 3);
+
+                var end = PageNo < 5
+                    ? Math.Min(PageNo + 2 + startLost + 1, PageCount - 1)
+                    : Math.Min(PageNo + 2 + startLost, PageCount - 1);
+
+                var endLost = (PageNo + 3) - end;
+
+                if (PageNo >= 5)
+                {
+                    start = PageNo > PageCount - 4
+                        ? Math.Max(PageNo - 2 - endLost - 1, 1)
+                        : Math.Max(PageNo - 2 - endLost, 1);
+                }
+
+                @for (int i = start; i < end; i++)
+                {
+                    var currentIndex = i;
+                    <li class="page-item @(PageNo == i + 1 ? "active" : "")">
+                        <button @onclick="() => HandlePageChange(currentIndex + 1)"
+                                class="page-link page-link-dark">
+                            <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
+                        </button>
+                    </li>
+                }
+
+                @if (PageNo < PageCount - 3)
+                {
+                    <li class="page-item">
+                        <a class="page-link page-link-dots">
+                            <code class="pagination-code">...</code>
+                        </a>
+                    </li>
+                }
+
+                <li class="page-item @(PageNo == PageCount ? "active" : "")">
+                    <button @onclick="() => HandlePageChange(PageCount)"
+                            class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code">@(PageCount)</code></pre>
+                    </button>
+                </li>
+            }
+
+            <li class="page-item">
+                @if (PageNo < PageCount)
+                {
+                    <button @onclick="() => HandlePageChange(PageNo + 1)"
+                            class="page-link page-link-dark">
+                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
+                    </button>
+                }
+                else
+                {
+                    <a class="page-link page-link-disabled">
+                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
+                    </a>
+                }
+            </li>
+        </ul>
+    </nav>
+
+    <nav aria-label="Page navigation" class="d-sm-none d-flex justify-content-center">
+        <ul class="pagination mt-3 mb-0">
+            @if (PageNo > 1)
+            {
+                <li class="page-item">
+                    <a
+                        asp-route-id="@Competition.Id"
+                        asp-route-pageNo="1"
+                        asp-page="./Details"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a
+                        asp-route-id="@Competition.Id"
+                        asp-route-pageNo="@(PageNo - 1)"
+                        asp-page="./Details"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link disabled page-link-disabled">
+                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link disabled page-link-disabled">
+                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
+                    </a>
+                </li>
+            }
+
+            <li class="page-item">
+                <a
+                    asp-route-id="@Competition.Id"
+                    asp-route-pageNo="@(PageNo)"
+                    asp-page="./Details"
+                    class="page-link page-link-dark page-link-disabled"
+                >
+                    <pre class="m-0"><code class="pagination-code">@(PageNo)</code></pre>
+                </a>
+            </li>
+
+            @if (PageNo < PageCount)
+            {
+                <li class="page-item">
+                    <a
+                        asp-route-id="@Competition.Id"
+                        asp-route-pageNo="@(PageNo + 1)"
+                        asp-page="./Details"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a
+                        asp-route-id="@Competition.Id"
+                        asp-route-pageNo="@(PageCount)"
+                        asp-page="./Details"
+                        class="page-link page-link-dark"
+                    >
+                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link disabled page-link-disabled">
+                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link disabled page-link-disabled">
+                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <div class="px-2 pb-6">
+        <h3 class="mt-4 mb-3">Division @PageNo</h3>
+
+        <div class="col-sm-4 d-md-none">
+            <dl class="row">
+                @if (PageNo > 1)
+                {
+                    <dt class="col-sm-6">Division @(PageNo - 1) Cutoff</dt>
+                    <dd class="col-sm-6">@_pageStatistics?.BetterDivCutoff</dd>
+                }
+                <dt class="col-sm-6">Division @PageNo Cutoff</dt>
+                <dd class="col-sm-6">@_pageStatistics?.CurrentDivCutoff</dd>
+                <dt class="col-sm-6">Division @PageNo Window</dt>
+                <dd class="col-sm-6">@_pageStatistics?.CurrentDivWindow</dd>
+                @if (PageNo == PageCount)
+                {
+                    <dt class="col-sm-6">Division @PageNo Size</dt>
+                    <dd class="col-sm-6">@(PaginatedLeaderboard.Count)</dd>
+                }
+            </dl>
+        </div>
+
+        <div class="container px-0">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="container px-0">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <table class="table table-borderless table-striped table-dark-bg">
+                                    <tbody>
+                                    @foreach (var item in PaginatedLeaderboard.Select((record, i) => (record, i)))
+                                    {
+                                        <tr>
+                                            <td class="fw-bold px-3">
+                                                @(item.i + 1 + (PageNo - 1) * PageSize)
+                                            </td>
+                                            <td class="px-4" style="text-align:right">
+                                                @item.record.FormattedTime()
+                                            </td>
+                                            @if (PageNo == 1 && item.i == 0)
+                                            {
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                <td class="first-seed-difference first-seed-difference-td">
+                                                    (@FirstSeedDifference[item.i].FormattedDiffTime())
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-4"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 d-none d-md-block">
+                    <dl class="row">
+                        @if (PageNo > 1)
+                        {
+                            <dt class="col-sm-6">Division @(PageNo - 1) Cutoff</dt>
+                            <dd class="col-sm-6">@_pageStatistics?.BetterDivCutoff</dd>
+                        }
+                        <dt class="col-sm-6">Division @PageNo Cutoff</dt>
+                        <dd class="col-sm-6">@_pageStatistics?.CurrentDivCutoff</dd>
+                        <dt class="col-sm-6">Division @PageNo Window</dt>
+                        <dd class="col-sm-6">@_pageStatistics?.CurrentDivWindow</dd>
+                        @if (PageNo == PageCount)
+                        {
+                            <dt class="col-sm-6">Division @PageNo Size</dt>
+                            <dd class="col-sm-6">@PaginatedLeaderboard.Count</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public int PageNo { get; set; } = 1;
+
+    public int? SearchBoxTime { get; set; } = null;
+
+    public const int PageSize = 64;
+
+    public CompetitionModel? Competition { get; set; }
+    public List<Time> PaginatedLeaderboard { get; set; } = [];
+    public List<Time> FirstSeedDifference { get; set; } = [];
+    private PageStatistics? _pageStatistics;
+    private RankStatistics? _rankStatistics;
+
+    public int PageCount { get; set; }
+    public int PlayerCount { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (PageNo < 1)
+            PageNo = 1;
+
+        if (Id is null || !int.TryParse(Id, out int idInt) || !CompetitionId.IsValid(idInt))
+        {
+            NavManager.NavigateTo("/", true);
+            return;
+        }
+
+        var competition = CompService.GetCompetition(new CompetitionId(idInt));
+        if (competition?.Leaderboard is null)
+        {
+            NavManager.NavigateTo("/", true);
+            return;
+        }
+
+        PlayerCount = competition.Leaderboard.Count;
+        PageCount = (int)Math.Ceiling((double)PlayerCount / PageSize);
+        if (PageNo > PageCount)
+            PageNo = PageCount;
+
+        competition.Leaderboard.Sort();
+        Competition = competition;
+
+        PopulateLeaderboardFromPageNo();
+        CalculateStatistics();
+
+        SearchBoxTime = null;
+    }
+
+    private void PopulateLeaderboardFromPageNo()
+    {
+        if (Competition?.Leaderboard is null)
+        {
+            NavManager.NavigateTo("/", true);
+            return;
+        }
+
+        PaginatedLeaderboard = Competition.Leaderboard.Skip((PageNo - 1) * PageSize).Take(PageSize).ToList();
+    }
+
+    private void CalculateStatistics()
+    {
+        if (Competition.Leaderboard is null || Competition.Leaderboard.Count == 0)
+            return;
+
+        // Calculate cutoff time of the division above
+        var betterDivCutoff = PageNo == 1 ? Competition.Leaderboard[0] : Competition.Leaderboard[(PageNo - 1) * PageSize - 1];
+
+        // Calculate cutoff of current division
+        var currentDivCutoff = PaginatedLeaderboard.Last();
+
+        // Calculate window of current division
+        var currentDivWindow = currentDivCutoff - betterDivCutoff;
+
+        _pageStatistics = new(betterDivCutoff.FormattedTime(), currentDivCutoff.FormattedTime(), currentDivWindow.FormattedTime());
+
+        // Calculate first seed difference
+        var firstSeed = Competition.Leaderboard[0];
+        FirstSeedDifference = PaginatedLeaderboard.Select(r => r - firstSeed).ToList();
+    }
+
+    private void HandleSearchTime()
+    {
+        if (SearchBoxTime is null || !Time.IsValid((int)SearchBoxTime))
+            return;
+        var time = new Time((int)SearchBoxTime);
+        var rankDTO = RankService.GetRank(Competition, time);
+        _rankStatistics = new(rankDTO.Rank, time);
+    }
+
+    private async Task HandlePageChange(int pageNo)
+    {
+        await JsRuntime.InvokeVoidAsync("unfocus");
+        PageNo = pageNo;
+        PopulateLeaderboardFromPageNo();
+        var uri = NavManager.GetUriWithQueryParameters(
+            new Dictionary<string, object?>
+            {
+                ["page"] = (int?)PageNo,
+            }
+        );
+        NavManager.NavigateTo(uri, false);
+    }
+
+    private class PageStatistics(string betterDivCutoff, string currentDivCutoff, string currentDivWindow)
+    {
+        public string BetterDivCutoff { get; set; } = betterDivCutoff;
+        public string CurrentDivCutoff { get; set; } = currentDivCutoff;
+        public string CurrentDivWindow { get; set; } = currentDivWindow;
+    }
+
+    private class RankStatistics(int rank, Time time)
+    {
+        public int Rank { get; set; } = rank;
+        public Time Time { get; set; } = time;
+    }
+
+}

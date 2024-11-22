@@ -3,6 +3,7 @@ html, body {
     background-color: #1d1f20;
     color: #cfcfcf;
     font-size: 16px;
+    height: 100%;
 }
 
 a, .btn-link {
@@ -21,6 +22,7 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
+    min-height: calc(100vh - 60px - 56px);
 }
 
 h1:focus {
@@ -147,7 +149,7 @@ pre {
 }
 
 .first-seed-difference{
-    color: #d56262;
+    color: #d56262 !important;
 }
 
 .index-pagination-container {
