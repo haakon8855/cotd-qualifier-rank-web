@@ -144,6 +144,10 @@ pre {
     text-align: center;
 }
 
+.pagination-dots {
+    color: #cfcfcf !important;
+}
+
 .first-seed-difference-td {
     width: 100px;
 }

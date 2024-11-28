@@ -139,18 +139,13 @@
 @if (Competition.Leaderboard is not null &&
      Competition.Leaderboard.Count > 0)
 {
-    <script>
-        function unfocus() {
-            document.activeElement.blur();
-        }
-    </script>
     <nav aria-label="Page navigation" class="d-none d-sm-block">
         <ul class="pagination">
             <li class="page-item">
                 @if (PageNo > 1)
                 {
                     <button
-                        @onclick="() => HandlePageChange(PageNo - 1)"
+                        @onclick="async () => await HandlePageChange(PageNo - 1)"
                         class="page-link page-link-dark"
                     >
                         <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
@@ -169,7 +164,7 @@
                 @for (int i = 0; i < PageCount; i++)
                 {
                     <li class="page-item @(PageNo == i + 1 ? "active" : "")">
-                        <button @onclick="() => HandlePageChange(i + 1)" class="page-link page-link-dark">
+                        <button @onclick="async () => await HandlePageChange(i + 1)" class="page-link page-link-dark">
                             <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
                         </button>
                     </li>
@@ -178,7 +173,7 @@
             else
             {
                 <li class="page-item @(PageNo == 1 ? "active" : "")">
-                    <button @onclick="() => HandlePageChange(1)"
+                    <button @onclick="async () => await HandlePageChange(1)"
                             class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code">1</code></pre>
                     </button>
@@ -186,9 +181,9 @@
                 @if (PageNo > 4)
                 {
                     <li class="page-item">
-                        <a class="page-link page-link-dots">
-                            <code class="pagination-code">...</code>
-                        </a>
+                        <div class="page-link page-link-dots">
+                            <code class="pagination-code pagination-dots">...</code>
+                        </div>
                     </li>
                 }
 
@@ -212,7 +207,7 @@
                 {
                     var currentIndex = i;
                     <li class="page-item @(PageNo == i + 1 ? "active" : "")">
-                        <button @onclick="() => HandlePageChange(currentIndex + 1)"
+                        <button @onclick="async () => await HandlePageChange(currentIndex + 1)"
                                 class="page-link page-link-dark">
                             <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
                         </button>
@@ -222,14 +217,14 @@
                 @if (PageNo < PageCount - 3)
                 {
                     <li class="page-item">
-                        <a class="page-link page-link-dots">
-                            <code class="pagination-code">...</code>
-                        </a>
+                        <div class="page-link page-link-dots">
+                            <code class="pagination-code pagination-dots">...</code>
+                        </div>
                     </li>
                 }
 
                 <li class="page-item @(PageNo == PageCount ? "active" : "")">
-                    <button @onclick="() => HandlePageChange(PageCount)"
+                    <button @onclick="async () => await HandlePageChange(PageCount)"
                             class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code">@(PageCount)</code></pre>
                     </button>
@@ -239,16 +234,16 @@
             <li class="page-item">
                 @if (PageNo < PageCount)
                 {
-                    <button @onclick="() => HandlePageChange(PageNo + 1)"
+                    <button @onclick="async () => await HandlePageChange(PageNo + 1)"
                             class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
                     </button>
                 }
                 else
                 {
-                    <a class="page-link page-link-disabled">
+                    <button class="page-link page-link-disabled">
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </a>
+                    </button>
                 }
             </li>
         </ul>
@@ -259,85 +254,65 @@
             @if (PageNo > 1)
             {
                 <li class="page-item">
-                    <a
-                        asp-route-id="@Competition.Id"
-                        asp-route-pageNo="1"
-                        asp-page="./Details"
-                        class="page-link page-link-dark"
-                    >
+                    <button @onclick="async () => await HandlePageChange(1)"
+                            class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre>
-                    </a>
+                    </button>
                 </li>
                 <li class="page-item">
-                    <a
-                        asp-route-id="@Competition.Id"
-                        asp-route-pageNo="@(PageNo - 1)"
-                        asp-page="./Details"
-                        class="page-link page-link-dark"
-                    >
+                    <button @onclick="async () => await HandlePageChange(PageNo - 1)"
+                            class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
-                    </a>
+                    </button>
                 </li>
             }
             else
             {
                 <li class="page-item">
-                    <a class="page-link disabled page-link-disabled">
+                    <button class="page-link page-link-disabled">
                         <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre>
-                    </a>
+                    </button>
                 </li>
                 <li class="page-item">
-                    <a class="page-link disabled page-link-disabled">
+                    <button class="page-link page-link-disabled">
                         <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
-                    </a>
+                    </button>
                 </li>
             }
 
             <li class="page-item">
-                <a
-                    asp-route-id="@Competition.Id"
-                    asp-route-pageNo="@(PageNo)"
-                    asp-page="./Details"
-                    class="page-link page-link-dark page-link-disabled"
-                >
+                <button @onclick="async () => await HandlePageChange(PageNo)"
+                        class="page-link page-link-dark page-link-disabled">
                     <pre class="m-0"><code class="pagination-code">@(PageNo)</code></pre>
-                </a>
+                </button>
             </li>
 
             @if (PageNo < PageCount)
             {
                 <li class="page-item">
-                    <a
-                        asp-route-id="@Competition.Id"
-                        asp-route-pageNo="@(PageNo + 1)"
-                        asp-page="./Details"
-                        class="page-link page-link-dark"
-                    >
+                    <button @onclick="async () => await HandlePageChange(PageNo + 1)"
+                            class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </a>
+                    </button>
                 </li>
                 <li class="page-item">
-                    <a
-                        asp-route-id="@Competition.Id"
-                        asp-route-pageNo="@(PageCount)"
-                        asp-page="./Details"
-                        class="page-link page-link-dark"
-                    >
+                    <button @onclick="async () => await HandlePageChange(PageCount)"
+                            class="page-link page-link-dark">
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre>
-                    </a>
+                    </button>
                 </li>
             }
             else
             {
                 <li class="page-item">
-                    <a class="page-link disabled page-link-disabled">
+                    <button class="page-link page-link-disabled">
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </a>
+                    </button>
                 </li>
                 <li class="page-item">
-                    <a class="page-link disabled page-link-disabled">
+                    <button class="page-link page-link-disabled">
                         <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre>
-                    </a>
+                    </button>
                 </li>
             }
         </ul>
@@ -427,7 +402,6 @@
 @code {
     [Parameter] public string? Id { get; set; }
 
-    [SupplyParameterFromQuery(Name = "page")]
     public int PageNo { get; set; } = 1;
 
     public int? SearchBoxTime { get; set; } = null;
@@ -521,13 +495,6 @@
         await JsRuntime.InvokeVoidAsync("unfocus");
         PageNo = pageNo;
         PopulateLeaderboardFromPageNo();
-        var uri = NavManager.GetUriWithQueryParameters(
-            new Dictionary<string, object?>
-            {
-                ["page"] = (int?)PageNo,
-            }
-        );
-        NavManager.NavigateTo(uri, false);
     }
 
     private class PageStatistics(string betterDivCutoff, string currentDivCutoff, string currentDivWindow)

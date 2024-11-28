@@ -5,6 +5,8 @@
 @using CotdQualifierRank.Domain.Models
 @inject NavigationManager NavManager
 @inject CompetitionService CompetitionService
+@inject IJSRuntime JsRuntime
+
 
 <PageTitle>COTD Qualifier Rank</PageTitle>
 
@@ -30,14 +32,14 @@ else
                 {
                     <li class="page-item">
                         <button
-                            @onclick="() => HandleNavigation(_oldestMonth)"
+                            @onclick="async () => await HandleNavigation(_oldestMonth)"
                             class="page-link page-link-dark">
                             <pre class="m-0">&lt;&lt;</pre>
                         </button>
                     </li>
                     <li class="page-item">
                         <button
-                            @onclick="() => HandleNavigation(_currentMonth.AddMonths(-1))"
+                            @onclick="async () => await HandleNavigation(_currentMonth.AddMonths(-1))"
                             class="page-link page-link-dark">
                             <pre class="m-0">&lt;&nbsp;@NewPageMonth(-1, true)</pre>
                         </button>
@@ -47,14 +49,14 @@ else
                 {
                     <li class="page-item">
                         <button
-                            @onclick="() => HandleNavigation(_currentMonth.AddMonths(1))"
+                            @onclick="async () => await HandleNavigation(_currentMonth.AddMonths(1))"
                             class="page-link page-link-dark">
                             <pre class="m-0">@NewPageMonth(1, true)&nbsp;&gt;</pre>
                         </button>
                     </li>
                     <li class="page-item">
                         <button
-                            @onclick="() => HandleNavigation(_newestMonth)"
+                            @onclick="async () => await HandleNavigation(_newestMonth)"
                             class="page-link page-link-dark">
                             <pre class="m-0">&gt;&gt;</pre>
                         </button>
@@ -213,8 +215,9 @@ else
         return newMonth.ToMonthString();
     }
 
-    private void HandleNavigation(DateTime month)
+    private async Task HandleNavigation(DateTime month)
     {
+        await JsRuntime.InvokeVoidAsync("unfocus");
         _currentMonth = month;
         FetchData();
         var uri = NavManager.GetUriWithQueryParameters(
