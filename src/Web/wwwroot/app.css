@@ -20,7 +20,7 @@ fluent-data-grid-cell {
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: #12ccb7;
 }
 
 .btn-primary {
@@ -35,7 +35,7 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
-    min-height: calc(100vh - 60px - 56px);
+    min-height: calc(100vh - 60px - 52px);
 }
 
 h1:focus {
@@ -161,12 +161,8 @@ pre {
     color: #cfcfcf !important;
 }
 
-.first-seed-difference-td {
-    width: 100px;
-}
-
 .first-seed-difference{
-    color: #d56262 !important;
+    color: #e04355 !important;
 }
 
 .index-pagination-container {
