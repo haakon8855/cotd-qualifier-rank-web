@@ -70,8 +70,8 @@
             {
                 <div class="col-lg-6">
                     <div>
-                    <form @onsubmit="HandleSearchTime">
-                        <dl class="row mb-0 mt-1">
+                        <form @onsubmit="HandleSearchTime">
+                            <dl class="row mb-0 mt-1">
                                 <dt class="col-sm-6">
                                     <InputNumber
                                         @bind-Value="SearchBoxTime"
@@ -94,8 +94,8 @@
                                     </a>
                                 </span>
                                 </dd>
-                        </dl>
-                    </form>
+                            </dl>
+                        </form>
 
                         @if (_rankStatistics is not null)
                         {
@@ -139,264 +139,290 @@
 @if (Competition.Leaderboard is not null &&
      Competition.Leaderboard.Count > 0)
 {
-    <nav aria-label="Page navigation" class="d-none d-sm-block">
-        <ul class="pagination">
-            <li class="page-item">
-                @if (PageNo > 1)
-                {
-                    <button
-                        @onclick="async () => await HandlePageChange(PageNo - 1)"
-                        class="page-link page-link-dark"
-                    >
-                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
-                    </button>
-                }
-                else
-                {
-                    <button class="page-link page-link-disabled">
-                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
-                    </button>
-                }
-            </li>
+    <FluentGrid>
+        <FluentGridItem md="12">
+            <h3 class="mt-4 mb-3">Division @PageNo</h3>
+        </FluentGridItem>
+        <FluentGridItem md="6">
+            <FluentPaginator State="Pagination">
+                <PaginationTextTemplate>
+                    This is page <strong>@(Pagination.CurrentPageIndex + 1)</strong> out of a total of
+                    <strong>@(Pagination.LastPageIndex + 1)</strong> pages
+                </PaginationTextTemplate>
+            </FluentPaginator>
+        </FluentGridItem>
+        <FluentGridItem md="6">
 
-            @if (PageCount < 8)
-            {
-                @for (int i = 0; i < PageCount; i++)
-                {
-                    <li class="page-item @(PageNo == i + 1 ? "active" : "")">
-                        <button @onclick="async () => await HandlePageChange(i + 1)" class="page-link page-link-dark">
-                            <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
-                        </button>
-                    </li>
-                }
-            }
-            else
-            {
-                <li class="page-item @(PageNo == 1 ? "active" : "")">
-                    <button @onclick="async () => await HandlePageChange(1)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code">1</code></pre>
-                    </button>
-                </li>
-                @if (PageNo > 4)
-                {
-                    <li class="page-item">
-                        <div class="page-link page-link-dots">
-                            <code class="pagination-code pagination-dots">...</code>
-                        </div>
-                    </li>
-                }
+        </FluentGridItem>
+        <FluentGridItem md="6">
+            <FluentDataGrid Items="Competition.Leaderboard.Select((time, i) => (Time: time, Index: i)).AsQueryable()"
+                            GenerateHeader="GenerateHeaderOption.None"
+                            Pagination="Pagination" >
+                <PropertyColumn Property="c => c.Index+1"/>
+                <PropertyColumn Property="c => c.Time.FormattedTime()"/>
+                <PropertyColumn Property="c => FirstSeedDifference[c.Index].FormattedTime()"/>
+            </FluentDataGrid>
+        </FluentGridItem>
+    </FluentGrid>
 
-                var start = Math.Max(PageNo - 3, 1);
-                var startLost = start - (PageNo - 3);
-
-                var end = PageNo < 5
-                    ? Math.Min(PageNo + 2 + startLost + 1, PageCount - 1)
-                    : Math.Min(PageNo + 2 + startLost, PageCount - 1);
-
-                var endLost = (PageNo + 3) - end;
-
-                if (PageNo >= 5)
-                {
-                    start = PageNo > PageCount - 4
-                        ? Math.Max(PageNo - 2 - endLost - 1, 1)
-                        : Math.Max(PageNo - 2 - endLost, 1);
-                }
-
-                @for (int i = start; i < end; i++)
-                {
-                    var currentIndex = i;
-                    <li class="page-item @(PageNo == i + 1 ? "active" : "")">
-                        <button @onclick="async () => await HandlePageChange(currentIndex + 1)"
-                                class="page-link page-link-dark">
-                            <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre>
-                        </button>
-                    </li>
-                }
-
-                @if (PageNo < PageCount - 3)
-                {
-                    <li class="page-item">
-                        <div class="page-link page-link-dots">
-                            <code class="pagination-code pagination-dots">...</code>
-                        </div>
-                    </li>
-                }
-
-                <li class="page-item @(PageNo == PageCount ? "active" : "")">
-                    <button @onclick="async () => await HandlePageChange(PageCount)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code">@(PageCount)</code></pre>
-                    </button>
-                </li>
-            }
-
-            <li class="page-item">
-                @if (PageNo < PageCount)
-                {
-                    <button @onclick="async () => await HandlePageChange(PageNo + 1)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </button>
-                }
-                else
-                {
-                    <button class="page-link page-link-disabled">
-                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </button>
-                }
-            </li>
-        </ul>
-    </nav>
-
-    <nav aria-label="Page navigation" class="d-sm-none d-flex justify-content-center">
-        <ul class="pagination mt-3 mb-0">
-            @if (PageNo > 1)
-            {
-                <li class="page-item">
-                    <button @onclick="async () => await HandlePageChange(1)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre>
-                    </button>
-                </li>
-                <li class="page-item">
-                    <button @onclick="async () => await HandlePageChange(PageNo - 1)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
-                    </button>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <button class="page-link page-link-disabled">
-                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre>
-                    </button>
-                </li>
-                <li class="page-item">
-                    <button class="page-link page-link-disabled">
-                        <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre>
-                    </button>
-                </li>
-            }
-
-            <li class="page-item">
-                <button @onclick="async () => await HandlePageChange(PageNo)"
-                        class="page-link page-link-dark page-link-disabled">
-                    <pre class="m-0"><code class="pagination-code">@(PageNo)</code></pre>
-                </button>
-            </li>
-
-            @if (PageNo < PageCount)
-            {
-                <li class="page-item">
-                    <button @onclick="async () => await HandlePageChange(PageNo + 1)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </button>
-                </li>
-                <li class="page-item">
-                    <button @onclick="async () => await HandlePageChange(PageCount)"
-                            class="page-link page-link-dark">
-                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre>
-                    </button>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <button class="page-link page-link-disabled">
-                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre>
-                    </button>
-                </li>
-                <li class="page-item">
-                    <button class="page-link page-link-disabled">
-                        <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre>
-                    </button>
-                </li>
-            }
-        </ul>
-    </nav>
-
-    <div class="px-2 pb-6">
-        <h3 class="mt-4 mb-3">Division @PageNo</h3>
-
-        <div class="col-sm-4 d-md-none">
-            <dl class="row">
-                @if (PageNo > 1)
-                {
-                    <dt class="col-sm-6">Division @(PageNo - 1) Cutoff</dt>
-                    <dd class="col-sm-6">@_pageStatistics?.BetterDivCutoff</dd>
-                }
-                <dt class="col-sm-6">Division @PageNo Cutoff</dt>
-                <dd class="col-sm-6">@_pageStatistics?.CurrentDivCutoff</dd>
-                <dt class="col-sm-6">Division @PageNo Window</dt>
-                <dd class="col-sm-6">@_pageStatistics?.CurrentDivWindow</dd>
-                @if (PageNo == PageCount)
-                {
-                    <dt class="col-sm-6">Division @PageNo Size</dt>
-                    <dd class="col-sm-6">@(PaginatedLeaderboard.Count)</dd>
-                }
-            </dl>
-        </div>
-
-        <div class="container px-0">
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="container px-0">
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <table class="table table-borderless table-striped table-dark-bg">
-                                    <tbody>
-                                    @foreach (var item in PaginatedLeaderboard.Select((record, i) => (record, i)))
-                                    {
-                                        <tr>
-                                            <td class="fw-bold px-3">
-                                                @(item.i + 1 + (PageNo - 1) * PageSize)
-                                            </td>
-                                            <td class="px-4" style="text-align:right">
-                                                @item.record.FormattedTime()
-                                            </td>
-                                            @if (PageNo == 1 && item.i == 0)
-                                            {
-                                                <td></td>
-                                            }
-                                            else
-                                            {
-                                                <td class="first-seed-difference first-seed-difference-td">
-                                                    (@FirstSeedDifference[item.i].FormattedDiffTime())
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="col-sm-4"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4 d-none d-md-block">
-                    <dl class="row">
-                        @if (PageNo > 1)
-                        {
-                            <dt class="col-sm-6">Division @(PageNo - 1) Cutoff</dt>
-                            <dd class="col-sm-6">@_pageStatistics?.BetterDivCutoff</dd>
-                        }
-                        <dt class="col-sm-6">Division @PageNo Cutoff</dt>
-                        <dd class="col-sm-6">@_pageStatistics?.CurrentDivCutoff</dd>
-                        <dt class="col-sm-6">Division @PageNo Window</dt>
-                        <dd class="col-sm-6">@_pageStatistics?.CurrentDivWindow</dd>
-                        @if (PageNo == PageCount)
-                        {
-                            <dt class="col-sm-6">Division @PageNo Size</dt>
-                            <dd class="col-sm-6">@PaginatedLeaderboard.Count</dd>
-                        }
-                    </dl>
-                </div>
-            </div>
-        </div>
-    </div>
+    @* <nav aria-label="Page navigation" class="d-none d-sm-block"> *@
+    @*     <ul class="pagination"> *@
+    @*         <li class="page-item"> *@
+    @*             @if (PageNo > 1) *@
+    @*             { *@
+    @*                 <button *@
+    @*                     @onclick="async () => await HandlePageChange(PageNo - 1)" *@
+    @*                     class="page-link page-link-dark" *@
+    @*                 > *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre> *@
+    @*                 </button> *@
+    @*             } *@
+    @*             else *@
+    @*             { *@
+    @*                 <button class="page-link page-link-disabled"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre> *@
+    @*                 </button> *@
+    @*             } *@
+    @*         </li> *@
+    @* *@
+    @*         @if (PageCount < 8) *@
+    @*         { *@
+    @*             @for (int i = 0; i < PageCount; i++) *@
+    @*             { *@
+    @*                 <li class="page-item @(PageNo == i + 1 ? "active" : "")"> *@
+    @*                     <button @onclick="async () => await HandlePageChange(i + 1)" class="page-link page-link-dark"> *@
+    @*                         <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre> *@
+    @*                     </button> *@
+    @*                 </li> *@
+    @*             } *@
+    @*         } *@
+    @*         else *@
+    @*         { *@
+    @*             <li class="page-item @(PageNo == 1 ? "active" : "")"> *@
+    @*                 <button @onclick="async () => await HandlePageChange(1)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code">1</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*             @if (PageNo > 4) *@
+    @*             { *@
+    @*                 <li class="page-item"> *@
+    @*                     <div class="page-link page-link-dots"> *@
+    @*                         <code class="pagination-code pagination-dots">...</code> *@
+    @*                     </div> *@
+    @*                 </li> *@
+    @*             } *@
+    @* *@
+    @*             var start = Math.Max(PageNo - 3, 1); *@
+    @*             var startLost = start - (PageNo - 3); *@
+    @* *@
+    @*             var end = PageNo < 5 *@
+    @*                 ? Math.Min(PageNo + 2 + startLost + 1, PageCount - 1) *@
+    @*                 : Math.Min(PageNo + 2 + startLost, PageCount - 1); *@
+    @* *@
+    @*             var endLost = (PageNo + 3) - end; *@
+    @* *@
+    @*             if (PageNo >= 5) *@
+    @*             { *@
+    @*                 start = PageNo > PageCount - 4 *@
+    @*                     ? Math.Max(PageNo - 2 - endLost - 1, 1) *@
+    @*                     : Math.Max(PageNo - 2 - endLost, 1); *@
+    @*             } *@
+    @* *@
+    @*             @for (int i = start; i < end; i++) *@
+    @*             { *@
+    @*                 var currentIndex = i; *@
+    @*                 <li class="page-item @(PageNo == i + 1 ? "active" : "")"> *@
+    @*                     <button @onclick="async () => await HandlePageChange(currentIndex + 1)" *@
+    @*                             class="page-link page-link-dark"> *@
+    @*                         <pre class="m-0"><code class="pagination-code">@(i + 1)</code></pre> *@
+    @*                     </button> *@
+    @*                 </li> *@
+    @*             } *@
+    @* *@
+    @*             @if (PageNo < PageCount - 3) *@
+    @*             { *@
+    @*                 <li class="page-item"> *@
+    @*                     <div class="page-link page-link-dots"> *@
+    @*                         <code class="pagination-code pagination-dots">...</code> *@
+    @*                     </div> *@
+    @*                 </li> *@
+    @*             } *@
+    @* *@
+    @*             <li class="page-item @(PageNo == PageCount ? "active" : "")"> *@
+    @*                 <button @onclick="async () => await HandlePageChange(PageCount)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code">@(PageCount)</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*         } *@
+    @* *@
+    @*         <li class="page-item"> *@
+    @*             @if (PageNo < PageCount) *@
+    @*             { *@
+    @*                 <button @onclick="async () => await HandlePageChange(PageNo + 1)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre> *@
+    @*                 </button> *@
+    @*             } *@
+    @*             else *@
+    @*             { *@
+    @*                 <button class="page-link page-link-disabled"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre> *@
+    @*                 </button> *@
+    @*             } *@
+    @*         </li> *@
+    @*     </ul> *@
+    @* </nav> *@
+    @* *@
+    @* <nav aria-label="Page navigation" class="d-sm-none d-flex justify-content-center"> *@
+    @*     <ul class="pagination mt-3 mb-0"> *@
+    @*         @if (PageNo > 1) *@
+    @*         { *@
+    @*             <li class="page-item"> *@
+    @*                 <button @onclick="async () => await HandlePageChange(1)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*             <li class="page-item"> *@
+    @*                 <button @onclick="async () => await HandlePageChange(PageNo - 1)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*         } *@
+    @*         else *@
+    @*         { *@
+    @*             <li class="page-item"> *@
+    @*                 <button class="page-link page-link-disabled"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;&lt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*             <li class="page-item"> *@
+    @*                 <button class="page-link page-link-disabled"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="left">&lt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*         } *@
+    @* *@
+    @*         <li class="page-item"> *@
+    @*             <button @onclick="async () => await HandlePageChange(PageNo)" *@
+    @*                     class="page-link page-link-dark page-link-disabled"> *@
+    @*                 <pre class="m-0"><code class="pagination-code">@(PageNo)</code></pre> *@
+    @*             </button> *@
+    @*         </li> *@
+    @* *@
+    @*         @if (PageNo < PageCount) *@
+    @*         { *@
+    @*             <li class="page-item"> *@
+    @*                 <button @onclick="async () => await HandlePageChange(PageNo + 1)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*             <li class="page-item"> *@
+    @*                 <button @onclick="async () => await HandlePageChange(PageCount)" *@
+    @*                         class="page-link page-link-dark"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*         } *@
+    @*         else *@
+    @*         { *@
+    @*             <li class="page-item"> *@
+    @*                 <button class="page-link page-link-disabled"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*             <li class="page-item"> *@
+    @*                 <button class="page-link page-link-disabled"> *@
+    @*                     <pre class="m-0"><code class="pagination-code" aria-label="right">&gt;&gt;</code></pre> *@
+    @*                 </button> *@
+    @*             </li> *@
+    @*         } *@
+    @*     </ul> *@
+    @* </nav> *@
+    @* *@
+    @* <div class="px-2 pb-6"> *@
+    @*     <h3 class="mt-4 mb-3">Division @PageNo</h3> *@
+    @* *@
+    @*     <div class="col-sm-4 d-md-none"> *@
+    @*         <dl class="row"> *@
+    @*             @if (PageNo > 1) *@
+    @*             { *@
+    @*                 <dt class="col-sm-6">Division @(PageNo - 1) Cutoff</dt> *@
+    @*                 <dd class="col-sm-6">@_pageStatistics?.BetterDivCutoff</dd> *@
+    @*             } *@
+    @*             <dt class="col-sm-6">Division @PageNo Cutoff</dt> *@
+    @*             <dd class="col-sm-6">@_pageStatistics?.CurrentDivCutoff</dd> *@
+    @*             <dt class="col-sm-6">Division @PageNo Window</dt> *@
+    @*             <dd class="col-sm-6">@_pageStatistics?.CurrentDivWindow</dd> *@
+    @*             @if (PageNo == PageCount) *@
+    @*             { *@
+    @*                 <dt class="col-sm-6">Division @PageNo Size</dt> *@
+    @*                 <dd class="col-sm-6">@(PaginatedLeaderboard.Count)</dd> *@
+    @*             } *@
+    @*         </dl> *@
+    @*     </div> *@
+    @* *@
+    @*     <div class="container px-0"> *@
+    @*         <div class="row"> *@
+    @*             <div class="col-sm-8"> *@
+    @*                 <div class="container px-0"> *@
+    @*                     <div class="row"> *@
+    @*                         <div class="col-sm-8"> *@
+    @*                             <table class="table table-borderless table-striped table-dark-bg"> *@
+    @*                                 <tbody> *@
+    @*                                 @foreach (var item in PaginatedLeaderboard.Select((record, i) => (record, i))) *@
+    @*                                 { *@
+    @*                                     <tr> *@
+    @*                                         <td class="fw-bold px-3"> *@
+    @*                                             @(item.i + 1 + (PageNo - 1) * PageSize) *@
+    @*                                         </td> *@
+    @*                                         <td class="px-4" style="text-align:right"> *@
+    @*                                             @item.record.FormattedTime() *@
+    @*                                         </td> *@
+    @*                                         @if (PageNo == 1 && item.i == 0) *@
+    @*                                         { *@
+    @*                                             <td></td> *@
+    @*                                         } *@
+    @*                                         else *@
+    @*                                         { *@
+    @*                                             <td class="first-seed-difference first-seed-difference-td"> *@
+    @*                                                 (@FirstSeedDifference[item.i].FormattedDiffTime()) *@
+    @*                                             </td> *@
+    @*                                         } *@
+    @*                                     </tr> *@
+    @*                                 } *@
+    @*                                 </tbody> *@
+    @*                             </table> *@
+    @*                         </div> *@
+    @*                         <div class="col-sm-4"></div> *@
+    @*                     </div> *@
+    @*                 </div> *@
+    @*             </div> *@
+    @*             <div class="col-sm-4 d-none d-md-block"> *@
+    @*                 <dl class="row"> *@
+    @*                     @if (PageNo > 1) *@
+    @*                     { *@
+    @*                         <dt class="col-sm-6">Division @(PageNo - 1) Cutoff</dt> *@
+    @*                         <dd class="col-sm-6">@_pageStatistics?.BetterDivCutoff</dd> *@
+    @*                     } *@
+    @*                     <dt class="col-sm-6">Division @PageNo Cutoff</dt> *@
+    @*                     <dd class="col-sm-6">@_pageStatistics?.CurrentDivCutoff</dd> *@
+    @*                     <dt class="col-sm-6">Division @PageNo Window</dt> *@
+    @*                     <dd class="col-sm-6">@_pageStatistics?.CurrentDivWindow</dd> *@
+    @*                     @if (PageNo == PageCount) *@
+    @*                     { *@
+    @*                         <dt class="col-sm-6">Division @PageNo Size</dt> *@
+    @*                         <dd class="col-sm-6">@PaginatedLeaderboard.Count</dd> *@
+    @*                     } *@
+    @*                 </dl> *@
+    @*             </div> *@
+    @*         </div> *@
+    @*     </div> *@
+    @* </div> *@
 }
 
 @code {
@@ -407,6 +433,8 @@
     public int? SearchBoxTime { get; set; } = null;
 
     public const int PageSize = 64;
+
+    public PaginationState Pagination = new PaginationState { ItemsPerPage = PageSize };
 
     public CompetitionModel? Competition { get; set; }
     public List<Time> PaginatedLeaderboard { get; set; } = [];
