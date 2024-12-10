@@ -1,9 +1,22 @@
-html, body {
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #1d1f20;
-    color: #cfcfcf;
-    font-size: 16px;
-    height: 100%;
+:root {
+    --type-ramp-base-font-size: 16px !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: var(--body-font);
+    font-size:   var(--type-ramp-base-font-size);
+    line-height: var(--type-ramp-base-line-height);
+    font-weight: var(--font-weight);
+    color:       var(--neutral-foreground-rest);
+    background:  var(--neutral-fill-layer-rest);
+}
+
+fluent-data-grid-cell {
+    display: flex;
+    align-items: center;
 }
 
 a, .btn-link {

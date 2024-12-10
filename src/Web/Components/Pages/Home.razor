@@ -7,8 +7,11 @@
 @inject CompetitionService CompetitionService
 @inject IJSRuntime JsRuntime
 
-
 <PageTitle>COTD Qualifier Rank</PageTitle>
+
+<div style="display: none">
+<FluentGrid OnBreakpointEnter="@OnBreakpointEnter"></FluentGrid>
+</div>
 
 @if (!FilterAnomalous)
 {
@@ -24,114 +27,61 @@ else
 
 @if (!FilterAnomalous)
 {
-    <div class="index-pagination-container">
-        <div class="filter-container"></div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                @if (_currentMonth.Year != _oldestMonth.Year || _currentMonth.Month != _oldestMonth.Month)
-                {
-                    <li class="page-item">
-                        <button
-                            @onclick="async () => await HandleNavigation(_oldestMonth)"
-                            class="page-link page-link-dark">
-                            <pre class="m-0">&lt;&lt;</pre>
-                        </button>
-                    </li>
-                    <li class="page-item">
-                        <button
-                            @onclick="async () => await HandleNavigation(_currentMonth.AddMonths(-1))"
-                            class="page-link page-link-dark">
-                            <pre class="m-0">&lt;&nbsp;@NewPageMonth(-1, true)</pre>
-                        </button>
-                    </li>
-                }
-                @if (_currentMonth != _newestMonth)
-                {
-                    <li class="page-item">
-                        <button
-                            @onclick="async () => await HandleNavigation(_currentMonth.AddMonths(1))"
-                            class="page-link page-link-dark">
-                            <pre class="m-0">@NewPageMonth(1, true)&nbsp;&gt;</pre>
-                        </button>
-                    </li>
-                    <li class="page-item">
-                        <button
-                            @onclick="async () => await HandleNavigation(_newestMonth)"
-                            class="page-link page-link-dark">
-                            <pre class="m-0">&gt;&gt;</pre>
-                        </button>
-                    </li>
-                }
-            </ul>
-        </nav>
+    <div class="d-flex">
+        <FluentSpacer/>
+        <div class="d-flex">
+            @if (_currentMonth.Year != _oldestMonth.Year || _currentMonth.Month != _oldestMonth.Month)
+            {
+                <FluentButton IconStart="@(new Icons.Filled.Size20.ChevronDoubleLeft())"
+                              Appearance="Appearance.Lightweight"
+                              Class="mx-1"
+                              OnClick="async () => await HandleNavigation(_oldestMonth)"/>
+                <FluentButton IconStart="@(new Icons.Filled.Size20.ChevronLeft())"
+                              Appearance="Appearance.Lightweight"
+                              Class="mx-1"
+                              OnClick="async () => await HandleNavigation(_currentMonth.AddMonths(-1))">
+                    <div style="min-width: 77px">
+                        @NewPageMonth(-1, true)
+                    </div>
+                </FluentButton>
+            }
+            @if (_currentMonth != _newestMonth)
+            {
+                <FluentButton Class="mx-1"
+                              Appearance="Appearance.Lightweight"
+                              IconEnd="@(new Icons.Filled.Size20.ChevronRight())"
+                              OnClick="async () => await HandleNavigation(_currentMonth.AddMonths(1))">
+                    <div style="min-width: 80px">
+                        @NewPageMonth(1, true)
+                    </div>
+                </FluentButton>
+                <FluentButton Class="mx-1"
+                              Appearance="Appearance.Lightweight"
+                              IconEnd="@(new Icons.Filled.Size20.ChevronDoubleRight())"
+                              OnClick="async () => await HandleNavigation(_newestMonth)"/>
+            }
+        </div>
     </div>
 }
 
-<table class="table table-borderless table-striped table-dark-bg">
-    <thead>
-    <tr>
-        <th>
-            Date
-        </th>
-        <th>
-            Player Count
-        </th>
-        <th class="d-none d-sm-table-cell">
-            Competition ID
-        </th>
-        <th class="d-none d-md-table-cell">
-            Challenge ID
-        </th>
-        <th class="fit d-none d-xl-table-cell">
-            Map UID
-        </th>
-        <th class="d-none d-md-table-cell"></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var comp in _competitions)
+<FluentDataGrid Items="_competitions.AsQueryable()">
+    <PropertyColumn Title="Date" Property="c => c.Date.ToShortDayString()"/>
+    @if (!_isMobile)
     {
-        <tr>
-            <td>
-                @if (FilterAnomalous)
-                {
-                    @comp.Date.ToString("dd.MM.yyyy")
-                }
-                else
-                {
-                    @comp.Date.ToShortDayString()
-                }
-            </td>
-            <td>
-                @comp.PlayerCount
-            </td>
-            <td class="d-none d-sm-table-cell">
-                @comp.NadeoCompetitionId
-            </td>
-            <td class="d-none d-md-table-cell">
-                @comp.NadeoChallengeId
-            </td>
-            <td class="fit d-none d-xl-table-cell">
-                <code class="mapuid-code">@comp.NadeoMapUid</code>
-            </td>
-            <td class="d-none d-md-table-cell">
-                <a
-                    aria-label="Send GET request to Rank endpoint"
-                    href="./api/rank/@comp.NadeoMapUid/45000"
-                >
-                    Rank API
-                </a>
-            </td>
-            <td>
-                <a href=@($"./details/{comp.Id}")>
-                    Details
-                </a>
-            </td>
-        </tr>
+    <PropertyColumn Title="Player Count" Property="c => c.PlayerCount"/>
+    <PropertyColumn Title="Competition ID" Property="c => c.NadeoCompetitionId"/>
+    <PropertyColumn Title="Challenge ID" Property="c => c.NadeoChallengeId"/>
+    <TemplateColumn Width="300px" Title="Map UID">
+        <code class="mapuid-code">@context.NadeoMapUid</code>
+    </TemplateColumn>
     }
-    </tbody>
-</table>
+    <TemplateColumn Width="100px">
+        <FluentButton Appearance="Appearance.Accent"
+                      OnClick='@(() => NavManager.NavigateTo($"./details/{context.Id}"))'>
+            Details
+        </FluentButton>
+    </TemplateColumn>
+</FluentDataGrid>
 
 <div class="filter-container">
     <div class="d-flex">
@@ -162,12 +112,17 @@ else
 
     private CompetitionModel[] _competitions = [];
     private DateTime _currentMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
+    private bool _isMobile;
+
+    private void OnBreakpointEnter(GridItemSize size)
+    {
+        _isMobile = size < GridItemSize.Md;
+    }
 
     protected override void OnInitialized()
     {
         if (TryParseMonthQueryParameter(Month, out DateTime monthDateTime))
             _currentMonth = monthDateTime;
-
         FetchData();
     }
 
@@ -234,7 +189,7 @@ else
     {
         FilterAnomalous = !FilterAnomalous;
         FetchData();
-    
+
         var uri = NavManager.GetUriWithQueryParameters(
             new Dictionary<string, object?>
             {
@@ -244,5 +199,5 @@ else
         );
         NavManager.NavigateTo(uri, false);
     }
-    
+
 }

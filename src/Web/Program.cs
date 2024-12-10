@@ -6,6 +6,7 @@ using CotdQualifierRank.Application.Services;
 using CotdQualifierRank.Application.Utils;
 using CotdQualifierRank.Web.Components;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,9 @@ builder.Services.AddScoped<NadeoCompetitionService>();
 builder.Services.AddScoped<CompetitionService>();
 builder.Services.AddScoped<CotdRepository>();
 builder.Services.AddScoped<RankService>();
+
+builder.Services.AddHttpClient();
+builder.Services.AddFluentUIComponents();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
